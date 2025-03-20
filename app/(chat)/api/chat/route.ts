@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     } = await request.json();
 
     const state = store.getState();
-    const userID = state.auth.user?.empID;
+    const employee_id = state.auth.user?.employee_id;
 
     if (!state.auth.isAuthenticated) {
       return new Response('Unauthorized', { status: 401 });
@@ -53,9 +53,9 @@ export async function POST(request: Request) {
     //     message: userMessage,
     //   });
 
-    //   await saveChat({ id, userId: userID, title });
+    //   await saveChat({ id, userId: employee_id, title });
     // } else {
-    //   if (chat.userId !== userID) {
+    //   if (chat.userId !== employee_id) {
     //     return new Response('Unauthorized', { status: 401 });
     //   }
     // }
@@ -86,22 +86,25 @@ export async function POST(request: Request) {
               : [
                   'getWeather',
                   'createDocument',
-                  'updateDocument',
-                  'requestSuggestions',
+                  // 'updateDocument',
+                  // 'requestSuggestions',
                 ],
           experimental_transform: smoothStream({ chunking: 'word' }),
           experimental_generateMessageId: generateUUID,
           tools: {
             getWeather,
-            createDocument: createDocument({ session, dataStream }),
-            updateDocument: updateDocument({ session, dataStream }),
-            requestSuggestions: requestSuggestions({
-              session,
-              dataStream,
+            createDocument: createDocument({ 
+              session: { user: { id: employee_id || 'unknown' } }, 
+              dataStream 
             }),
+            // updateDocument: updateDocument({ session, dataStream }),
+            // requestSuggestions: requestSuggestions({
+            //   session,
+            //   dataStream,
+            // }),
           },
           onFinish: async ({ response }) => {
-            if (userID) {
+            if (employee_id) {
               try {
                 const assistantId = getTrailingMessageId({
                   messages: response.messages.filter(
@@ -118,19 +121,19 @@ export async function POST(request: Request) {
                   responseMessages: response.messages,
                 });
 
-                await saveMessages({
-                  messages: [
-                    {
-                      id: assistantId,
-                      chatId: id,
-                      role: assistantMessage.role,
-                      parts: assistantMessage.parts,
-                      attachments:
-                        assistantMessage.experimental_attachments ?? [],
-                      createdAt: new Date(),
-                    },
-                  ],
-                });
+                // await saveMessages({
+                //   messages: [
+                //     {
+                //       id: assistantId,
+                //       chatId: id,
+                //       role: assistantMessage.role,
+                //       parts: assistantMessage.parts,
+                //       attachments:
+                //         assistantMessage.experimental_attachments ?? [],
+                //       createdAt: new Date(),
+                //     },
+                //   ],
+                // });
               } catch (error) {
                 console.error('Failed to save chat');
               }
@@ -168,7 +171,7 @@ export async function DELETE(request: Request) {
   }
 
   const state = store.getState();
-  const userID = state.auth.user?.empID;
+  const employee_id = state.auth.user?.employee_id;
 
   if (!state.auth.isAuthenticated) {
     return new Response('Unauthorized', { status: 401 });
@@ -177,7 +180,7 @@ export async function DELETE(request: Request) {
   try {
     // const chat = await getChatById({ id });
 
-    // if (chat.userId !== userID) {
+    // if (chat.userId !== employee_id) {
     //   return new Response('Unauthorized', { status: 401 });
     // }
 

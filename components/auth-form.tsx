@@ -6,34 +6,34 @@ import { Label } from './ui/label';
 export function AuthForm({
   action,
   children,
-  defaultEmail = '',
+  defaultEmployeeId = '',
 }: {
   action: NonNullable<
     string | ((formData: FormData) => void | Promise<void>) | undefined
   >;
   children: React.ReactNode;
-  defaultEmail?: string;
+  defaultEmployeeId?: string;
 }) {
   return (
     <Form action={action} className="flex flex-col gap-4 px-4 sm:px-16">
       <div className="flex flex-col gap-2">
         <Label
-          htmlFor="email"
+          htmlFor="employee_id"
           className="text-zinc-600 font-normal dark:text-zinc-400"
         >
-          Email Address
+          Employee ID
         </Label>
 
         <Input
-          id="email"
-          name="email"
+          id="employee_id"
+          name="employee_id"
           className="bg-muted text-md md:text-sm"
-          type="email"
-          placeholder="user@acme.com"
-          autoComplete="email"
+          type="text"
+          placeholder="johndoe"
+          autoComplete="employee_id"
           required
           autoFocus
-          defaultValue={defaultEmail}
+          defaultValue={defaultEmployeeId}
         />
       </div>
 

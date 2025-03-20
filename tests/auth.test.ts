@@ -4,7 +4,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
-const testEmail = `test-${getUnixTime(new Date())}@playwright.com`;
+const testEmployeeId = `test-${getUnixTime(new Date())}`;
 const testPassword = generateId(16);
 
 class AuthPage {
@@ -20,19 +20,19 @@ class AuthPage {
     await expect(this.page.getByRole('heading')).toContainText('Sign Up');
   }
 
-  async register(email: string, password: string) {
+  async register(employeeId: string, password: string) {
     await this.gotoRegister();
-    await this.page.getByPlaceholder('user@acme.com').click();
-    await this.page.getByPlaceholder('user@acme.com').fill(email);
+    await this.page.getByPlaceholder('johndoe').click();
+    await this.page.getByPlaceholder('johndoe').fill(employeeId);
     await this.page.getByLabel('Password').click();
     await this.page.getByLabel('Password').fill(password);
     await this.page.getByRole('button', { name: 'Sign Up' }).click();
   }
 
-  async login(email: string, password: string) {
+  async login(employeeId: string, password: string) {
     await this.gotoLogin();
-    await this.page.getByPlaceholder('user@acme.com').click();
-    await this.page.getByPlaceholder('user@acme.com').fill(email);
+    await this.page.getByPlaceholder('johndoe').click();
+    await this.page.getByPlaceholder('johndoe').fill(employeeId);
     await this.page.getByLabel('Password').click();
     await this.page.getByLabel('Password').fill(password);
     await this.page.getByRole('button', { name: 'Sign In' }).click();
@@ -57,18 +57,18 @@ test.describe
     });
 
     test('register a test account', async ({ page }) => {
-      await authPage.register(testEmail, testPassword);
+      await authPage.register(testEmployeeId, testPassword);
       await expect(page).toHaveURL('/');
       await authPage.expectToastToContain('Account created successfully!');
     });
 
-    test('register test account with existing email', async () => {
-      await authPage.register(testEmail, testPassword);
+    test('register test account with existing employee ID', async () => {
+      await authPage.register(testEmployeeId, testPassword);
       await authPage.expectToastToContain('Account already exists!');
     });
 
     test('log into account', async ({ page }) => {
-      await authPage.login(testEmail, testPassword);
+      await authPage.login(testEmployeeId, testPassword);
 
       await page.waitForURL('/');
       await expect(page).toHaveURL('/');

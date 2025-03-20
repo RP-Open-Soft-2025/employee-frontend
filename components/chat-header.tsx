@@ -55,13 +55,13 @@ function HeaderUserNav() {
           className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white hidden md:flex py-1.5 px-2 h-fit md:h-[34px] order-4 md:ml-auto gap-2"
         >
           <Image
-            src={`https://avatar.vercel.sh/${user?.empID}`}
-            alt={user?.empID ?? 'User Avatar'}
+            src={`https://avatar.vercel.sh/${user?.employee_id}`}
+            alt={user?.employee_id ?? 'User Avatar'}
             width={24}
             height={24}
             className="rounded-full"
           />
-          <span className="truncate">{user?.empID}</span>
+          <span className="truncate">{user?.employee_id}</span>
           <ChevronUp className="size-4" />
         </Button>
       </DropdownMenuTrigger>
