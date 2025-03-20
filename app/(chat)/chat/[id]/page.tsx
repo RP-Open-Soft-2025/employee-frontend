@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { Chat } from "@/components/chat";
 import { DataStreamHandler } from "@/components/data-stream-handler";
 import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
-import { DBMessage } from "@/lib/db/schema";
-import { Attachment, UIMessage } from "ai";
+import type { DBMessage } from "@/lib/db/schema";
+import type { Attachment, UIMessage } from "ai";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;

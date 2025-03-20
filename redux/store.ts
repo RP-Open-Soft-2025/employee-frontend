@@ -1,6 +1,6 @@
-import { configureStore, Store } from "@reduxjs/toolkit";
+import { configureStore, type Store } from "@reduxjs/toolkit";
 import authReducer from "./features/auth";
-import { AuthState } from "./features/auth";
+import type { AuthState } from "./features/auth";
 
 // Root state interface
 export interface RootState {

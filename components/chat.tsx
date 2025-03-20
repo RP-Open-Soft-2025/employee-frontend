@@ -11,11 +11,11 @@ import { fetcher, generateUUID } from '@/lib/utils';
 import { Artifact } from './artifact';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
-import { VisibilityType } from './visibility-selector';
+import type { VisibilityType } from './visibility-selector';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
+import type { RootState } from '@/redux/store';
 import { checkAuth } from '@/redux/features/auth';
 
 export function Chat({

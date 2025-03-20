@@ -6,7 +6,7 @@ import { useTheme } from 'next-themes';
 import { useDispatch, useSelector } from "react-redux";
 import { logout, checkAuth } from "@/redux/features/auth";
 import { useRouter } from "next/navigation";
-import { RootState } from "@/redux/store";
+import type { RootState } from "@/redux/store";
 import { useEffect } from 'react';
 
 import {
@@ -64,7 +64,7 @@ export function SidebarUserNav() {
                 className="rounded-full"
               />
               <span className="truncate">{user?.empID}</span>
-              <ChevronUp className="ml-auto" />
+              <ChevronUp className="size-4 ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -75,7 +75,7 @@ export function SidebarUserNav() {
               className="cursor-pointer"
               onSelect={() => router.push('/')}
             >
-              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <LayoutDashboard className="mr-2 size-4" />
               Dashboard
             </DropdownMenuItem>
             <DropdownMenuItem
