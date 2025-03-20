@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
 import { ChevronUp, LayoutDashboard } from 'lucide-react';
@@ -71,7 +70,7 @@ function HeaderUserNav() {
           className="cursor-pointer"
           onSelect={() => router.push('/')}
         >
-          <LayoutDashboard className="mr-2 h-4 w-4" />
+          <LayoutDashboard className="mr-2 size-4" />
           Dashboard
         </DropdownMenuItem>
         <DropdownMenuItem
