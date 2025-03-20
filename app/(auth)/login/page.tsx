@@ -24,20 +24,18 @@ export default function Page() {
     (state: RootState) => state.auth.isAuthenticated
   );
   const error = useSelector((state: RootState) => state.auth.error);
-  // if (isAuthenticated) {
-  //   router.push("/");
-  // }
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  
   // Check authentication status on component mount
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
+  
+  // If already authenticated, redirect to home
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, router]);
 
   const [email, setEmail] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
@@ -58,9 +56,9 @@ export default function Page() {
       });
     } else if (status === "success") {
       setIsSuccessful(true);
-      // router.refresh();
+      // Don't need to call router.push here as the isAuthenticated effect will handle it
     }
-  }, [status, router]);
+  }, [status]);
 
   const handleSubmit = (formData: FormData) => {
     setEmail(formData.get("email") as string);
@@ -91,7 +89,7 @@ export default function Page() {
       // ref.current?.reset();
       console.log("Logged in successfully");
       setStatus("success");
-      router.push(`/`);
+      // The isAuthenticated effect will handle redirecting
     } else {
       console.error(user.message);
       setStatus("failed");

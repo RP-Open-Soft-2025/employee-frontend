@@ -1,5 +1,5 @@
 'use client';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, LayoutDashboard } from 'lucide-react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 
@@ -71,6 +71,13 @@ export function SidebarUserNav() {
             side="top"
             className="w-[--radix-popper-anchor-width]"
           >
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onSelect={() => router.push('/')}
+            >
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              Dashboard
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
               onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}

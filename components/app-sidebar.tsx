@@ -1,25 +1,28 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 
-import { PlusIcon } from '@/components/icons';
-import { SidebarHistory } from '@/components/sidebar-history';
-import { Button } from '@/components/ui/button';
+import { PlusIcon } from "@/components/icons";
+import { SidebarHistory } from "@/components/sidebar-history";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
-import Link from 'next/link';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+} from "@/components/ui/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { LayoutDashboard, MessageSquare } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function AppSidebar() {
   const router = useRouter();
+  const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
   const user = useSelector((state: RootState) => state.auth.user);
@@ -37,7 +40,7 @@ export function AppSidebar() {
               className="flex flex-row gap-3 items-center"
             >
               <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                Chatbot
+                Employee Portal
               </span>
             </Link>
             <Tooltip>
@@ -48,7 +51,7 @@ export function AppSidebar() {
                   className="p-2 h-fit"
                   onClick={() => {
                     setOpenMobile(false);
-                    router.push('/');
+                    router.push("/");
                     router.refresh();
                   }}
                 >

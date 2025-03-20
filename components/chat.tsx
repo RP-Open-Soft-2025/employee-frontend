@@ -2,7 +2,8 @@
 
 import type { Attachment, UIMessage } from 'ai';
 import { useChat } from '@ai-sdk/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
@@ -13,6 +14,9 @@ import { Messages } from './messages';
 import { VisibilityType } from './visibility-selector';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { checkAuth } from '@/redux/features/auth';
 
 export function Chat({
   id,
@@ -27,6 +31,9 @@ export function Chat({
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
 }) {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const { mutate } = useSWRConfig();
 
   const {
@@ -61,6 +68,19 @@ export function Chat({
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    dispatch(checkAuth());
+    if (!isAuthenticated) {
+      router.push('/login');
+    }
+  }, [dispatch, isAuthenticated, router]);
+
+  // If not authenticated, show nothing while redirecting
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <>
