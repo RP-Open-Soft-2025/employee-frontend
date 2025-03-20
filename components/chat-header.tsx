@@ -9,14 +9,13 @@ import { useTheme } from 'next-themes';
 import { useDispatch, useSelector } from "react-redux";
 import { logout, checkAuth } from "@/redux/features/auth";
 import { RootState } from "@/redux/store";
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 
 import { ModelSelector } from '@/components/model-selector';
 import { SidebarToggle } from '@/components/sidebar-toggle';
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from './icons';
 import { useSidebar } from './ui/sidebar';
-import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { VisibilityType, VisibilitySelector } from './visibility-selector';
 import {
@@ -32,10 +31,18 @@ function HeaderUserNav() {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogOut = () => {
     dispatch(logout());
@@ -56,7 +63,7 @@ function HeaderUserNav() {
             className="rounded-full"
           />
           <span className="truncate">{user?.empID}</span>
-          <ChevronUp className="h-4 w-4" />
+          <ChevronUp className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[--radix-popper-anchor-width]">
