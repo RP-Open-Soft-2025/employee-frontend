@@ -1,6 +1,6 @@
 # Migrate to Message Parts
 
-The release of [`@ai-sdk/react@1.1.10`](https://github.com/vercel/ai/pull/4670) introduced a new property called `parts` to messages in the `useChat` hook. We recommend rendering the messages using the `parts` property instead of the `content` property. The parts property supports different message types, including text, tool invocation, and tool result, and allows for more flexible and complex chat and agent-like user interfaces.
+The release of [`@ai-sdk/react@1.1.10`](https://github.com/vercel/ai/pull/4670) introduced a new property called `parts` to messages in the `useChat` hook. We recommend rendering the messages using the `parts` property instead of the `content` property. The parts property supports different message types, including text, tool invocation, and tool result, and allows for more flexible and complex employee conversation and agent-like user interfaces.
 
 You can read the API reference for the `parts` property [here](https://sdk.vercel.ai/docs/reference/ai-sdk-ui/use-chat#messages.ui-message.parts).
 
@@ -234,10 +234,10 @@ Previously you were using content types to render messages and tool invocations.
 
 At this point, you can deploy your application so new messages can be stored in the new format.
 
-To restore messages of previous chat conversations, you can run the following script that applies a transformation to the old messages and stores them in the new format.
+To restore messages of previous employee conversations, you can run the following script that applies a transformation to the old messages and stores them in the new format.
 
 ```zsh title="shell"
-pnpm exec tsx lib/db/helpers/01-core-to-parts.ts
+npm exec tsx lib/db/helpers/01-core-to-parts.ts
 ```
 
 This script will take some time to complete based on the number of messages to be migrated. After completion, you can verify that the messages have been successfully migrated by checking the database.
