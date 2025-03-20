@@ -11,14 +11,11 @@ import {
   SidebarContent,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { LayoutDashboard, MessageSquare } from "lucide-react";
-import { cn } from "@/lib/utils";
+import type { RootState } from "@/redux/store";
 
 export function AppSidebar() {
   const router = useRouter();

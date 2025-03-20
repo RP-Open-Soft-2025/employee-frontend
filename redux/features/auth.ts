@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 // AuthState interface
 export interface AuthState {
@@ -16,9 +16,7 @@ const initialState: AuthState = {
 	user: (typeof window !== 'undefined' && localStorage.getItem('user'))
 		? JSON.parse(localStorage.getItem('user') as string)
 		: null,
-	isAuthenticated: (typeof window !== 'undefined' && localStorage.getItem('userToken'))
-		? true
-		: false,
+	isAuthenticated: !!(typeof window !== 'undefined' && localStorage.getItem('userToken')),
 	error: null
 };
 

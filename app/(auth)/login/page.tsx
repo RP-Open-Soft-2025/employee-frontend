@@ -10,7 +10,7 @@ import { SubmitButton } from "@/components/submit-button";
 
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, loginFailure, checkAuth } from "@/redux/features/auth";
-import { RootState } from "@/redux/store";
+import type { RootState } from "@/redux/store";
 
 interface LoginState {
   status: "idle" | "in_progress" | "success" | "failed" | "invalid_data";

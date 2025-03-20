@@ -1,5 +1,5 @@
 import store from "@/redux/store";
-import { ArtifactKind } from '@/components/artifact';
+import type { ArtifactKind } from '@/components/artifact';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

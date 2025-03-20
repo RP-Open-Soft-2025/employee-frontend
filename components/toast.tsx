@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { toast as sonnerToast } from 'sonner';
 import { CheckCircleFillIcon, WarningIcon } from './icons';
 

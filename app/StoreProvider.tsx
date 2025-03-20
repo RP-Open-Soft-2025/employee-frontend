@@ -1,8 +1,8 @@
 'use client'
-import { useRef, ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { makeStore } from '../redux/store'
-import { Store } from 'redux'
+import type { Store } from 'redux'
 
 interface StoreProviderProps {
   children: ReactNode

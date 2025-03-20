@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { useDispatch, useSelector } from "react-redux";
 import { logout, checkAuth } from "@/redux/features/auth";
-import { RootState } from "@/redux/store";
+import type { RootState } from "@/redux/store";
 import { memo, useEffect } from 'react';
 
 import { ModelSelector } from '@/components/model-selector';
@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { PlusIcon } from './icons';
 import { useSidebar } from './ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { VisibilityType, VisibilitySelector } from './visibility-selector';
+import { type VisibilityType, VisibilitySelector } from './visibility-selector';
 import {
   DropdownMenu,
   DropdownMenuContent,

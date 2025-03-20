@@ -11,7 +11,7 @@ import { toast } from "@/components/toast";
 
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuth } from "@/redux/features/auth";
-import { RootState } from "@/redux/store";
+import type { RootState } from "@/redux/store";
 
 interface RegisterState {
   status:

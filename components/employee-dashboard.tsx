@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
+import type { RootState } from '@/redux/store';
 import { checkAuth } from '@/redux/features/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,17 +55,17 @@ export function EmployeeDashboard() {
         </div>
         <div className="flex items-center space-x-2 mt-4 md:mt-0">
           <Button variant="outline" size="sm" className="relative">
-            <Bell className="h-4 w-4 mr-2" />
+            <Bell className="size-4 mr-2" />
             Notifications
             {notifications > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full size-5 flex items-center justify-center text-xs">
                 {notifications}
               </span>
             )}
           </Button>
           <Link href="/chat">
             <Button size="sm">
-              <MessageSquare className="h-4 w-4 mr-2" />
+              <MessageSquare className="size-5 mr-2" />
               Chat
             </Button>
           </Link>
@@ -77,7 +76,7 @@ export function EmployeeDashboard() {
         <Card className="col-span-1 md:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Calendar className="h-5 w-5 mr-2" />
+              <Calendar className="size-5 mr-2" />
               Upcoming Events
             </CardTitle>
             <CardDescription>Your scheduled events and deadlines</CardDescription>
@@ -98,7 +97,7 @@ export function EmployeeDashboard() {
           <CardFooter>
             <Button variant="ghost" size="sm" className="ml-auto flex items-center">
               View Calendar
-              <ChevronRight className="h-4 w-4 ml-1" />
+              <ChevronRight className="size-6 ml-1" />
             </Button>
           </CardFooter>
         </Card>
@@ -106,7 +105,7 @@ export function EmployeeDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <MessageSquare className="h-5 w-5 mr-2" />
+              <MessageSquare className="size-5 mr-2" />
               Recent Chats
             </CardTitle>
             <CardDescription>Your recent conversations</CardDescription>
@@ -116,8 +115,8 @@ export function EmployeeDashboard() {
               {recentChats.map(chat => (
                 <Link key={chat.id} href={`/chat/${chat.id}`}>
                   <div className="flex items-center cursor-pointer hover:bg-muted p-2 rounded">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                      <MessageSquare className="h-5 w-5 text-primary" />
+                    <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                      <MessageSquare className="size-5 text-primary" />
                     </div>
                     <div>
                       <h3 className="font-medium">{chat.title}</h3>
@@ -140,7 +139,7 @@ export function EmployeeDashboard() {
         <Card className="col-span-1 md:col-span-3">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <FileText className="h-5 w-5 mr-2" />
+              <FileText className="size-5 mr-2" />
               Quick Actions
             </CardTitle>
             <CardDescription>Common tasks and resources</CardDescription>
@@ -148,20 +147,20 @@ export function EmployeeDashboard() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Button variant="outline" className="h-auto flex flex-col items-center justify-center py-6">
-                <FileText className="h-6 w-6 mb-2" />
+                <FileText className="size-6 mb-2" />
                 <span>Documents</span>
               </Button>
               <Button variant="outline" className="h-auto flex flex-col items-center justify-center py-6">
-                <Calendar className="h-6 w-6 mb-2" />
+                <Calendar className="size-6 mb-2" />
                 <span>Schedule</span>
               </Button>
               <Button variant="outline" className="h-auto flex flex-col items-center justify-center py-6">
-                <Bell className="h-6 w-6 mb-2" />
+                <Bell className="size-6 mb-2" />
                 <span>Notifications</span>
               </Button>
               <Link href="/chat" className="w-full">
                 <Button variant="outline" className="h-auto flex flex-col items-center justify-center py-6 w-full">
-                  <MessageSquare className="h-6 w-6 mb-2" />
+                  <MessageSquare className="size-6 mb-2" />
                   <span>Chat</span>
                 </Button>
               </Link>
