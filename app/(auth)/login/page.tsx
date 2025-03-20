@@ -12,8 +12,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, loginFailure, checkAuth } from "@/redux/features/auth";
 import type { RootState } from "@/redux/store";
 
+// Use environment variable for API URL with fallback
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
 interface LoginState {
-  status: "idle" | "in_progress" | "success" | "failed" | "invalid_data";
+  status: "idle" | "in_progress" | "success" | "failed" | "invalid_credentials" | "invalid_data" | "server_error";
 }
 
 export default function Page() {
@@ -37,17 +40,22 @@ export default function Page() {
     }
   }, [isAuthenticated, router]);
 
-  const [email, setEmail] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
 
   const [status, setStatus] = useState<LoginState["status"]>("idle");
 
   useEffect(() => {
     console.log("status", status);
-    if (status === "failed") {
+    if (status === "invalid_credentials") {
       toast({
         type: "error",
         description: "Invalid credentials!",
+      });
+    } else if (status === "server_error") {
+      toast({
+        type: "error",
+        description: error || "An error occurred during login",
       });
     } else if (status === "invalid_data") {
       toast({
@@ -58,42 +66,33 @@ export default function Page() {
       setIsSuccessful(true);
       // Don't need to call router.push here as the isAuthenticated effect will handle it
     }
-  }, [status]);
+  }, [status, error]);
 
-  const handleSubmit = (formData: FormData) => {
-    setEmail(formData.get("email") as string);
+  const handleSubmit = async (formData: FormData) => {
+    setEmployeeId(formData.get("employee_id") as string);
     setStatus("in_progress");
 
     const data = {
-      email: formData.get("email") as string,
+      employee_id: formData.get("employee_id") as string,
       password: formData.get("password") as string,
     };
 
     console.log(data);
 
-    // const user = await login(data);
-
-    const user = {
-      success: true,
-      message: "Login successful",
-      token: "JWTGENERATEDTOKEN",
-      id: "EMPLOYEEID",
-    };
-
-    // console.log(user);
-
-    if (user.success) {
-      // alert(user.message);
-      const token = user.token;
-      dispatch(loginSuccess({ token, user: { empID: user.id } }));
-      // ref.current?.reset();
+    // Temporary bypass of API integration - accept any credentials
+    try {
+      // Simulate a successful login with any credentials
+      const mockToken = "mock-jwt-token";
+      
+      // Dispatch success with the employee ID from the form
+      dispatch(loginSuccess({ token: mockToken, user: { employee_id: data.employee_id } }));
       console.log("Logged in successfully");
       setStatus("success");
       // The isAuthenticated effect will handle redirecting
-    } else {
-      console.error(user.message);
-      setStatus("failed");
-      dispatch(loginFailure({ error: "Invalid login" }));
+    } catch (error) {
+      console.error("Login error:", error);
+      setStatus("server_error");
+      dispatch(loginFailure({ error: "An unexpected error occurred" }));
     }
   };
 
@@ -103,10 +102,10 @@ export default function Page() {
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
           <h3 className="text-xl font-semibold dark:text-zinc-50">Sign In</h3>
           <p className="text-sm text-gray-500 dark:text-zinc-400">
-            Use your email and password to sign in
+            Use your employee ID and password to sign in
           </p>
         </div>
-        <AuthForm action={handleSubmit} defaultEmail={email}>
+        <AuthForm action={handleSubmit} defaultEmployeeId={employeeId}>
           <SubmitButton isSuccessful={isSuccessful}>Sign in</SubmitButton>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
             {"Don't have an account? "}

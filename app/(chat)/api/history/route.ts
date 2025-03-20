@@ -2,14 +2,14 @@ import store from "@/redux/store";
 
 export async function GET() {
   const state = store.getState();
-  const userID = state.auth.user?.empID;
+  const employee_id = state.auth.user?.employee_id;
 
   if (!state.auth.isAuthenticated) {
     return Response.json('Unauthorized!', { status: 401 });
   }
 
   // biome-ignore lint: Forbidden non-null assertion.
-  // const chats = await getChatsByUserId({ id: userID! });
+  // const chats = await getChatsByUserId({ id: employee_id! });
   const chats = {};
   return Response.json(chats);
 }

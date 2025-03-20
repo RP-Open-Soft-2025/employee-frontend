@@ -50,7 +50,7 @@ export function EmployeeDashboard() {
     <div className="container mx-auto p-4 md:p-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Welcome, {user?.empID || 'Employee'}</h1>
+          <h1 className="text-3xl font-bold">Welcome, {user?.employee_id || 'Employee'}</h1>
           <p className="text-muted-foreground mt-1">Your employee dashboard</p>
         </div>
         <div className="flex items-center space-x-2 mt-4 md:mt-0">

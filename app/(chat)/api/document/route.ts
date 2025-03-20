@@ -39,7 +39,7 @@ export async function POST(request: Request) {
   }
 
   const state = store.getState();
-  const userID = state.auth.user?.empID;
+  const employee_id = state.auth.user?.employee_id;
 
   if (!state.auth.isAuthenticated) {
     return new Response('Unauthorized', { status: 401 });
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
   }: { content: string; title: string; kind: ArtifactKind } =
     await request.json();
 
-  if (userID) {
+  if (employee_id) {
     // const document = await saveDocument({
     //   id,
     //   content,

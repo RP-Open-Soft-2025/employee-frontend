@@ -44,7 +44,7 @@ export default function Page() {
   }, [dispatch]);
 
 
-  const [email, setEmail] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
 
   const [status, setStatus] = useState<RegisterState["status"]>("idle");
@@ -68,12 +68,12 @@ export default function Page() {
   }, [status, router]);
 
   const handleSubmit = (formData: FormData) => {
-    setEmail(formData.get("email") as string);
+    setEmployeeId(formData.get("employee_id") as string);
     setStatus("in_progress");
 
     const data = {
       // name: formData.get("name") as string,
-      email: formData.get("email") as string,
+      employee_id: formData.get("employee_id") as string,
       password: formData.get("password") as string,
       // confirmPassword: formData.get("confirmPassword") as string,
     };
@@ -109,10 +109,10 @@ export default function Page() {
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
           <h3 className="text-xl font-semibold dark:text-zinc-50">Sign Up</h3>
           <p className="text-sm text-gray-500 dark:text-zinc-400">
-            Create an account with your email and password
+            Create an account with your employee ID and password
           </p>
         </div>
-        <AuthForm action={handleSubmit} defaultEmail={email}>
+        <AuthForm action={handleSubmit} defaultEmployeeId={employeeId}>
           <SubmitButton isSuccessful={isSuccessful}>Sign Up</SubmitButton>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
             {"Already have an account? "}
