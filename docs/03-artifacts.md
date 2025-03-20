@@ -1,13 +1,13 @@
 # Artifacts
 
-Artifacts is a special user interface mode that allows you to have a workspace like interface along with the chat interface. This is similar to [ChatGPT's Canvas](https://openai.com/index/introducing-canvas) and [Claude's Artifacts](https://www.anthropic.com/news/artifacts).
+Artifacts is a special user interface mode that allows you to have a workspace-like interface along with the conversation interface. This is similar to [ChatGPT's Canvas](https://openai.com/index/introducing-canvas) and [Claude's Artifacts](https://www.anthropic.com/news/artifacts).
 
-The template already ships with the following artifacts:
+The Employee Experience AI Conversation Bot already ships with the following artifacts:
 
-- **Text Artifact**: A artifact that allows you to work with text content like drafting essays and emails.
-- **Code Artifact**: A artifact that allows you to write and execute code (Python).
-- **Image Artifact**: A artifact that allows you to work with images like editing, annotating, and processing images.
-- **Sheet Artifact**: A artifact that allows you to work with tabular data like creating, editing, and analyzing data.
+- **Text Artifact**: An artifact that allows employees to work with text content like drafting emails, documents, and reports.
+- **Code Artifact**: An artifact that allows employees to write and execute code (Python) for automating tasks or analyzing data.
+- **Image Artifact**: An artifact that allows employees to work with images like editing, annotating, and processing visual content.
+- **Sheet Artifact**: An artifact that allows employees to work with tabular data like creating, editing, and analyzing spreadsheets or reports.
 
 ## Adding a Custom Artifact
 
