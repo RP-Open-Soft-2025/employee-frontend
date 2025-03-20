@@ -51,7 +51,7 @@ export function AppSidebar() {
                   className="p-2 h-fit"
                   onClick={() => {
                     setOpenMobile(false);
-                    router.push("/");
+                    router.push("/chat");
                     router.refresh();
                   }}
                 >
