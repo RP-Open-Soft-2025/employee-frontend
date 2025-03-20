@@ -3,6 +3,13 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
+import { ChevronUp } from 'lucide-react';
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
+import { useDispatch, useSelector } from "react-redux";
+import { logout, checkAuth } from "@/redux/features/auth";
+import { RootState } from "@/redux/store";
+import { useEffect } from 'react';
 
 import { ModelSelector } from '@/components/model-selector';
 import { SidebarToggle } from '@/components/sidebar-toggle';
@@ -12,6 +19,67 @@ import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { VisibilityType, VisibilitySelector } from './visibility-selector';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+function HeaderUserNav() {
+  const { setTheme, theme } = useTheme();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+
+  const handleLogOut = () => {
+    dispatch(logout());
+    router.push("/login");
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button 
+          className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white hidden md:flex py-1.5 px-2 h-fit md:h-[34px] order-4 md:ml-auto gap-2"
+        >
+          <Image
+            src={`https://avatar.vercel.sh/${user?.empID}`}
+            alt={user?.empID ?? 'User Avatar'}
+            width={24}
+            height={24}
+            className="rounded-full"
+          />
+          <span className="truncate">{user?.empID}</span>
+          <ChevronUp className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[--radix-popper-anchor-width]">
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        >
+          {`Toggle ${theme === 'light' ? 'dark' : 'light'} mode`}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <button
+            type="button"
+            className="w-full cursor-pointer"
+            onClick={handleLogOut}
+          >
+            Sign out
+          </button>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 function PureChatHeader({
   chatId,
@@ -66,6 +134,8 @@ function PureChatHeader({
           className="order-1 md:order-3"
         />
       )}
+      
+      <HeaderUserNav />
     </header>
   );
 }
