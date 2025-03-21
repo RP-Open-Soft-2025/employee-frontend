@@ -11,14 +11,14 @@ export interface RootState {
 function loadState(): RootState {
   try {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("userToken");
+      const role = localStorage.getItem("userRole");
       const user = localStorage.getItem("user");
 
       return {
         auth: {
-          userToken: token ? token : null,
+          userRole: role ? role : null,
           user: user ? JSON.parse(user) : null, 
-          isAuthenticated: !!token, 
+          isAuthenticated: !!role,
           error: null,
         },
       };
@@ -27,17 +27,17 @@ function loadState(): RootState {
     console.error("Failed to load state:", err);
   }
 
-  return { auth: { userToken: null, user: null, isAuthenticated: false, error: null } }; // Fallback state
+  return { auth: { userRole: null, user: null, isAuthenticated: false, error: null } }; // Fallback state
 }
 
 // Function to save the state to localStorage
 function saveState(state: RootState): void {
   try {
     if (typeof window !== "undefined") {
-      if (state.auth.userToken) {
-        localStorage.setItem("userToken", state.auth.userToken);
+      if (state.auth.userRole) {
+        localStorage.setItem("userRole", state.auth.userRole);
       } else {
-        localStorage.removeItem("userToken");
+        localStorage.removeItem("userRole");
       }
 
       if (state.auth.user) {
