@@ -114,13 +114,19 @@ export default function Page() {
       }
 
       if (result.access_token) {
-        const token = result.access_token;
-        dispatch(
-          loginSuccess({ token, user: { employee_id: data.employee_id } })
-        );
-        console.log("Logged in successfully");
-        setStatus("success");
-        // The isAuthenticated effect will handle redirecting
+        if (result.success) {
+          const role = result.role;
+          dispatch(
+            loginSuccess({ role, user: { employee_id: data.employee_id } })
+          );
+          console.log("Logged in successfully");
+          setStatus("success");
+          // The isAuthenticated effect will handle redirecting
+        } else {
+          console.error("Login failed: No access token received");
+          setStatus("invalid_credentials");
+          dispatch(loginFailure({ error: "Invalid login" }));
+        }
       } else {
         console.error("Login failed: No access token received");
         setStatus("invalid_credentials");

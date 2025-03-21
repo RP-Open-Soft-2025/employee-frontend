@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 // AuthState interface
 export interface AuthState {
-	userToken: string | null;
+	userRole: string | null;
 	user: {employee_id: string} | null;
 	isAuthenticated: boolean;
 	error: string | null;
@@ -10,13 +10,13 @@ export interface AuthState {
 
 // Initial state for authentication
 const initialState: AuthState = {
-	userToken: (typeof window !== 'undefined' && localStorage.getItem('userToken'))
-		? localStorage.getItem('userToken')
+	userRole: (typeof window !== 'undefined' && localStorage.getItem('userRole'))
+		? localStorage.getItem('userRole')
 		: null,
 	user: (typeof window !== 'undefined' && localStorage.getItem('user'))
 		? JSON.parse(localStorage.getItem('user') as string)
 		: null,
-	isAuthenticated: !!(typeof window !== 'undefined' && localStorage.getItem('userToken')),
+	isAuthenticated: !!(typeof window !== 'undefined' && localStorage.getItem('userRole')), // Updated to check userRole
 	error: null
 };
 
@@ -27,16 +27,16 @@ const authSlice = createSlice({
   reducers: {
     loginSuccess: (
       state,
-      action: PayloadAction<{ token: string; user: { employee_id: string } }>
+      action: PayloadAction<{ role: string; user: { employee_id: string } }>
     ) => {
-      state.userToken = action.payload.token;
+      state.userRole = action.payload.role;
       state.user = action.payload.user;
       state.isAuthenticated = true;
       state.error = null;
 
       // Save to localStorage
       if (typeof window !== "undefined") {
-        localStorage.setItem("userToken", action.payload.token);
+        localStorage.setItem("userRole", action.payload.role);
         localStorage.setItem("user", JSON.stringify(action.payload.user));
       }
     },
@@ -44,32 +44,32 @@ const authSlice = createSlice({
       state.error = action.payload.error;
       state.user = null;
       state.isAuthenticated = false;
-      state.userToken = null;
+      state.userRole = null;
 
       // Remove from localStorage
       if (typeof window !== "undefined") {
-        localStorage.removeItem("userToken");
+        localStorage.removeItem("userRole");
         localStorage.removeItem("user");
       }
     },
     logout: (state) => {
-      state.userToken = null;
+      state.userRole = null;
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
 
       // Remove from localStorage
       if (typeof window !== "undefined") {
-        localStorage.removeItem("userToken");
+        localStorage.removeItem("userRole");
         localStorage.removeItem("user");
       }
     },
     checkAuth: (state) => {
       if (typeof window !== "undefined") {
-        const token = localStorage.getItem("userToken");
+        const token = localStorage.getItem("userRole");
         const user = localStorage.getItem("user");
 
-        state.userToken = token;
+        state.userRole = token; // This line should be updated to reflect the correct logic
         state.user = user ? JSON.parse(user) : null;
         state.isAuthenticated = !!token;
       }
