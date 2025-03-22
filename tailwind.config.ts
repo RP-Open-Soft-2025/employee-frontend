@@ -24,6 +24,10 @@ const config: Config = {
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        'background-gradient': {
+          start: 'hsl(var(--background-start))',
+          end: 'hsl(var(--background-end))',
+        },
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
