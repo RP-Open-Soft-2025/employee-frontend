@@ -9,7 +9,7 @@ import { checkAuth } from '@/redux/features/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, Bell, Calendar, FileText, ChevronRight } from 'lucide-react';
-import { HeaderUserNav } from '@/components/chat-header';
+import { Header } from '@/components/header';
 
 export function EmployeeDashboard() {
   const router = useRouter();
@@ -26,7 +26,8 @@ export function EmployeeDashboard() {
   
   const [recentChats, setRecentChats] = useState([
     { id: 'chat-1', title: 'HR Department', preview: 'About leave policy...' },
-    { id: 'chat-2', title: 'Tech Support', preview: 'Laptop issue resolution...' }
+    { id: 'chat-2', title: 'Tech Support', preview: 'Laptop issue resolution...' },
+    { id: 'chat-3', title: 'Sales Team', preview: 'Discussion on new product launch...' },
   ]);
 
   // Add client-side only indicator to prevent hydration mismatch
@@ -50,25 +51,10 @@ export function EmployeeDashboard() {
   // Normal render for client-side with authentication
   return (
     <div className="container mx-auto p-4 md:p-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Welcome, {user?.employee_id || role}</h1>
-          <p className="text-muted-foreground mt-1">Your employee dashboard</p>
-        </div>
-        <div className="flex items-center space-x-2 mt-4 md:mt-0">
-          <Button variant="outline" size="sm" className="relative">
-            <Bell className="size-4 mr-2" />
-            Notifications
-            {notifications > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full size-5 flex items-center justify-center text-xs">
-                {notifications}
-              </span>
-            )}
-          </Button>
-          <HeaderUserNav />
-        </div>
-      </div>
-
+      <Header notifications={notifications}>
+        <h1 className="text-3xl font-bold">Welcome, {user?.employee_id}</h1>
+        <p className="text-muted-foreground mt-1">Your employee dashboard</p>
+      </Header>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="col-span-1 md:col-span-2">
           <CardHeader>
