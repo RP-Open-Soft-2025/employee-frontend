@@ -24,7 +24,7 @@ export default async function Layout({
         src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"
         strategy="beforeInteractive"
       />
-      <div className="flex flex-col h-svh px-2 sm:px-4 md:px-6 lg:px-8">
+      <div className="flex flex-col px-2 sm:px-4 md:px-6 lg:px-8">
         <div className="w-full">
           <Header>
             <Image src={logo} alt="Logo" className="h-8 w-auto" />
