@@ -80,7 +80,7 @@ export function Chat({
 
   return (
     <>
-      <div className="flex flex-col min-w-0 bg-background h-[calc(100vh-125px)] rounded-lg">
+      <div className="flex flex-col min-w-0 bg-white/70 dark:bg-black/70 h-[calc(100vh-125px)] rounded-lg">
         <ChatHeader
           chatId={id}
           isReadonly={isReadonly}
