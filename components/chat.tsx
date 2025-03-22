@@ -80,7 +80,7 @@ export function Chat({
 
   return (
     <>
-      <div className="flex flex-col min-w-0 bg-background h-[calc(100vh-125px)]">
+      <div className="flex flex-col min-w-0 bg-background h-[calc(100vh-125px)] rounded-lg">
         <ChatHeader
           chatId={id}
           isReadonly={isReadonly}
@@ -97,7 +97,7 @@ export function Chat({
           isArtifactVisible={isArtifactVisible}
         />
 
-        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl rounded-b-lg">
           {!isReadonly && (
             <MultimodalInput
               chatId={id}
