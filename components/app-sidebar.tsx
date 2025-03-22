@@ -3,9 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 
-import { PlusIcon } from "@/components/icons";
 import { SidebarHistory } from "@/components/sidebar-history";
-import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +11,7 @@ import {
   SidebarMenu,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 
@@ -40,23 +38,6 @@ export function AppSidebar() {
                 Employee Portal
               </span>
             </Link>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  type="button"
-                  className="p-2 h-fit"
-                  onClick={() => {
-                    setOpenMobile(false);
-                    router.push("/chat");
-                    router.refresh();
-                  }}
-                >
-                  <PlusIcon />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent align="end">New Chat</TooltipContent>
-            </Tooltip>
           </div>
         </SidebarMenu>
       </SidebarHeader>
