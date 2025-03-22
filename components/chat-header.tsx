@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-function HeaderUserNav() {
+export function HeaderUserNav() {
   const { setTheme, theme } = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
