@@ -1,23 +1,6 @@
-import {
-  type UIMessage,
-  appendResponseMessages,
-  createDataStreamResponse,
-  smoothStream,
-  streamText,
-} from 'ai';
+import { type UIMessage } from 'ai';
 import store from "@/redux/store";
-import { systemPrompt } from '@/lib/ai/prompts';
-import {
-  generateUUID,
-  getMostRecentUserMessage,
-  getTrailingMessageId,
-} from '@/lib/utils';
-import { createDocument } from '@/lib/ai/tools/create-document';
-// import { updateDocument } from '@/lib/ai/tools/update-document';
-// import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
-import { getWeather } from '@/lib/ai/tools/get-weather';
-import { isProductionEnvironment } from '@/lib/constants';
-import { myProvider } from '@/lib/ai/providers';
+import { getMostRecentUserMessage } from '@/lib/utils';
 
 export const maxDuration = 60;
 
@@ -33,131 +16,50 @@ export async function POST(request: Request) {
       selectedChatModel: string;
     } = await request.json();
 
-    const state = store.getState();
-    const employee_id = state.auth.user?.employee_id;
-
-    if (!state.auth.isAuthenticated) {
-      return new Response('Unauthorized', { status: 401 });
-    }
-
     const userMessage = getMostRecentUserMessage(messages);
 
     if (!userMessage) {
       return new Response('No user message found', { status: 400 });
     }
 
-    // const chat = await getChatById({ id });
-
-    // if (!chat) {
-    //   const title = await generateTitleFromUserMessage({
-    //     message: userMessage,
-    //   });
-
-    //   await saveChat({ id, userId: employee_id, title });
-    // } else {
-    //   if (chat.userId !== employee_id) {
-    //     return new Response('Unauthorized', { status: 401 });
-    //   }
-    // }
-
-    // await saveMessages({
-    //   messages: [
-    //     {
-    //       chatId: id,
-    //       id: userMessage.id,
-    //       role: 'user',
-    //       parts: userMessage.parts,
-    //       attachments: userMessage.experimental_attachments ?? [],
-    //       createdAt: new Date(),
-    //     },
-    //   ],
-    // });
-
-    return createDataStreamResponse({
-      execute: (dataStream) => {
-        const result = streamText({
-          model: myProvider.languageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel }),
-          messages,
-          maxSteps: 5,
-          experimental_activeTools:
-            selectedChatModel === 'chat-model-reasoning'
-              ? []
-              : [
-                  'getWeather',
-                  'createDocument',
-                  // 'updateDocument',
-                  // 'requestSuggestions',
-                ],
-          experimental_transform: smoothStream({ chunking: 'word' }),
-          experimental_generateMessageId: generateUUID,
-          tools: {
-            getWeather,
-            createDocument: createDocument({ 
-              session: { user: { id: employee_id || 'unknown' } }, 
-              dataStream 
-            }),
-            // updateDocument: updateDocument({ session, dataStream }),
-            // requestSuggestions: requestSuggestions({
-            //   session,
-            //   dataStream,
-            // }),
-          },
-          onFinish: async ({ response }) => {
-            if (employee_id) {
-              try {
-                const assistantId = getTrailingMessageId({
-                  messages: response.messages.filter(
-                    (message) => message.role === 'assistant',
-                  ),
-                });
-
-                if (!assistantId) {
-                  throw new Error('No assistant message found!');
-                }
-
-                const [, assistantMessage] = appendResponseMessages({
-                  messages: [userMessage],
-                  responseMessages: response.messages,
-                });
-
-                // await saveMessages({
-                //   messages: [
-                //     {
-                //       id: assistantId,
-                //       chatId: id,
-                //       role: assistantMessage.role,
-                //       parts: assistantMessage.parts,
-                //       attachments:
-                //         assistantMessage.experimental_attachments ?? [],
-                //       createdAt: new Date(),
-                //     },
-                //   ],
-                // });
-              } catch (error) {
-                console.error('Failed to save chat');
-              }
-            }
-          },
-          experimental_telemetry: {
-            isEnabled: isProductionEnvironment,
-            functionId: 'stream-text',
-          },
-        });
-
-        result.consumeStream();
-
-        result.mergeIntoDataStream(dataStream, {
-          sendReasoning: true,
-        });
-      },
-      onError: () => {
-        return 'Oops, an error occured!';
-      },
+    // Extract the user's message
+    let userInput = "";
+    if (typeof userMessage.content === 'string') {
+      userInput = userMessage.content;
+    } else if (Array.isArray(userMessage.parts)) {
+      // Find text content in parts
+      for (const part of userMessage.parts) {
+        if (typeof part === 'string') {
+          userInput = part;
+          break;
+        } else if (part && typeof part === 'object' && 'text' in part) {
+          userInput = part.text as string;
+          break;
+        }
+      }
+    }
+    
+    // Create a readable stream for progressive response
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        // Echo back the user's message directly
+        controller.enqueue(encoder.encode("You said: " + userInput));
+        
+        controller.close();
+      }
+    });
+    
+    // Return the stream as text
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain',
+      }
     });
   } catch (error) {
+    console.error('Error in POST handler:', error);
     return new Response('An error occurred while processing your request!', {
-      status: 404,
+      status: 500,
     });
   }
 }
@@ -170,26 +72,11 @@ export async function DELETE(request: Request) {
     return new Response('Not Found', { status: 404 });
   }
 
-  const state = store.getState();
-  const employee_id = state.auth.user?.employee_id;
-
-  if (!state.auth.isAuthenticated) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-
   try {
-    // const chat = await getChatById({ id });
-
-    // if (chat.userId !== employee_id) {
-    //   return new Response('Unauthorized', { status: 401 });
-    // }
-
-    // await deleteChatById({ id });
-
     return new Response('Chat deleted', { status: 200 });
   } catch (error) {
     return new Response('An error occurred while processing your request!', {
       status: 500,
     });
   }
-}
+} 
