@@ -15,17 +15,6 @@ import DeloitteLogo from "./deloitte-logo.svg"; // Update the path to the actual
 // Use environment variable for API URL with fallback
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-interface LoginState {
-  status:
-    | "idle"
-    | "in_progress"
-    | "success"
-    | "failed"
-    | "invalid_credentials"
-    | "invalid_data"
-    | "server_error";
-}
-
 export default function Page() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -48,34 +37,9 @@ export default function Page() {
 
   const [employeeId, setEmployeeId] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
-  const [status, setStatus] = useState<LoginState["status"]>("idle");
-
-  useEffect(() => {
-    console.log("status", status);
-    if (status === "invalid_credentials") {
-      toast({
-        type: "error",
-        description: "Invalid credentials!",
-      });
-    } else if (status === "server_error") {
-      toast({
-        type: "error",
-        description: error || "An error occurred during login",
-      });
-    } else if (status === "invalid_data") {
-      toast({
-        type: "error",
-        description: "Failed validating your submission!",
-      });
-    } else if (status === "success") {
-      setIsSuccessful(true);
-      // Don't need to call router.push here as the isAuthenticated effect will handle it
-    }
-  }, [status, error]);
 
   const handleSubmit = async (formData: FormData) => {
     setEmployeeId(formData.get("employee_id") as string);
-    setStatus("in_progress");
 
     const data = {
       employee_id: formData.get("employee_id") as string,
@@ -85,50 +49,59 @@ export default function Page() {
     console.log(data);
 
     try {
-      dispatch(
-        loginSuccess({
-          role: "employee",
-          user: { employee_id: data.employee_id },
-        })
-      );
-      console.log("Logged in successfully");
-      setStatus("success");
+      // dispatch(
+      //   loginSuccess({
+      //     role: "employee",
+      //     user: { employee_id: data.employee_id },
+      //   })
+      // );
+      // console.log("Logged in successfully");
+      // setStatus("success");
 
-      // const response = await fetch(`${API_URL}/auth/login`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(data),
-      // });
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-      // const result = await response.json();
+      const result = await response.json();
 
-      // console.log(result);
+      console.log(result);
 
-      // if (!response.ok) {
-      //   throw new Error(result.message || "Login failed");
-      // }
-
-      // if (result.access_token) {
-      //   if (result.success) {
-      //     const role = result.role;
-      //     dispatch(
-      //       loginSuccess({ role, user: { employee_id: data.employee_id } })
-      //     );
-      //     console.log("Logged in successfully");
-      //     setStatus("success");
-      //     // The isAuthenticated effect will handle redirecting
-      //   } else {
-      //     console.error("Login failed: No access token received");
-      //     setStatus("invalid_credentials");
-      //     dispatch(loginFailure({ error: "Invalid login" }));
-      //   }
-      // } else {
-      //   console.error("Login failed: No access token received");
-      //   setStatus("invalid_credentials");
-      //   dispatch(loginFailure({ error: "Invalid login" }));
-      // }
+      if (response.ok) {
+        if (result.success) {
+          const role = result.role;
+          dispatch(
+            loginSuccess({ role, user: { employee_id: data.employee_id } })
+          );
+          console.log("Logged in successfully");
+          setIsSuccessful(true);
+          // The isAuthenticated effect will handle redirecting
+        } else {
+          console.error("Login failed: No access token received");
+          toast({
+            type: "error",
+            description: "Invalid credentials!",
+          });
+          dispatch(loginFailure({ error: "Invalid login" }));
+        }
+      } else if (response.status === 403) {
+        console.error("Login failed: Invalid credentials");
+        dispatch(loginFailure({ error: "Invalid login" }));
+        toast({
+          type: "error",
+          description: "Invalid credentials!",
+        });
+      } else {
+        console.error("Login failed: Server error");
+        toast({
+          type: "error",
+          description: "Failed validating your submission!",
+        });
+        dispatch(loginFailure({ error: "Server error" }));
+      }
     } catch (error) {
       console.error("Login error:", error);
 
@@ -140,9 +113,15 @@ export default function Page() {
         errorMessage.toLowerCase().includes("invalid credentials") ||
         errorMessage.toLowerCase().includes("unauthorized")
       ) {
-        setStatus("invalid_credentials");
+        toast({
+          type: "error",
+          description: "Invalid credentials!",
+        });
       } else {
-        setStatus("server_error");
+        toast({
+          type: "error",
+          description: (error instanceof Error ? error.message : String(error)) || "An error occurred during login",
+        });
       }
 
       dispatch(loginFailure({ error: errorMessage }));
