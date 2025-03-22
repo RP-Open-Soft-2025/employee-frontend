@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
-import { ChevronUp, LayoutDashboard } from 'lucide-react';
+import { ChevronUp, LayoutDashboard, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { useDispatch, useSelector } from "react-redux";
@@ -52,7 +52,7 @@ export function HeaderUserNav() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
-          className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white hidden md:flex py-1.5 px-4 h-fit md:h-[34px] order-4 md:ml-auto gap-2"
+          className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white hidden md:flex py-1.5 px-4 h-fit order-4 md:ml-auto gap-2"
         >
           <Image
             src={`https://avatar.vercel.sh/${user?.employee_id}`}
@@ -72,6 +72,16 @@ export function HeaderUserNav() {
         >
           <LayoutDashboard className="mr-2 size-4" />
           Dashboard
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onSelect={() => {
+            router.push('/chat');
+            router.refresh();
+          }}
+        >
+          <MessageSquare className="mr-2 size-4" />
+          New Chat
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
@@ -113,25 +123,6 @@ function PureChatHeader({
   return (
     <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2">
       <SidebarToggle />
-
-      {(!open || windowWidth < 768) && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              className="order-2 md:order-1 md:px-2 px-2 md:h-fit ml-auto md:ml-0"
-              onClick={() => {
-                router.push('/chat');
-                router.refresh();
-              }}
-            >
-              <PlusIcon />
-              <span className="md:sr-only">New Chat</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>New Chat</TooltipContent>
-        </Tooltip>
-      )}
 
       {!isReadonly && (
         <ModelSelector
