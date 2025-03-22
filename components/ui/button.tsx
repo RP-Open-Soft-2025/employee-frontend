@@ -18,6 +18,7 @@ const buttonVariants = cva(
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
+        cardButton: 'bg-[hsl(var(--button-tint))] text-[hsl(var(--button-tint-text))] border border-[hsl(var(--button-tint-border))] hover:bg-[hsl(84,53%,35%)] hover:text-white hover:border-[hsl(84,53%,30%)]',
       },
       size: {
         default: 'h-10 px-4 py-2',
