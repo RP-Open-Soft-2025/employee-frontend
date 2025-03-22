@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-function HeaderUserNav() {
+export function HeaderUserNav() {
   const { setTheme, theme } = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -52,7 +52,7 @@ function HeaderUserNav() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
-          className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white hidden md:flex py-1.5 px-2 h-fit md:h-[34px] order-4 md:ml-auto gap-2"
+          className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white hidden md:flex py-1.5 px-4 h-fit md:h-[34px] order-4 md:ml-auto gap-2"
         >
           <Image
             src={`https://avatar.vercel.sh/${user?.employee_id}`}
@@ -65,7 +65,7 @@ function HeaderUserNav() {
           <ChevronUp className="size-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[--radix-popper-anchor-width]">
+      <DropdownMenuContent align="end" className="w-[--radix-popper-anchor-width] whitespace-nowrap">
         <DropdownMenuItem
           className="cursor-pointer"
           onSelect={() => router.push('/')}
