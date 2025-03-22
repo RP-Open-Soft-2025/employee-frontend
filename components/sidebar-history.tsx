@@ -58,12 +58,10 @@ type GroupedChats = {
 const PureChatItem = ({
   chat,
   isActive,
-  onDelete,
   setOpenMobile,
 }: {
   chat: Chat;
   isActive: boolean;
-  onDelete: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;
 }) => {
   return (
@@ -73,28 +71,6 @@ const PureChatItem = ({
           <span>{chat.title}</span>
         </Link>
       </SidebarMenuButton>
-
-      <DropdownMenu modal={true}>
-        <DropdownMenuTrigger asChild>
-          <SidebarMenuAction
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5"
-            showOnHover={!isActive}
-          >
-            <MoreHorizontalIcon />
-            <span className="sr-only">More</span>
-          </SidebarMenuAction>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent side="bottom" align="end">
-          <DropdownMenuItem
-            className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
-            onSelect={() => onDelete(chat.id)}
-          >
-            <TrashIcon />
-            <span>Delete</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </SidebarMenuItem>
   );
 };
@@ -120,33 +96,7 @@ export function SidebarHistory({ user }: { user: any }) {
     mutate();
   }, [pathname, mutate]);
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const router = useRouter();
-  const handleDelete = async () => {
-    const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
-      method: 'DELETE',
-    });
-
-    toast.promise(deletePromise, {
-      loading: 'Deleting chat...',
-      success: () => {
-        mutate((history) => {
-          if (history) {
-            return history.filter((h) => h.id !== id);
-          }
-        });
-        return 'Chat deleted successfully';
-      },
-      error: 'Failed to delete chat',
-    });
-
-    setShowDeleteDialog(false);
-
-    if (deleteId === id) {
-      router.push('/');
-    }
-  };
 
   if (!user) {
     return (
@@ -255,10 +205,6 @@ export function SidebarHistory({ user }: { user: any }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
                             setOpenMobile={setOpenMobile}
                           />
                         ))}
@@ -275,10 +221,6 @@ export function SidebarHistory({ user }: { user: any }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
                             setOpenMobile={setOpenMobile}
                           />
                         ))}
@@ -295,10 +237,6 @@ export function SidebarHistory({ user }: { user: any }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
                             setOpenMobile={setOpenMobile}
                           />
                         ))}
@@ -315,10 +253,6 @@ export function SidebarHistory({ user }: { user: any }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
                             setOpenMobile={setOpenMobile}
                           />
                         ))}
@@ -335,10 +269,6 @@ export function SidebarHistory({ user }: { user: any }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
                             setOpenMobile={setOpenMobile}
                           />
                         ))}
@@ -350,23 +280,6 @@ export function SidebarHistory({ user }: { user: any }) {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              chat and remove it from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 }

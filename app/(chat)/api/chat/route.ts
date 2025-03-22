@@ -62,19 +62,5 @@ export async function POST(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get('id');
-
-  if (!id) {
-    return new Response('Not Found', { status: 404 });
-  }
-
-  try {
-    return new Response('Chat deleted', { status: 200 });
-  } catch (error) {
-    return new Response('An error occurred while processing your request!', {
-      status: 500,
-    });
-  }
-} 
+// Removing the DELETE function entirely:
+// export async function DELETE(request: Request) { ... } 
