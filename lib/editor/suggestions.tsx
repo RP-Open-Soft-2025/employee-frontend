@@ -68,7 +68,7 @@ export function projectWithPositions(
 }
 
 export function createSuggestionWidget(
-  suggestion: UISuggestion,
+  suggestion: UISuggestion | any,
   view: EditorView,
   artifactKind: ArtifactKind = 'text',
 ): { dom: HTMLElement; destroy: () => void } {
@@ -91,7 +91,7 @@ export function createSuggestionWidget(
       const newDecorations = DecorationSet.create(
         state.doc,
         currentDecorations.find().filter((decoration: Decoration) => {
-          return decoration.spec.suggestionId !== suggestion.id;
+          return decoration.spec.suggestionId !== suggestion?.id;
         }),
       );
 

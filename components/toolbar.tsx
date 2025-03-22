@@ -85,7 +85,9 @@ const Tool = ({
       setSelectedTool(description);
     } else {
       setSelectedTool(null);
-      onClick({ appendMessage: append });
+      onClick({ 
+        appendMessage: (message: any, options?: any) => append(message, options)
+      });
     }
   };
 
