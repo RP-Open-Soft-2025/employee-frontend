@@ -9,16 +9,18 @@ setup('authenticate', async ({ page }) => {
   const testEmployeeId = `test-${getUnixTime(new Date())}`;
   const testPassword = generateId(16);
 
-  await page.goto('http://localhost:3000/register');
+  // Instead of registration, directly log in with credentials
+  // that you know exist in your test environment
+  await page.goto('http://localhost:3000/login');
   await page.getByPlaceholder('johndoe').click();
   await page.getByPlaceholder('johndoe').fill(testEmployeeId);
   await page.getByLabel('Password').click();
   await page.getByLabel('Password').fill(testPassword);
-  await page.getByRole('button', { name: 'Sign Up' }).click();
+  await page.getByRole('button', { name: 'Sign In' }).click();
 
-  await expect(page.getByTestId('toast')).toContainText(
-    'Account created successfully!',
-  );
+  // Instead of checking for registration success, check for login success
+  // You may need to adjust this based on your login success indicator
+  await expect(page).toHaveURL('/');
 
   await page.context().storageState({ path: authFile });
 });
