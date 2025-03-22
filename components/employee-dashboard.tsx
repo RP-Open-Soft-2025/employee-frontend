@@ -15,6 +15,7 @@ export function EmployeeDashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
+  const role = useSelector((state: RootState) => state.auth.userRole);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const [notifications, setNotifications] = useState(3);
   const [upcomingEvents, setUpcomingEvents] = useState([
@@ -51,7 +52,7 @@ export function EmployeeDashboard() {
     <div className="container mx-auto p-4 md:p-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Welcome, {user?.employee_id || 'Employee'}</h1>
+          <h1 className="text-3xl font-bold">Welcome, {user?.employee_id || role}</h1>
           <p className="text-muted-foreground mt-1">Your employee dashboard</p>
         </div>
         <div className="flex items-center space-x-2 mt-4 md:mt-0">
@@ -64,12 +65,6 @@ export function EmployeeDashboard() {
               </span>
             )}
           </Button>
-          <Link href="/chat">
-            <Button size="sm">
-              <MessageSquare className="size-5 mr-2" />
-              Chat
-            </Button>
-          </Link>
           <HeaderUserNav />
         </div>
       </div>
