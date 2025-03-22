@@ -119,10 +119,21 @@
         @apply text-foreground min-h-screen;
     }
     
-    body:not(:has(.auth-layout)) {
+    /* Base background for all pages in light mode */
+    body {
         background: linear-gradient(105.47deg, hsl(var(--gradient-white)) 6.55%, hsl(var(--gradient-green)) 95.57%);
     }
     
+    /* Dark theme background image for all pages */
+    .dark body {
+        background-image: url('/images/dark-theme-bg.svg');
+        background-size: cover;
+        background-position: center bottom;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    /* Specific styling for auth pages that overrides the base background */
     body:has(.auth-layout) {
         background: linear-gradient(
             135deg,
