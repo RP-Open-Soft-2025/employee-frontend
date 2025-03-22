@@ -12,10 +12,7 @@ import { memo, useEffect } from "react";
 
 import { SidebarToggle } from "@/components/sidebar-toggle";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "./icons";
 import { useSidebar } from "./ui/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { type VisibilityType, VisibilitySelector } from "./visibility-selector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -108,11 +105,9 @@ export function HeaderUserNav() {
 
 function PureChatHeader({
   chatId,
-  selectedVisibilityType,
   isReadonly,
 }: {
   chatId: string;
-  selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
 }) {
   const router = useRouter();
@@ -123,14 +118,6 @@ function PureChatHeader({
   return (
     <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2">
       <SidebarToggle />
-
-      {!isReadonly && (
-        <VisibilitySelector
-          chatId={chatId}
-          selectedVisibilityType={selectedVisibilityType}
-          className="order-1 md:order-3"
-        />
-      )}
     </header>
   );
 }

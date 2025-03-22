@@ -11,7 +11,6 @@ import { fetcher, generateUUID } from "@/lib/utils";
 import { Artifact } from "./artifact";
 import { MultimodalInput } from "./multimodal-input";
 import { Messages } from "./messages";
-import type { VisibilityType } from "./visibility-selector";
 import { useArtifactSelector } from "@/hooks/use-artifact";
 import { toast } from "sonner";
 import { useSelector, useDispatch } from "react-redux";
@@ -22,12 +21,10 @@ import type { Message } from "@ai-sdk/react";
 export function Chat({
   id,
   initialMessages,
-  selectedVisibilityType,
   isReadonly,
 }: {
   id: string;
   initialMessages: Array<UIMessage>;
-  selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
 }) {
   const router = useRouter();
@@ -86,7 +83,6 @@ export function Chat({
       <div className="flex flex-col min-w-0 bg-background h-[calc(100vh-125px)]">
         <ChatHeader
           chatId={id}
-          selectedVisibilityType={selectedVisibilityType}
           isReadonly={isReadonly}
         />
 
