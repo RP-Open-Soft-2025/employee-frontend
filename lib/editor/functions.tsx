@@ -23,7 +23,7 @@ export const buildContentFromDocument = (document: Node) => {
 };
 
 export const createDecorations = (
-  suggestions: Array<UISuggestion>,
+  suggestions: Array<UISuggestion | any>,
   view: EditorView,
 ) => {
   const decorations: Array<Decoration> = [];
@@ -37,7 +37,7 @@ export const createDecorations = (
           class: 'suggestion-highlight',
         },
         {
-          suggestionId: suggestion.id,
+          suggestionId: suggestion?.id,
           type: 'highlight',
         },
       ),

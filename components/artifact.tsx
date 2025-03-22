@@ -334,7 +334,9 @@ function PureArtifact({
                     messages={messages}
                     append={append}
                     className="bg-background dark:bg-muted"
-                    setMessages={setMessages}
+                    setMessages={(newMessages: any) => {
+                      setMessages(newMessages);
+                    }}
                   />
                 </form>
               </div>
@@ -475,7 +477,9 @@ function PureArtifact({
                     append={append}
                     status={status}
                     stop={stop}
-                    setMessages={setMessages}
+                    setMessages={(newMessages: any) => {
+                      setMessages(newMessages);
+                    }}
                     artifactKind={artifact.kind}
                   />
                 )}
