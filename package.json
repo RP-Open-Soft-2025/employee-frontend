@@ -8,8 +8,7 @@
 		"start": "next start",
 		"lint": "next lint && biome lint --write --unsafe",
 		"lint:fix": "next lint --fix && biome lint --write --unsafe",
-		"format": "biome format --write",
-		"test": "set PLAYWRIGHT=True && npx playwright test --workers=4"
+		"format": "biome format --write"
 	},
 	"dependencies": {
 		"@ai-sdk/fireworks": "0.1.16",
@@ -72,7 +71,6 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@playwright/test": "^1.50.1",
 		"@tailwindcss/typography": "^0.5.15",
 		"@types/d3-scale": "^4.0.8",
 		"@types/node": "^22.8.6",
