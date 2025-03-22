@@ -1,16 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "@/components/toast";
-
-import { AuthForm } from "@/components/auth-form";
-import { SubmitButton } from "@/components/submit-button";
-
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, loginFailure, checkAuth } from "@/redux/features/auth";
 import type { RootState } from "@/redux/store";
+import { AuthForm } from "@/components/auth-form";
+import { SubmitButton } from "@/components/submit-button";
+import DeloitteLogo from "./deloitte-logo.svg"; // Update the path to the actual logo location
 
 // Use environment variable for API URL with fallback
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
@@ -28,7 +28,6 @@ interface LoginState {
 
 export default function Page() {
   const router = useRouter();
-
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
@@ -49,7 +48,6 @@ export default function Page() {
 
   const [employeeId, setEmployeeId] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
-
   const [status, setStatus] = useState<LoginState["status"]>("idle");
 
   useEffect(() => {
@@ -87,51 +85,50 @@ export default function Page() {
     console.log(data);
 
     try {
-      // dispatch(
-      //   loginSuccess({
-      //     token: "SAMPLETOKEN",
-      //     user: { employee_id: data.employee_id },
-      //   })
-      // );
-      // console.log("Logged in successfully");
-      // setStatus("success");
+      dispatch(
+        loginSuccess({
+          role: "employee",
+          user: { employee_id: data.employee_id },
+        })
+      );
+      console.log("Logged in successfully");
+      setStatus("success");
 
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      // const response = await fetch(`${API_URL}/auth/login`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
 
+      // const result = await response.json();
 
-      const result = await response.json();
+      // console.log(result);
 
-      console.log(result);
+      // if (!response.ok) {
+      //   throw new Error(result.message || "Login failed");
+      // }
 
-      if (!response.ok) {
-        throw new Error(result.message || "Login failed");
-      }
-
-      if (result.access_token) {
-        if (result.success) {
-          const role = result.role;
-          dispatch(
-            loginSuccess({ role, user: { employee_id: data.employee_id } })
-          );
-          console.log("Logged in successfully");
-          setStatus("success");
-          // The isAuthenticated effect will handle redirecting
-        } else {
-          console.error("Login failed: No access token received");
-          setStatus("invalid_credentials");
-          dispatch(loginFailure({ error: "Invalid login" }));
-        }
-      } else {
-        console.error("Login failed: No access token received");
-        setStatus("invalid_credentials");
-        dispatch(loginFailure({ error: "Invalid login" }));
-      }
+      // if (result.access_token) {
+      //   if (result.success) {
+      //     const role = result.role;
+      //     dispatch(
+      //       loginSuccess({ role, user: { employee_id: data.employee_id } })
+      //     );
+      //     console.log("Logged in successfully");
+      //     setStatus("success");
+      //     // The isAuthenticated effect will handle redirecting
+      //   } else {
+      //     console.error("Login failed: No access token received");
+      //     setStatus("invalid_credentials");
+      //     dispatch(loginFailure({ error: "Invalid login" }));
+      //   }
+      // } else {
+      //   console.error("Login failed: No access token received");
+      //   setStatus("invalid_credentials");
+      //   dispatch(loginFailure({ error: "Invalid login" }));
+      // }
     } catch (error) {
       console.error("Login error:", error);
 
@@ -153,27 +150,41 @@ export default function Page() {
   };
 
   return (
-    <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl flex flex-col gap-12">
-        <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
-          <h3 className="text-xl font-semibold dark:text-zinc-50">Sign In</h3>
-          <p className="text-sm text-gray-500 dark:text-zinc-400">
-            Use your employee ID and password to sign in
-          </p>
+    <div className="w-full h-screen md:min-h-screen flex flex-col md:flex-row">
+      {/* Left Section (Green) */}
+      <div className="h-[50vh] md:h-auto w-full md:w-1/2 flex items-center justify-center bg-[#66872B] dark:bg-[#334016] relative">
+        <div className="rounded-none md:rounded-l-2xl rounded-tl-0xl size-full md:size-[400px] bg-[#3B4F17] dark:bg-[#1E2B09] shadow-lg flex flex-col items-center justify-center text-center p-6 md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 py-15">
+          <h1 className="text-3xl font-bold text-white mb-2">Deloitte.</h1>
+          <Image
+            src={DeloitteLogo}
+            alt="Deloitte Logo"
+            width={150}
+            height={150}
+            className="rounded-lg shadow-[0_0_70px_25px_rgba(255,255,255,0.2)] dark:shadow-[0_0_70px_25px_rgba(255,255,255,0.15)]"
+          />
         </div>
-        <AuthForm action={handleSubmit} defaultEmployeeId={employeeId}>
-          <SubmitButton isSuccessful={isSuccessful}>Sign in</SubmitButton>
-          <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
-            {"Don't have an account? "}
-            <Link
-              href="/register"
-              className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
-            >
-              Sign up
-            </Link>
-            {" for free."}
-          </p>
-        </AuthForm>
+      </div>
+
+      {/* Right Section (Black in dark mode) */}
+      <div className="h-[50vh] md:h-auto w-full md:w-1/2 flex items-center justify-center bg-gray-200 dark:bg-black relative">
+        <div className="rounded-none md:rounded-r-2xl size-full md:size-[400px] bg-[#D9D9D9] dark:bg-zinc-900 shadow-lg p-6 md:absolute md:left-0 md:top-1/2 md:-translate-y-1/2">
+          <div className="flex flex-col items-center justify-center h-full md:mt-0 px-10">
+            <div className="font-semibold text-2xl mb-3 text-black dark:text-white">
+              Login
+            </div>
+            <AuthForm action={handleSubmit} defaultEmployeeId={employeeId}>
+              <SubmitButton isSuccessful={isSuccessful}>Submit</SubmitButton>
+              <div className="flex flex-col items-center">
+                <Link
+                  href="/forgot-password"
+                  className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer text-sm"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+            </AuthForm>
+          </div>
+        </div>
       </div>
     </div>
   );
