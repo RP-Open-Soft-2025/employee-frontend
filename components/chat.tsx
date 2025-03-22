@@ -22,13 +22,11 @@ import type { Message } from "@ai-sdk/react";
 export function Chat({
   id,
   initialMessages,
-  selectedChatModel,
   selectedVisibilityType,
   isReadonly,
 }: {
   id: string;
   initialMessages: Array<UIMessage>;
-  selectedChatModel: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
 }) {
@@ -54,7 +52,7 @@ export function Chat({
     initialMessages: initialMessages as any,
     api: "/api/chat",
     streamProtocol: "text",
-    body: { id, selectedChatModel },
+    body: { id },
     onError: (error) => {
       console.error("Chat error:", error);
       toast.error("An error occurred, please try again!");
@@ -88,7 +86,6 @@ export function Chat({
       <div className="flex flex-col min-w-0 bg-background h-[calc(100vh-125px)]">
         <ChatHeader
           chatId={id}
-          selectedModelId={selectedChatModel}
           selectedVisibilityType={selectedVisibilityType}
           isReadonly={isReadonly}
         />

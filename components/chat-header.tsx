@@ -10,7 +10,6 @@ import { logout, checkAuth } from "@/redux/features/auth";
 import type { RootState } from "@/redux/store";
 import { memo, useEffect } from "react";
 
-import { ModelSelector } from "@/components/model-selector";
 import { SidebarToggle } from "@/components/sidebar-toggle";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "./icons";
@@ -109,12 +108,10 @@ export function HeaderUserNav() {
 
 function PureChatHeader({
   chatId,
-  selectedModelId,
   selectedVisibilityType,
   isReadonly,
 }: {
   chatId: string;
-  selectedModelId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
 }) {
@@ -128,13 +125,6 @@ function PureChatHeader({
       <SidebarToggle />
 
       {!isReadonly && (
-        <ModelSelector
-          selectedModelId={selectedModelId}
-          className="order-1 md:order-2"
-        />
-      )}
-
-      {!isReadonly && (
         <VisibilitySelector
           chatId={chatId}
           selectedVisibilityType={selectedVisibilityType}
@@ -146,5 +136,5 @@ function PureChatHeader({
 }
 
 export const ChatHeader = memo(PureChatHeader, (prevProps, nextProps) => {
-  return prevProps.selectedModelId === nextProps.selectedModelId;
+  return true;
 });

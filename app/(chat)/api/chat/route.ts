@@ -9,11 +9,9 @@ export async function POST(request: Request) {
     const {
       id,
       messages,
-      selectedChatModel,
     }: {
       id: string;
       messages: Array<UIMessage>;
-      selectedChatModel: string;
     } = await request.json();
 
     const userMessage = getMostRecentUserMessage(messages);
