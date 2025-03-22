@@ -9,7 +9,7 @@ import { checkAuth } from '@/redux/features/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, Bell, Calendar, FileText, ChevronRight } from 'lucide-react';
-import { Header } from '@/components/header';
+import { Header } from '@/components/ui/header';
 
 export function EmployeeDashboard() {
   const router = useRouter();
@@ -52,8 +52,8 @@ export function EmployeeDashboard() {
   return (
     <div className="container mx-auto p-4 md:p-6">
       <Header notifications={notifications}>
-        <h1 className="text-3xl font-bold">Welcome, {user?.employee_id}</h1>
-        <p className="text-muted-foreground mt-1">Your employee dashboard</p>
+        <h1 className="text-3xl text-black font-bold">Welcome, {user?.employee_id}</h1>
+        <p className="text-muted-foreground">Your employee dashboard</p>
       </Header>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="col-span-1 md:col-span-2">
