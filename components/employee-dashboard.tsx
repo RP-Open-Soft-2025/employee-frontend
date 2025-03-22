@@ -9,6 +9,7 @@ import { checkAuth } from '@/redux/features/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, Bell, Calendar, FileText, ChevronRight } from 'lucide-react';
+import { HeaderUserNav } from '@/components/chat-header';
 
 export function EmployeeDashboard() {
   const router = useRouter();
@@ -69,6 +70,7 @@ export function EmployeeDashboard() {
               Chat
             </Button>
           </Link>
+          <HeaderUserNav />
         </div>
       </div>
 

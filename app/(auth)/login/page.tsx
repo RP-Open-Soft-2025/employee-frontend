@@ -16,7 +16,14 @@ import type { RootState } from "@/redux/store";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 interface LoginState {
-  status: "idle" | "in_progress" | "success" | "failed" | "invalid_credentials" | "invalid_data" | "server_error";
+  status:
+    | "idle"
+    | "in_progress"
+    | "success"
+    | "failed"
+    | "invalid_credentials"
+    | "invalid_data"
+    | "server_error";
 }
 
 export default function Page() {
@@ -27,12 +34,12 @@ export default function Page() {
     (state: RootState) => state.auth.isAuthenticated
   );
   const error = useSelector((state: RootState) => state.auth.error);
-  
+
   // Check authentication status on component mount
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
-  
+
   // If already authenticated, redirect to home
   useEffect(() => {
     if (isAuthenticated) {
@@ -79,20 +86,69 @@ export default function Page() {
 
     console.log(data);
 
-    // Temporary bypass of API integration - accept any credentials
     try {
-      // Simulate a successful login with any credentials
-      const mockToken = "mock-jwt-token";
-      
-      // Dispatch success with the employee ID from the form
-      dispatch(loginSuccess({ token: mockToken, user: { employee_id: data.employee_id } }));
-      console.log("Logged in successfully");
-      setStatus("success");
-      // The isAuthenticated effect will handle redirecting
+      // dispatch(
+      //   loginSuccess({
+      //     token: "SAMPLETOKEN",
+      //     user: { employee_id: data.employee_id },
+      //   })
+      // );
+      // console.log("Logged in successfully");
+      // setStatus("success");
+
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+
+      const result = await response.json();
+
+      console.log(result);
+
+      if (!response.ok) {
+        throw new Error(result.message || "Login failed");
+      }
+
+      if (result.access_token) {
+        if (result.success) {
+          const role = result.role;
+          dispatch(
+            loginSuccess({ role, user: { employee_id: data.employee_id } })
+          );
+          console.log("Logged in successfully");
+          setStatus("success");
+          // The isAuthenticated effect will handle redirecting
+        } else {
+          console.error("Login failed: No access token received");
+          setStatus("invalid_credentials");
+          dispatch(loginFailure({ error: "Invalid login" }));
+        }
+      } else {
+        console.error("Login failed: No access token received");
+        setStatus("invalid_credentials");
+        dispatch(loginFailure({ error: "Invalid login" }));
+      }
     } catch (error) {
       console.error("Login error:", error);
-      setStatus("server_error");
-      dispatch(loginFailure({ error: "An unexpected error occurred" }));
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Network error";
+
+      // Differentiate between credential errors and server errors
+      if (
+        errorMessage.toLowerCase().includes("invalid credentials") ||
+        errorMessage.toLowerCase().includes("unauthorized")
+      ) {
+        setStatus("invalid_credentials");
+      } else {
+        setStatus("server_error");
+      }
+
+      dispatch(loginFailure({ error: errorMessage }));
     }
   };
 
