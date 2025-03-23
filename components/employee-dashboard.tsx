@@ -31,7 +31,6 @@ export function EmployeeDashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  const role = useSelector((state: RootState) => state.auth.userRole);
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
@@ -69,11 +68,17 @@ export function EmployeeDashboard() {
   // Add client-side only indicator to prevent hydration mismatch
   const [isClientSide, setIsClientSide] = useState(false);
 
-  const fetchStatus = async () => {
+  const employeeId = user?.employee_id;
+  const userRole = user?.userRole;
+  const accessToken = user?.accessToken;
+
+  const fetchEmployeeDetails = async () => {
     try {
-      console.log("fetching...");
-      const response = await fetch(`${API_URL}/user/profile`, {
+      const response = await fetch(`${API_URL}/employee/profile`, {
         method: "GET",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`
+        }
       });
 
       const result = await response.json();
@@ -83,6 +88,11 @@ export function EmployeeDashboard() {
       console.error(e);
     }
   };
+
+  useEffect(() => {
+    fetchEmployeeDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     // This will only run on the client and after hydration
@@ -104,11 +114,11 @@ export function EmployeeDashboard() {
     <div className="container mx-auto p-4 md:p-6">
       <Header notifications={notifications}>
         <h1 className="text-3xl font-bold">
-          Welcome, {user?.employee_id}
+          Welcome, {employeeId}
         </h1>
         <p className="text-muted-foreground">Your employee dashboard</p>
       </Header>
-      {/* <button onClick={fetchStatus}>Fetch</button> */}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="col-span-1 md:col-span-2">
           <CardHeader>
