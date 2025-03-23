@@ -79,7 +79,7 @@ export default function Page() {
           dispatch(
             loginSuccess({ 
               role, 
-              user: { employee_id: data.employee_id },
+              employee_id: data.employee_id,
               accessToken,
               refreshToken
             })
