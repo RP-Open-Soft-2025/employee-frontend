@@ -7,9 +7,9 @@ import "./globals.css";
 import StoreProvider from "./StoreProvider";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Next.js Chatbot Template",
-  description: "Next.js chatbot template using the AI SDK.",
+  metadataBase: new URL("https://employee-frontend-ten-puce.vercel.app"),
+  title: "Employee AI Conversation Bot - Vibemeter",
+  description: "AI-powered conversation bot to enhance employee experience and measure team vibes.",
 };
 
 export const viewport = {
