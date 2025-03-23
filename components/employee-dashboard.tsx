@@ -23,6 +23,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Header } from "@/components/ui/header";
+import { LoadingScreen } from "./loading-screen";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
@@ -95,9 +96,7 @@ export function EmployeeDashboard() {
 
   // If not authenticated or still on server, show a placeholder with matching structure
   if (!isClientSide || !isAuthenticated) {
-    return (
-      <div className="container mx-auto p-4 md:p-6">Loading dashboard...</div>
-    );
+    return <LoadingScreen />;
   }
 
   // Normal render for client-side with authentication
