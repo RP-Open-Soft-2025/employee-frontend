@@ -103,7 +103,7 @@ export function EmployeeDashboard() {
   return (
     <div className="container mx-auto p-4 md:p-6">
       <Header notifications={notifications}>
-        <h1 className="text-3xl text-black font-bold">
+        <h1 className="text-3xl font-bold">
           Welcome, {user?.employee_id}
         </h1>
         <p className="text-muted-foreground">Your employee dashboard</p>
