@@ -56,7 +56,8 @@ export default function Page() {
       //   })
       // );
       // console.log("Logged in successfully");
-      // setStatus("success");
+
+      console.log(API_URL)
 
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -71,10 +72,17 @@ export default function Page() {
       console.log(result);
 
       if (response.ok) {
-        if (result.success) {
+        if (result.access_token) {
+          const accessToken = result.access_token.access_token;
+          const refreshToken = result.refresh_token;
           const role = result.role;
           dispatch(
-            loginSuccess({ role, user: { employee_id: data.employee_id } })
+            loginSuccess({ 
+              role, 
+              user: { employee_id: data.employee_id },
+              accessToken,
+              refreshToken
+            })
           );
           console.log("Logged in successfully");
           setIsSuccessful(true);
