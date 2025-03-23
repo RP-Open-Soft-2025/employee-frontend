@@ -41,9 +41,29 @@ export function HeaderUserNav() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleLogOut = () => {
-    dispatch(logout());
-    router.push("/login");
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+  const handleLogOut = async () => {
+    try {
+      // const response = await fetch(`${API_URL}/auth/logout`, {
+      //   method: 'DELETE',
+      //   credentials: 'include',
+      // });
+      
+      // if (!response.ok) {
+      //   console.error('Logout failed:', response.statusText);
+      // }
+
+      // const result = await response.json();
+
+      // console.log(result);
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
+      // Proceed with local logout even if API call fails
+      dispatch(logout());
+      router.push("/login");
+    }
   };
 
   return (
