@@ -29,7 +29,7 @@ export function AuthForm({
           name="employee_id"
           className="bg-muted text-md md:text-sm"
           type="text"
-          placeholder="johndoe"
+          placeholder="EMPXXXX"
           autoComplete="employee_id"
           required
           autoFocus

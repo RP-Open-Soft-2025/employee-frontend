@@ -102,7 +102,7 @@ export default function ForgotPasswordPage() {
                       name="email"
                       className="bg-muted text-md md:text-sm p-2 rounded-md border border-gray-300 dark:border-gray-700"
                       type="email"
-                      placeholder="Enter your email address"
+                      placeholder="example@email.com"
                       autoComplete="email"
                       required
                       autoFocus
