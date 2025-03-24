@@ -41,23 +41,23 @@ export function HeaderUserNav() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
   const handleLogOut = async () => {
     try {
       const response = await fetch(`${API_URL}/auth/logout`, {
-        method: 'DELETE',
-        credentials: 'include',
+        method: "DELETE",
+        credentials: "include",
       });
-      
+
       if (!response.ok) {
-        console.error('Logout failed:', response.statusText);
+        console.error("Logout failed:", response.statusText);
       }
 
       const result = await response.json();
       console.log(result);
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
     } finally {
       // Proceed with local logout even if API call fails
       dispatch(logout());
@@ -99,7 +99,7 @@ export function HeaderUserNav() {
           }}
         >
           <MessageSquare className="mr-2 size-4" />
-          New Chat
+          Open Chat
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
