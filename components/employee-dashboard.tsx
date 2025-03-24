@@ -444,7 +444,6 @@ export function EmployeeDashboard() {
                   </span>
                 )}
               </Button>
-              <Link href="/chat" className="w-full">
                 <Button
                   variant="outline"
                   className="h-auto flex flex-col items-center justify-center py-4 w-full"
@@ -457,7 +456,6 @@ export function EmployeeDashboard() {
                     </span>
                   )}
                 </Button>
-              </Link>
             </div>
           </CardContent>
         </Card>
