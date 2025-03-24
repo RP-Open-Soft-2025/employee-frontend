@@ -1,7 +1,7 @@
 import { loginSuccess, logout } from "@/redux/features/auth";
-import { Store } from "@reduxjs/toolkit";
-import { RootState } from "@/redux/store";
-import { useRouter } from "next/navigation";
+import type { Store } from "@reduxjs/toolkit";
+import type { RootState } from "@/redux/store";
+import type { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 

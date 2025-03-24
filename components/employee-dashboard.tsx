@@ -20,15 +20,67 @@ import {
   Bell,
   Calendar,
   FileText,
-  ChevronRight,
+  User,
+  BarChart,
 } from "lucide-react";
 import { Header } from "@/components/ui/header";
 import { LoadingScreen } from "./loading-screen";
-import { refreshAccessToken } from "@/lib/auth";
-import { makeProtectedRequest } from "@/lib/api-client";
 import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
+interface EmployeeDetails {
+  employee_id: string;
+  name: string;
+  email: string;
+  role: string;
+  manager_id: string;
+  is_blocked: boolean;
+  mood_stats: {
+    average_score: number;
+    total_sessions: number;
+    emotion_distribution: {
+      "Sad Zone": number;
+      "Leaning to Sad Zone": number;
+      "Neutral Zone (OK)": number;
+      "Leaning to Happy Zone": number;
+      "Happy Zone": number;
+    };
+    last_5_scores: number[];
+  };
+  chat_summary: {
+    chat_id: string;
+    last_message: string;
+    last_message_time: string;
+    chat_mode: string;
+    is_escalated: boolean;
+    total_messages: number;
+    unread_count: number;
+  };
+  company_data: {
+    activity: any[];
+    leave: Array<{
+      Leave_Type: string;
+      Leave_Days: number;
+      Leave_Start_Date: string;
+      Leave_End_Date: string;
+    }>;
+    onboarding: any[];
+    performance: Array<{
+      Review_Period: string;
+      Performance_Rating: number;
+      Manager_Feedback: string;
+    }>;
+    rewards: any[];
+    vibemeter: Array<{
+      Response_Date: string;
+      Vibe_Score: number;
+      Emotion_Zone: string;
+    }>;
+  };
+  upcoming_meets: number;
+  upcoming_sessions: number;
+}
 
 export function EmployeeDashboard() {
   const router = useRouter();
@@ -38,36 +90,7 @@ export function EmployeeDashboard() {
     (state: RootState) => state.auth.isAuthenticated
   );
   const [notifications, setNotifications] = useState(3);
-  const [upcomingEvents, setUpcomingEvents] = useState([
-    {
-      id: 1,
-      title: "Team Meeting",
-      date: "2023-03-25 10:00 AM",
-      type: "Meeting",
-    },
-    { id: 2, title: "Project Deadline", date: "2023-03-28", type: "Deadline" },
-    {
-      id: 3,
-      title: "Training Session",
-      date: "2023-03-30 2:00 PM",
-      type: "Training",
-    },
-  ]);
-
-  const [recentChats, setRecentChats] = useState([
-    { id: "chat-1", title: "HR Department", preview: "About leave policy..." },
-    {
-      id: "chat-2",
-      title: "Tech Support",
-      preview: "Laptop issue resolution...",
-    },
-    {
-      id: "chat-3",
-      title: "Sales Team",
-      preview: "Discussion on new product launch...",
-    },
-  ]);
-
+  const [employeeDetails, setEmployeeDetails] = useState<EmployeeDetails | null>(null);
   // Add client-side only indicator to prevent hydration mismatch
   const [isClientSide, setIsClientSide] = useState(false);
 
@@ -82,6 +105,7 @@ export function EmployeeDashboard() {
     try {
       const result = await fetchProtected("/employee/profile");
       console.log("Employee details:", result);
+      setEmployeeDetails(result);
       // Process the result here
     } catch (e) {
       console.error("Failed to fetch employee details:", e);
@@ -158,91 +182,224 @@ export function EmployeeDashboard() {
   return (
     <div className="container mx-auto p-4 md:p-6">
       <Header notifications={notifications}>
-        <h1 className="text-3xl font-bold">Welcome, {employeeId}</h1>
+        <h1 className="text-3xl font-bold">Welcome, {employeeDetails?.employee_id}</h1>
         <p className="text-muted-foreground">Your employee dashboard</p>
       </Header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="col-span-1 md:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Calendar className="size-5 mr-2" />
-              Upcoming Events
-            </CardTitle>
-            <CardDescription>
-              Your scheduled events and deadlines
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {upcomingEvents.map((event) => (
-                <div
-                  key={event.id}
-                  className="flex items-center justify-between border-b pb-3"
-                >
-                  <div>
-                    <h3 className="font-medium">{event.title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {event.date}
-                    </p>
-                  </div>
-                  <span className="text-xs bg-muted px-2 py-1 rounded">
-                    {event.type}
-                  </span>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Left Column */}
+        <div className="grid grid-cols-1 gap-4">
+          {/* Employee Profile Card */}
+          <Card className="h-full">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center">
+                <User className="size-5 mr-2" />
+                Profile Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Employee ID</p>
+                  <p className="font-medium">{employeeDetails?.employee_id}</p>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="ml-auto flex items-center"
-            >
-              View Calendar
-              <ChevronRight className="size-6 ml-1" />
-            </Button>
-          </CardFooter>
-        </Card>
+                <div>
+                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p className="font-medium">{employeeDetails?.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Role</p>
+                  <p className="font-medium capitalize">{employeeDetails?.role}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Manager ID</p>
+                  <p className="font-medium">{employeeDetails?.manager_id}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <MessageSquare className="size-5 mr-2" />
-              Recent Chats
-            </CardTitle>
-            <CardDescription>Your recent conversations</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentChats.map((chat) => (
-                <Link key={chat.id} href={`/chat/${chat.id}`}>
-                  <div className="flex items-center cursor-pointer hover:bg-muted p-2 rounded">
-                    <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                      <MessageSquare className="size-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">{chat.title}</h3>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {chat.preview}
-                      </p>
+          {/* Leave Information Card */}
+          <Card className="h-full">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center">
+                <Calendar className="size-5 mr-2" />
+                Leave Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3">
+                {employeeDetails?.company_data?.leave?.map((leave, index) => (
+                  <div key={`${leave.Leave_Type}-${leave.Leave_Start_Date}`} className="border-b pb-2 last:border-b-0 last:pb-0">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium">{leave.Leave_Type}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(leave.Leave_Start_Date).toLocaleDateString()} - {new Date(leave.Leave_End_Date).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <span className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
+                        {leave.Leave_Days} days
+                      </span>
                     </div>
                   </div>
-                </Link>
-              ))}
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Link href="/chat" className="w-full">
-              <Button variant="outline" size="sm" className="w-full">
-                Open Chat
-              </Button>
-            </Link>
-          </CardFooter>
-        </Card>
+                ))}
+                {(!employeeDetails?.company_data?.leave || employeeDetails.company_data.leave.length === 0) && (
+                  <p className="text-sm text-muted-foreground">No leave records found</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="col-span-1 md:col-span-3">
-          <CardHeader>
+          {/* Performance Card */}
+          <Card className="h-full">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center">
+                <BarChart className="size-5 mr-2" />
+                Performance & Vibe
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                {employeeDetails?.company_data?.performance?.[0] && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Latest Performance Review</p>
+                    <div className="space-y-2">
+                      <div>
+                        <p className="text-sm font-medium">{employeeDetails.company_data.performance[0].Review_Period}</p>
+                        <p className="text-xs text-muted-foreground">Rating: {employeeDetails.company_data.performance[0].Performance_Rating}/5</p>
+                      </div>
+                      <p className="text-sm italic">&ldquo;{employeeDetails.company_data.performance[0].Manager_Feedback}&rdquo;</p>
+                    </div>
+                  </div>
+                )}
+
+                {employeeDetails?.company_data?.vibemeter?.[0] && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Latest Vibe Check</p>
+                    <div className="space-y-2">
+                      <div>
+                        <p className="text-sm font-medium">{employeeDetails.company_data.vibemeter[0].Emotion_Zone}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Score: {employeeDetails.company_data.vibemeter[0].Vibe_Score}/5 • {new Date(employeeDetails.company_data.vibemeter[0].Response_Date).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column */}
+        <div className="grid grid-cols-1 gap-4">
+          {/* Mood Stats Card */}
+          <Card className="h-full">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center">
+                <BarChart className="size-5 mr-2" />
+                Mood Statistics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                <div className="grid gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Average Score</p>
+                    <p className="text-2xl font-medium">{employeeDetails?.mood_stats.average_score}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Sessions</p>
+                    <p className="text-2xl font-medium">{employeeDetails?.mood_stats.total_sessions}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm text-muted-foreground mb-3">Emotion Distribution</p>
+                  <div className="grid gap-2">
+                    {employeeDetails?.mood_stats.emotion_distribution && 
+                      Object.entries(employeeDetails.mood_stats.emotion_distribution).map(([emotion, count]) => (
+                        <div key={emotion} className="flex flex-col">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-sm">{emotion}</span>
+                            <span className="text-sm font-medium">{count}</span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-2">
+                            <div 
+                              className="bg-primary h-2 rounded-full" 
+                              style={{ 
+                                width: `${(count / Object.values(employeeDetails.mood_stats.emotion_distribution).reduce((a, b) => a + b, 0)) * 100}%` 
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Chat Summary Card */}
+          <Card className="h-full">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center">
+                <MessageSquare className="size-5 mr-2" />
+                Recent Chat
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3">
+                {employeeDetails?.chat_summary && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                          <MessageSquare className="size-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">
+                            {employeeDetails.chat_summary.chat_mode === 'bot' ? 'AI Assistant' : 'HR Chat'}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(employeeDetails.chat_summary.last_message_time).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      {employeeDetails.chat_summary.unread_count > 0 && (
+                        <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
+                          {employeeDetails.chat_summary.unread_count}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {employeeDetails.chat_summary.last_message}
+                    </p>
+                    {employeeDetails.chat_summary.is_escalated && (
+                      <div className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
+                        <Bell className="size-4" />
+                        Escalated to HR
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Link href="/chat" className="w-full">
+                <Button variant="outline" size="sm" className="w-full">
+                  Open Chat
+                </Button>
+              </Link>
+            </CardFooter>
+          </Card>
+        </div>
+
+        {/* Quick Actions Card - Full Width Bottom */}
+        <Card className="col-span-2">
+          <CardHeader className="pb-2">
             <CardTitle className="flex items-center">
               <FileText className="size-5 mr-2" />
               Quick Actions
@@ -250,35 +407,55 @@ export function EmployeeDashboard() {
             <CardDescription>Common tasks and resources</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <Button
                 variant="outline"
-                className="h-auto flex flex-col items-center justify-center py-6"
+                className="h-auto flex flex-col items-center justify-center py-4"
               >
                 <FileText className="size-6 mb-2" />
                 <span>Documents</span>
+                {(employeeDetails?.company_data?.activity?.length ?? 0) > 0 && (
+                  <span className="text-xs text-muted-foreground mt-1">
+                    {employeeDetails?.company_data?.activity?.length} updates
+                  </span>
+                )}
               </Button>
               <Button
                 variant="outline"
-                className="h-auto flex flex-col items-center justify-center py-6"
+                className="h-auto flex flex-col items-center justify-center py-4"
               >
                 <Calendar className="size-6 mb-2" />
                 <span>Schedule</span>
+                {(employeeDetails?.upcoming_meets ?? 0) > 0 && (
+                  <span className="text-xs text-muted-foreground mt-1">
+                    {employeeDetails?.upcoming_meets} upcoming
+                  </span>
+                )}
               </Button>
               <Button
                 variant="outline"
-                className="h-auto flex flex-col items-center justify-center py-6"
+                className="h-auto flex flex-col items-center justify-center py-4"
               >
                 <Bell className="size-6 mb-2" />
-                <span>Notifications</span>
+                <span>Sessions</span>
+                {(employeeDetails?.upcoming_sessions ?? 0) > 0 && (
+                  <span className="text-xs text-muted-foreground mt-1">
+                    {employeeDetails?.upcoming_sessions} scheduled
+                  </span>
+                )}
               </Button>
               <Link href="/chat" className="w-full">
                 <Button
                   variant="outline"
-                  className="h-auto flex flex-col items-center justify-center py-6 w-full"
+                  className="h-auto flex flex-col items-center justify-center py-4 w-full"
                 >
                   <MessageSquare className="size-6 mb-2" />
                   <span>Chat</span>
+                  {(employeeDetails?.chat_summary?.unread_count ?? 0) > 0 && (
+                    <span className="text-xs text-muted-foreground mt-1">
+                      {employeeDetails?.chat_summary?.unread_count} unread
+                    </span>
+                  )}
                 </Button>
               </Link>
             </div>
