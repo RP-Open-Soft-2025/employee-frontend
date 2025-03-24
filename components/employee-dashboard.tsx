@@ -92,7 +92,7 @@ export function EmployeeDashboard() {
   const fetchEmployeeScheduledMeets = async () => {
     try {
       const result = await fetchProtected("/employee/scheduled-meets");
-      console.log("Employee meets:", result);
+      console.log("Employee scheduled meets:", result);
       // Process the result here
     } catch (e) {
       console.error("Failed to fetch employee meets:", e);
