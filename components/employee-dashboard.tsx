@@ -24,6 +24,9 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/ui/header";
 import { LoadingScreen } from "./loading-screen";
+import { refreshAccessToken } from "@/lib/auth";
+import { makeProtectedRequest } from "@/lib/api-client";
+import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
@@ -71,26 +74,57 @@ export function EmployeeDashboard() {
   const employeeId = user?.employee_id;
   const userRole = user?.userRole;
   const accessToken = user?.accessToken;
+  const refreshToken = user?.refreshToken;
+
+  const { fetchProtected } = useProtectedApi();
 
   const fetchEmployeeDetails = async () => {
     try {
-      const response = await fetch(`${API_URL}/employee/profile`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${accessToken}`
-        }
-      });
-
-      const result = await response.json();
-
-      console.log(result);
+      const result = await fetchProtected("/employee/profile");
+      console.log("Employee details:", result);
+      // Process the result here
     } catch (e) {
-      console.error(e);
+      console.error("Failed to fetch employee details:", e);
+      // Handle error here
+    }
+  };
+
+  const fetchEmployeeMeets = async () => {
+    try {
+      const result = await fetchProtected("/employee/scheduled-meets");
+      console.log("Employee meets:", result);
+      // Process the result here
+    } catch (e) {
+      console.error("Failed to fetch employee meets:", e);
+      // Handle error here
+    }
+  };
+
+  const fetchEmployeeScheduledSessions = async () => {
+    try {
+      const result = await fetchProtected("/employee/scheduled-sessions");
+      console.log("Employee scheduled sessions:", result);
+      // Process the result here
+    } catch (e) {
+      console.error("Failed to fetch employee scheduled sessions:", e);
+    }
+  };
+
+  const fetchEmployeeChats = async () => {
+    try {
+      const result = await fetchProtected("/employee/chats");
+      console.log("Employee chats:", result);
+      // Process the result here
+    } catch (e) {
+      console.error("Failed to fetch employee chats:", e);
     }
   };
 
   useEffect(() => {
     fetchEmployeeDetails();
+    fetchEmployeeMeets();
+    fetchEmployeeScheduledSessions();
+    fetchEmployeeChats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -113,9 +147,7 @@ export function EmployeeDashboard() {
   return (
     <div className="container mx-auto p-4 md:p-6">
       <Header notifications={notifications}>
-        <h1 className="text-3xl font-bold">
-          Welcome, {employeeId}
-        </h1>
+        <h1 className="text-3xl font-bold">Welcome, {employeeId}</h1>
         <p className="text-muted-foreground">Your employee dashboard</p>
       </Header>
 
