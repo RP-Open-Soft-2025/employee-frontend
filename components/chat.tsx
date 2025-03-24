@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import useSWR, { useSWRConfig } from "swr";
 import { ChatHeader } from "@/components/chat-header";
 import type { Vote } from "@/lib/db/schema";
-import { fetcher, generateUUID } from "@/lib/utils";
+import { fetcher, } from "@/lib/utils";
 import { Artifact } from "./artifact";
 import { MultimodalInput } from "./multimodal-input";
 import { Messages } from "./messages";
@@ -15,8 +15,6 @@ import { useArtifactSelector } from "@/hooks/use-artifact";
 import { toast } from "sonner";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/redux/store";
-import { checkAuth } from "@/redux/features/auth";
-import type { Message } from "@ai-sdk/react";
 
 export function Chat({
   id,

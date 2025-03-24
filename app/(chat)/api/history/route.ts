@@ -8,8 +8,6 @@ export async function GET() {
     return Response.json('Unauthorized!', { status: 401 });
   }
 
-  // biome-ignore lint: Forbidden non-null assertion.
-  // const chats = await getChatsByUserId({ id: employee_id! });
   const chats = {};
   return Response.json(chats);
 }
