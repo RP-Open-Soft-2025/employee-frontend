@@ -3,43 +3,12 @@
 import { isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { memo, useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { memo, useEffect, } from 'react';
 import useSWR from 'swr';
-
-import {
-  CheckCircleFillIcon,
-  GlobeIcon,
-  LockIcon,
-  MoreHorizontalIcon,
-  ShareIcon,
-  TrashIcon,
-} from '@/components/icons';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,

@@ -1,5 +1,4 @@
-import { type UIMessage } from 'ai';
-import store from "@/redux/store";
+import type { UIMessage } from 'ai';
 import { getMostRecentUserMessage } from '@/lib/utils';
 
 export const maxDuration = 60;
@@ -42,7 +41,7 @@ export async function POST(request: Request) {
     const stream = new ReadableStream({
       async start(controller) {
         // Echo back the user's message directly
-        controller.enqueue(encoder.encode("You said: " + userInput));
+        controller.enqueue(encoder.encode(`You said: ${userInput}`));
         
         controller.close();
       }

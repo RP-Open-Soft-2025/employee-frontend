@@ -19,7 +19,7 @@ export const LoadingScreen = () => {
       >
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
         >
           <LoaderIcon size={48} />
         </motion.div>

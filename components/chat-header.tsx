@@ -45,18 +45,17 @@ export function HeaderUserNav() {
 
   const handleLogOut = async () => {
     try {
-      // const response = await fetch(`${API_URL}/auth/logout`, {
-      //   method: 'DELETE',
-      //   credentials: 'include',
-      // });
+      const response = await fetch(`${API_URL}/auth/logout`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
       
-      // if (!response.ok) {
-      //   console.error('Logout failed:', response.statusText);
-      // }
+      if (!response.ok) {
+        console.error('Logout failed:', response.statusText);
+      }
 
-      // const result = await response.json();
-
-      // console.log(result);
+      const result = await response.json();
+      console.log(result);
     } catch (error) {
       console.error('Error during logout:', error);
     } finally {
