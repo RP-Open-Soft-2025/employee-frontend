@@ -68,7 +68,7 @@ export function HeaderUserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white hidden md:flex py-1.5 px-4 h-fit order-4 md:ml-auto gap-2">
+        <Button className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white flex py-1.5 px-4 h-fit order-4 md:ml-auto gap-2">
           <Image
             src={`https://avatar.vercel.sh/${user?.employee_id}`}
             alt={user?.employee_id ?? "User Avatar"}
@@ -76,7 +76,7 @@ export function HeaderUserNav() {
             height={24}
             className="rounded-full"
           />
-          <span className="truncate">{user?.employee_id}</span>
+          <span className="truncate hidden md:block">{user?.employee_id}</span>
           <ChevronUp className="size-4" />
         </Button>
       </DropdownMenuTrigger>

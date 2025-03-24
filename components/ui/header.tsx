@@ -11,11 +11,11 @@ interface HeaderProps {
 
 export function Header({ notifications, children }: HeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center my-4 px-4 md:px-6 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm dark:bg-dark-mode-bg bg-[#F9FAFC]">
+    <div className="flex flex-row justify-between items-center my-4 px-4 md:px-6 py-2 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm dark:bg-dark-mode-bg bg-[#F9FAFC]">
       <div>{children}</div>
-      <div className="flex items-center space-x-2 mt-4 md:mt-0">
+      <div className="flex items-center space-x-2">
         {notifications && (
-          <Button variant="outline" size="sm" className="relative">
+          <Button variant="outline" size="sm" className="relative hidden md:flex">
             <Bell className="size-4 mr-2" />
             Notifications
             {notifications > 0 && (
