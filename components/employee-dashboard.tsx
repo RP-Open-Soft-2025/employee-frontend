@@ -120,10 +120,21 @@ export function EmployeeDashboard() {
     }
   };
 
+  const fetchEmployeeChatMessages = async (chatId: string) => {
+    try {
+      const result = await fetchProtected(`/employee/chats/${chatId}/messages`);
+      console.log("Employee chat messages:", result);
+      // Process the result here
+    } catch (e) {
+      console.error("Failed to fetch employee chat messages:", e);
+    }
+  };
+
   useEffect(() => {
     fetchEmployeeDetails();
     fetchEmployeeScheduledMeets();
     fetchEmployeeScheduledSessions();
+    fetchEmployeeChatMessages("CHATE54BE3");
     fetchEmployeeChats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
