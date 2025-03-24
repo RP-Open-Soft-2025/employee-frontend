@@ -89,7 +89,7 @@ export function EmployeeDashboard() {
     }
   };
 
-  const fetchEmployeeMeets = async () => {
+  const fetchEmployeeScheduledMeets = async () => {
     try {
       const result = await fetchProtected("/employee/scheduled-meets");
       console.log("Employee meets:", result);
@@ -122,7 +122,7 @@ export function EmployeeDashboard() {
 
   useEffect(() => {
     fetchEmployeeDetails();
-    fetchEmployeeMeets();
+    fetchEmployeeScheduledMeets();
     fetchEmployeeScheduledSessions();
     fetchEmployeeChats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
