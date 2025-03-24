@@ -20,14 +20,11 @@ import {
   Bell,
   Calendar,
   FileText,
-  ChevronRight,
   User,
   BarChart,
 } from "lucide-react";
 import { Header } from "@/components/ui/header";
 import { LoadingScreen } from "./loading-screen";
-import { refreshAccessToken } from "@/lib/auth";
-import { makeProtectedRequest } from "@/lib/api-client";
 import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
@@ -222,7 +219,7 @@ export function EmployeeDashboard() {
             <CardContent>
               <div className="grid gap-3">
                 {employeeDetails?.company_data?.leave?.map((leave, index) => (
-                  <div key={index} className="border-b pb-2 last:border-b-0 last:pb-0">
+                  <div key={`${leave.Leave_Type}-${leave.Leave_Start_Date}`} className="border-b pb-2 last:border-b-0 last:pb-0">
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-medium">{leave.Leave_Type}</p>
@@ -261,7 +258,7 @@ export function EmployeeDashboard() {
                         <p className="text-sm font-medium">{employeeDetails.company_data.performance[0].Review_Period}</p>
                         <p className="text-xs text-muted-foreground">Rating: {employeeDetails.company_data.performance[0].Performance_Rating}/5</p>
                       </div>
-                      <p className="text-sm italic">"{employeeDetails.company_data.performance[0].Manager_Feedback}"</p>
+                      <p className="text-sm italic">&ldquo;{employeeDetails.company_data.performance[0].Manager_Feedback}&rdquo;</p>
                     </div>
                   </div>
                 )}

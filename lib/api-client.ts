@@ -1,6 +1,6 @@
 import { refreshAccessToken } from "@/lib/auth";
-import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
+import type { useRouter } from "next/navigation";
+import type { useDispatch } from "react-redux";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
