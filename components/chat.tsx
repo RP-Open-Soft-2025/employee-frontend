@@ -1,8 +1,7 @@
 "use client";
 
-import type { Attachment, UIMessage } from "ai";
-import { useChat } from "@ai-sdk/react";
-import { useState, useEffect } from "react";
+import type { Attachment } from "ai";
+import { useState, } from "react";
 import { useRouter } from "next/navigation";
 import useSWR, { useSWRConfig } from "swr";
 import { ChatHeader } from "@/components/chat-header";
@@ -16,14 +15,24 @@ import { toast } from "sonner";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/redux/store";
 
+// Create a simple message type that doesn't depend on the UIMessage type
+interface SimpleMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system' | 'function' | 'data';
+  content: string;
+  createdAt: Date | string;
+}
+
 export function Chat({
   id,
   initialMessages,
   isReadonly,
+  useRawMessages = false,
 }: {
   id: string;
-  initialMessages: Array<UIMessage>;
+  initialMessages: Array<any>;
   isReadonly: boolean;
+  useRawMessages?: boolean;
 }) {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -31,50 +40,190 @@ export function Chat({
     (state: RootState) => state.auth.isAuthenticated
   );
   const { mutate } = useSWRConfig();
-
-  const {
-    messages,
-    setMessages,
-    handleSubmit,
-    input,
-    setInput,
-    append,
-    status,
-    stop,
-    reload,
-  } = useChat({
-    id,
-    initialMessages: initialMessages as any,
-    api: "/api/chat",
-    streamProtocol: "text",
-    body: { id },
-    onError: (error) => {
-      console.error("Chat error:", error);
-      toast.error("An error occurred, please try again!");
-    },
-  });
+  
+  // Process initial messages to ensure they have the right format
+  const processedInitialMessages = useRawMessages 
+    ? initialMessages 
+    : initialMessages.map((msg: any) => ({
+        id: msg.id || `${id}-${Date.now()}-${msg.role}`,
+        role: msg.role,
+        content: msg.content,
+        createdAt: msg.createdAt || new Date(),
+      }));
+  
+  // State
+  const [messages, setMessages] = useState<SimpleMessage[]>(processedInitialMessages || []);
+  const [input, setInput] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'streaming'>('idle');
+  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  
+  // Debug initialMessages to see if they're correct
+  console.log("Initial messages in Chat component:", initialMessages);
+  console.log("Processed initial messages:", processedInitialMessages);
+  console.log("Current messages state:", messages);
+  
+  const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
   const { data: votes } = useSWR<Array<Vote>>(
     messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
     fetcher
   );
 
-  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
-  const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
-
-  // Check authentication status on component mount
-  useEffect(() => {
-    // Temporarily disable auth check to prevent login redirect
-    // dispatch(checkAuth());
-    // if (!isAuthenticated) {
-    //   router.push("/login");
-    // }
-  }, [dispatch, isAuthenticated, router]);
-
-  // If not authenticated, show UI anyway (temporarily)
-  // if (!isAuthenticated) {
-  //   return null;
-  // }
+  // Handle message submission
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    
+    if (!input.trim()) return;
+    
+    try {
+      // Set status to loading
+      setStatus('loading');
+      
+      // Add user message to UI
+      const userMessage: SimpleMessage = {
+        id: `${id}-${Date.now()}-user`,
+        role: 'user',
+        content: input,
+        createdAt: new Date(),
+      };
+      
+      setMessages(prevMessages => [...prevMessages, userMessage]);
+      setInput('');
+      
+      // Send to backend
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/llm/chat/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chatId: id,
+          message: input,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to send message: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      // Add bot response to UI
+      const botMessage: SimpleMessage = {
+        id: `${id}-${Date.now()}-bot`,
+        role: 'assistant',
+        content: data.message || 'I received your message.',
+        createdAt: new Date(),
+      };
+      
+      setMessages(prevMessages => [...prevMessages, botMessage]);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setStatus('idle');
+    }
+  };
+  
+  // Handle message reload
+  const reload = async () => {
+    // Find the last user message
+    const lastUserMessage = [...messages].reverse().find(m => m.role === 'user');
+    
+    if (!lastUserMessage) return;
+    
+    try {
+      setStatus('loading');
+      
+      // Send to backend
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/llm/chat/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chatId: id,
+          message: lastUserMessage.content,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to reload message: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      // Remove last bot message and add new one
+      const filteredMessages = messages.filter(
+        (_, index) => index !== messages.length - 1
+      );
+      
+      const botMessage: SimpleMessage = {
+        id: `${id}-${Date.now()}-bot`,
+        role: 'assistant',
+        content: data.message || 'I received your message.',
+        createdAt: new Date(),
+      };
+      
+      setMessages([...filteredMessages, botMessage]);
+    } catch (error) {
+      console.error('Failed to reload message:', error);
+      toast.error('Failed to reload message. Please try again.');
+    } finally {
+      setStatus('idle');
+    }
+  };
+  
+  // Simple stop function for compatibility
+  const stop = () => {
+    setStatus('idle');
+  };
+  
+  // Simple append function for compatibility
+  const append = async (message: SimpleMessage | { content: string; role: 'user' | 'assistant' }) => {
+    const fullMessage = 'id' in message ? message : {
+      ...message,
+      id: `${id}-${Date.now()}-${message.role}`,
+      createdAt: new Date(),
+    };
+    
+    setMessages(prevMessages => [...prevMessages, fullMessage as SimpleMessage]);
+    
+    if (fullMessage.role === 'user') {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        const response = await fetch(`${apiUrl}/llm/chat/message`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chatId: id,
+            message: fullMessage.content,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to append message: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        const botMessage: SimpleMessage = {
+          id: `${id}-${Date.now()}-bot`,
+          role: 'assistant',
+          content: data.message || 'I received your message.',
+          createdAt: new Date(),
+        };
+        
+        setMessages(prevMessages => [...prevMessages, botMessage]);
+      } catch (error) {
+        console.error('Failed to append message:', error);
+      }
+    }
+  };
 
   return (
     <>
@@ -86,29 +235,38 @@ export function Chat({
 
         <Messages
           chatId={id}
-          status={status}
+          status={status as any}
           votes={votes}
-          messages={messages as any}
+          messages={messages.map(msg => ({
+            ...msg,
+            parts: [{ type: 'text', text: msg.content }]
+          })) as any}
           setMessages={setMessages as any}
-          reload={reload}
+          reload={reload as any}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
         />
 
-        <form className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl">
+        <form 
+          className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl"
+          onSubmit={handleSubmit}
+        >
           {!isReadonly && (
             <MultimodalInput
               chatId={id}
               input={input}
               setInput={setInput}
-              handleSubmit={handleSubmit}
-              status={status}
+              handleSubmit={handleSubmit as any}
+              status={status as any}
               stop={stop}
               attachments={attachments}
               setAttachments={setAttachments}
-              messages={messages as any}
+              messages={messages.map(msg => ({
+                ...msg,
+                parts: [{ type: 'text', text: msg.content }]
+              })) as any}
               setMessages={setMessages as any}
-              append={append}
+              append={append as any}
             />
           )}
         </form>
@@ -118,15 +276,18 @@ export function Chat({
         chatId={id}
         input={input}
         setInput={setInput}
-        handleSubmit={handleSubmit}
-        status={status}
+        handleSubmit={handleSubmit as any}
+        status={status as any}
         stop={stop}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={append}
-        messages={messages as any}
+        append={append as any}
+        messages={messages.map(msg => ({
+          ...msg,
+          parts: [{ type: 'text', text: msg.content }]
+        })) as any}
         setMessages={setMessages as any}
-        reload={reload}
+        reload={reload as any}
         votes={votes}
         isReadonly={isReadonly}
       />

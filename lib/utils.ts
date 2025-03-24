@@ -160,3 +160,16 @@ export function getTrailingMessageId({
 
   return trailingMessage.id;
 }
+
+/**
+ * Format a date string into a user-friendly format
+ * @param dateString - ISO date string
+ * @returns Formatted date string
+ */
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  }).format(date);
+}

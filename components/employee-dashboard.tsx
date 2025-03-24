@@ -432,18 +432,20 @@ export function EmployeeDashboard() {
                   </span>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                className="h-auto flex flex-col items-center justify-center py-4"
-              >
-                <Bell className="size-6 mb-2" />
-                <span>Sessions</span>
-                {(employeeDetails?.upcoming_sessions ?? 0) > 0 && (
-                  <span className="text-xs text-muted-foreground mt-1">
-                    {employeeDetails?.upcoming_sessions} scheduled
-                  </span>
-                )}
-              </Button>
+              <Link href="/chat">
+                <Button
+                  variant="outline"
+                  className="h-auto flex flex-col items-center justify-center py-4"
+                >
+                  <Bell className="size-6 mb-2" />
+                  <span>Sessions</span>
+                  {(employeeDetails?.upcoming_sessions ?? 0) > 0 && (
+                    <span className="text-xs text-muted-foreground mt-1">
+                      {employeeDetails?.upcoming_sessions} scheduled
+                    </span>
+                  )}
+                </Button>
+              </Link>
                 <Button
                   variant="outline"
                   className="h-auto flex flex-col items-center justify-center py-4 w-full"
