@@ -365,8 +365,8 @@ export function ScheduledChatClient() {
   // If we have a pending session, show the start button
   if (pendingSession) {
     return (
-      <div className="p-4">
-        <Card className="mb-6">
+      <div className="h-[calc(100vh-125px)] flex justify-center items-center">
+        <Card>
           <CardHeader>
             <CardTitle>Scheduled Wellness Session</CardTitle>
             <CardDescription>
@@ -412,7 +412,7 @@ export function ScheduledChatClient() {
   
   // No active or pending sessions
   return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] p-4 text-center">
+    <div className="flex flex-col items-center justify-center h-[calc(100vh-125px)] p-4 text-center">
       <h2 className="text-2xl font-bold mb-4">No Active Sessions</h2>
       <p className="text-muted-foreground mb-6">You don&apos;t have any active or pending chat sessions at the moment.</p>
       <Button onClick={() => router.push("/")}>Back to Dashboard</Button>
