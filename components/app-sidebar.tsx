@@ -27,17 +27,9 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <div className="flex flex-row justify-between items-center">
-            <Link
-              href="/"
-              onClick={() => {
-                setOpenMobile(false);
-              }}
-              className="flex flex-row gap-3 items-center"
-            >
-              <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                Employee Portal
-              </span>
-            </Link>
+            <span className="text-lg font-semibold px-2 rounded-md cursor-pointer">
+              Previous Sessions
+            </span>
           </div>
         </SidebarMenu>
       </SidebarHeader>
