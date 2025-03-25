@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, } from "react";
-import useSWR from "swr";
 import { ChatHeader } from "@/components/chat-header";
 import type { Vote } from "@/lib/db/schema";
-import { fetcher, } from "@/lib/utils";
 import { Artifact } from "./artifact";
 import { MultimodalInput } from "./multimodal-input";
 import { Messages } from "./messages";

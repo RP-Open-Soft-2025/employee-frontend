@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import Link from "next/link";
 
 import { SidebarHistory } from "@/components/sidebar-history";
 import {

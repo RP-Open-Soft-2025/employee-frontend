@@ -1,8 +1,7 @@
 "use client";
 
 import { isToday, isYesterday, subMonths, subWeeks } from "date-fns";
-import Link from "next/link";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, } from "next/navigation";
 import { memo, useEffect, useState } from "react";
 import {
   SidebarGroup,
@@ -108,7 +107,7 @@ export function SidebarHistory({ user }: { user: any }) {
       setLoading(true);
       const result = await fetchProtected<ChatsApiResponse>("/employee/chats");
       console.log("Chat history:", result);
-      if (result && result.chats && Array.isArray(result.chats)) {
+      if (result?.chats && Array.isArray(result.chats)) {
         setChatHistory(
           result.chats.map((chat: ChatResponse) => ({
             id: chat.chat_id,
