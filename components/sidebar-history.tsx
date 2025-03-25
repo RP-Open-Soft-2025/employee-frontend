@@ -4,7 +4,7 @@ import { isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { memo, useEffect, } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -53,17 +53,20 @@ export function SidebarHistory({ user }: { user: any }) {
   const { setOpenMobile } = useSidebar();
   const { id } = useParams();
   const pathname = usePathname();
-  const {
-    data: history,
-    isLoading,
-    mutate,
-  } = useSWR<Array<Chat>>(user ? '/api/history' : null, fetcher, {
-    fallbackData: [],
-  });
+  // const {
+  //   data: history,
+  //   isLoading,
+  //   mutate,
+  // } = useSWR<Array<Chat>>(user ? '/api/history' : null, fetcher, {
+  //   fallbackData: [],
+  // });
 
-  useEffect(() => {
-    mutate();
-  }, [pathname, mutate]);
+  const history: Array<Chat> = [];
+  const isLoading = false;
+
+  // useEffect(() => {
+  //   mutate();
+  // }, [pathname, mutate]);
 
   const router = useRouter();
 

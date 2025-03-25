@@ -53,10 +53,12 @@ export function Chat({
   
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
-  const { data: votes } = useSWR<Array<Vote>>(
-    messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
-    fetcher
-  );
+  // const { data: votes } = useSWR<Array<Vote>>(
+  //   messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
+  //   fetcher
+  // );
+
+  const votes: Array<Vote> = [];
 
   // Handle message submission
   const handleSubmit = async (e?: React.FormEvent) => {
