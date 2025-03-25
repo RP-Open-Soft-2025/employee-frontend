@@ -156,11 +156,6 @@ export function Chat({
     }
   };
   
-  // Simple stop function for compatibility
-  const stop = () => {
-    setStatus('idle');
-  };
-  
   // Simple append function for compatibility
   const append = async (message: SimpleMessage | { content: string; role: 'user' | 'assistant' }) => {
     const fullMessage = 'id' in message ? message : {
@@ -228,7 +223,6 @@ export function Chat({
               setInput={setInput}
               handleSubmit={handleSubmit as any}
               status={status as any}
-              stop={stop}
               messages={messages.map(msg => ({
                 ...msg,
                 parts: [{ type: 'text', text: msg.content }]
@@ -246,7 +240,6 @@ export function Chat({
         setInput={setInput}
         handleSubmit={handleSubmit as any}
         status={status as any}
-        stop={stop}
         append={append as any}
         messages={messages.map(msg => ({
           ...msg,

@@ -57,7 +57,6 @@ function PureArtifact({
   setInput,
   handleSubmit,
   status,
-  stop,
   append,
   messages,
   setMessages,
@@ -69,7 +68,6 @@ function PureArtifact({
   input: string;
   setInput: UseChatHelpers['setInput'];
   status: UseChatHelpers['status'];
-  stop: UseChatHelpers['stop'];
   messages: Array<UIMessage>;
   setMessages: UseChatHelpers['setMessages'];
   votes: Array<Vote> | undefined;
@@ -324,7 +322,6 @@ function PureArtifact({
                     setInput={setInput}
                     handleSubmit={handleSubmit}
                     status={status}
-                    stop={stop}
                     messages={messages}
                     append={append}
                     className="bg-background dark:bg-muted"
@@ -470,7 +467,6 @@ function PureArtifact({
                     setIsToolbarVisible={setIsToolbarVisible}
                     append={append}
                     status={status}
-                    stop={stop}
                     setMessages={(newMessages: any) => {
                       setMessages(newMessages);
                     }}

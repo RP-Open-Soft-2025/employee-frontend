@@ -26,7 +26,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-import { ArrowUpIcon, StopIcon, SummarizeIcon } from './icons';
+import { ArrowUpIcon, SummarizeIcon } from './icons';
 import { artifactDefinitions, type ArtifactKind } from './artifact';
 import type { ArtifactToolbarItem } from './create-artifact';
 import type { UseChatHelpers } from '@ai-sdk/react';
@@ -312,7 +312,6 @@ const PureToolbar = ({
   setIsToolbarVisible,
   append,
   status,
-  stop,
   setMessages,
   artifactKind,
 }: {
@@ -320,7 +319,6 @@ const PureToolbar = ({
   setIsToolbarVisible: Dispatch<SetStateAction<boolean>>;
   status: UseChatHelpers['status'];
   append: UseChatHelpers['append'];
-  stop: UseChatHelpers['stop'];
   setMessages: Dispatch<SetStateAction<Message[]>>;
   artifactKind: ArtifactKind;
 }) => {
@@ -381,83 +379,40 @@ const PureToolbar = ({
   }
 
   return (
-    <TooltipProvider delayDuration={0}>
+    <TooltipProvider>
       <motion.div
-        className="cursor-pointer absolute right-6 bottom-6 p-1.5 border rounded-full shadow-lg bg-background flex flex-col justify-end"
-        initial={{ opacity: 0, y: -20, scale: 1 }}
-        animate={
-          isToolbarVisible
-            ? selectedTool === 'adjust-reading-level'
-              ? {
-                  opacity: 1,
-                  y: 0,
-                  height: 6 * 43,
-                  transition: { delay: 0 },
-                  scale: 0.95,
-                }
-              : {
-                  opacity: 1,
-                  y: 0,
-                  height: toolsByArtifactKind.length * 50,
-                  transition: { delay: 0 },
-                  scale: 1,
-                }
-            : { opacity: 1, y: 0, height: 54, transition: { delay: 0 } }
-        }
-        exit={{ opacity: 0, y: -20, transition: { duration: 0.1 } }}
-        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-        onHoverStart={() => {
-          if (status === 'streaming') return;
-
-          cancelCloseTimer();
-          setIsToolbarVisible(true);
-        }}
-        onHoverEnd={() => {
-          if (status === 'streaming') return;
-
-          startCloseTimer();
-        }}
-        onAnimationStart={() => {
-          setIsAnimating(true);
-        }}
-        onAnimationComplete={() => {
-          setIsAnimating(false);
-        }}
         ref={toolbarRef}
+        className="absolute bottom-0 right-0 flex flex-row items-center justify-end gap-2 p-2"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
       >
-        {status === 'streaming' ? (
-          <motion.div
-            key="stop-icon"
-            initial={{ scale: 1 }}
-            animate={{ scale: 1.4 }}
-            exit={{ scale: 1 }}
-            className="p-3"
-            onClick={() => {
-              stop();
-              setMessages((messages) => messages);
-            }}
-          >
-            <StopIcon />
-          </motion.div>
-        ) : selectedTool === 'adjust-reading-level' ? (
-          <ReadingLevelSelector
-            key="reading-level-selector"
-            append={append}
-            setSelectedTool={setSelectedTool}
-            isAnimating={isAnimating}
-          />
-        ) : (
-          <Tools
-            key="tools"
-            append={append}
-            isAnimating={isAnimating}
-            isToolbarVisible={isToolbarVisible}
-            selectedTool={selectedTool}
-            setIsToolbarVisible={setIsToolbarVisible}
-            setSelectedTool={setSelectedTool}
-            tools={toolsByArtifactKind}
-          />
-        )}
+        <motion.div
+          className="flex flex-row items-center gap-2"
+          initial={{ scale: 1 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 1 }}
+        >
+          {selectedTool === 'adjust-reading-level' ? (
+            <ReadingLevelSelector
+              key="reading-level-selector"
+              append={append}
+              setSelectedTool={setSelectedTool}
+              isAnimating={isAnimating}
+            />
+          ) : (
+            <Tools
+              key="tools"
+              append={append}
+              isAnimating={isAnimating}
+              isToolbarVisible={isToolbarVisible}
+              selectedTool={selectedTool}
+              setIsToolbarVisible={setIsToolbarVisible}
+              setSelectedTool={setSelectedTool}
+              tools={toolsByArtifactKind}
+            />
+          )}
+        </motion.div>
       </motion.div>
     </TooltipProvider>
   );

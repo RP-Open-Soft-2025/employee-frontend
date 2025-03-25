@@ -15,7 +15,7 @@ import {
 import { toast } from 'sonner';
 import { useLocalStorage, useWindowSize } from 'usehooks-ts';
 
-import { ArrowUpIcon, StopIcon } from './icons';
+import { ArrowUpIcon } from './icons';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import equal from 'fast-deep-equal';
@@ -26,7 +26,6 @@ function PureMultimodalInput({
   input,
   setInput,
   status,
-  stop,
   messages,
   setMessages,
   append,
@@ -37,7 +36,6 @@ function PureMultimodalInput({
   input: UseChatHelpers['input'];
   setInput: UseChatHelpers['setInput'];
   status: UseChatHelpers['status'];
-  stop: () => void;
   messages: Array<Message>;
   setMessages: Dispatch<SetStateAction<Array<Message>>>;
   append: UseChatHelpers['append'];
@@ -140,14 +138,10 @@ function PureMultimodalInput({
       />
 
       <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
-        {status === 'submitted' ? (
-          <StopButton stop={stop} setMessages={setMessages} />
-        ) : (
-          <SendButton
-            input={input}
-            submitForm={submitForm}
-          />
-        )}
+        <SendButton
+          input={input}
+          submitForm={submitForm}
+        />
       </div>
     </div>
   );
@@ -162,30 +156,6 @@ export const MultimodalInput = memo(
     return true;
   },
 );
-
-function PureStopButton({
-  stop,
-  setMessages,
-}: {
-  stop: () => void;
-  setMessages: Dispatch<SetStateAction<Array<Message>>>;
-}) {
-  return (
-    <Button
-      data-testid="stop-button"
-      className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
-      onClick={(event) => {
-        event.preventDefault();
-        stop();
-        setMessages((messages) => messages);
-      }}
-    >
-      <StopIcon size={14} />
-    </Button>
-  );
-}
-
-const StopButton = memo(PureStopButton);
 
 function PureSendButton({
   submitForm,
