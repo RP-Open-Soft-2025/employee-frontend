@@ -55,7 +55,7 @@ export function Chat({
   // State
   const [messages, setMessages] = useState<SimpleMessage[]>(processedInitialMessages || []);
   const [input, setInput] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'streaming'>('idle');
+  const [status, setStatus] = useState<"streaming" | "error" | "submitted" | "ready">('ready');
   
   // Debug initialMessages to see if they're correct
   console.log("Initial messages in Chat component:", initialMessages);
@@ -77,7 +77,7 @@ export function Chat({
     
     try {
       // Set status to loading
-      setStatus('loading');
+      setStatus('streaming');
       
       // Add user message to UI
       const userMessage: SimpleMessage = {
@@ -112,7 +112,7 @@ export function Chat({
       console.error('Failed to send message:', error);
       toast.error('Failed to send message. Please try again.');
     } finally {
-      setStatus('idle');
+      setStatus('ready');
     }
   };
   
@@ -124,7 +124,7 @@ export function Chat({
     if (!lastUserMessage) return;
     
     try {
-      setStatus('loading');
+      setStatus('streaming');
       
       // Send to backend using fetchProtected
       const data = await fetchProtected('/llm/chat/message', {
@@ -152,7 +152,7 @@ export function Chat({
       console.error('Failed to reload message:', error);
       toast.error('Failed to reload message. Please try again.');
     } finally {
-      setStatus('idle');
+      setStatus('ready');
     }
   };
   
@@ -200,7 +200,7 @@ export function Chat({
 
         <Messages
           chatId={id}
-          status={status as any}
+          status={status}
           votes={votes}
           messages={messages.map(msg => ({
             ...msg,
@@ -222,7 +222,7 @@ export function Chat({
               input={input}
               setInput={setInput}
               handleSubmit={handleSubmit as any}
-              status={status as any}
+              status={status}
               messages={messages.map(msg => ({
                 ...msg,
                 parts: [{ type: 'text', text: msg.content }]
@@ -239,7 +239,7 @@ export function Chat({
         input={input}
         setInput={setInput}
         handleSubmit={handleSubmit as any}
-        status={status as any}
+        status={status}
         append={append as any}
         messages={messages.map(msg => ({
           ...msg,
