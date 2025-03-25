@@ -28,6 +28,16 @@ interface ScheduledSession {
   notes: string | null;
 }
 
+interface ChatHistory {
+  id: string;
+  lastMessage: string;
+  lastMessageTime: string;
+  mode: string;
+  isEscalated: boolean;
+  totalMessages: number;
+  unreadCount: number;
+}
+
 export function ScheduledChatClient() {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -37,6 +47,7 @@ export function ScheduledChatClient() {
   const [isReadonly, setIsReadonly] = useState(false);
   const [initialMessages, setInitialMessages] = useState<UIMessage[]>([]);
   const [initiatingChat, setInitiatingChat] = useState<string | null>(null);
+  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   
   // Get authentication status and active chat ID from Redux
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -83,8 +94,9 @@ export function ScheduledChatClient() {
   // Initial data loading
   useEffect(() => {
     if (isAuthenticated) {
-      console.log("Authenticated, fetching scheduled sessions");
+      console.log("Authenticated, fetching scheduled sessions and chat history");
       fetchScheduledSession();
+      fetchChatHistory();
     }
     // fetchScheduledSession is intentionally omitted to prevent infinite loops
     // eslint-disable-next-line
@@ -308,6 +320,27 @@ export function ScheduledChatClient() {
       // Don't clear activeChatId on error
     } finally {
       setInitiatingChat(null);
+    }
+  };
+
+  // Add fetchChatHistory function
+  const fetchChatHistory = async () => {
+    try {
+      const result = await fetchProtected("/employee/chats");
+      console.log("Chat history:", result);
+      if (result && Array.isArray(result)) {
+        setChatHistory(result.map(chat => ({
+          id: chat.id,
+          lastMessage: chat.lastMessage,
+          lastMessageTime: chat.lastMessageTime,
+          mode: chat.mode,
+          isEscalated: chat.isEscalated,
+          totalMessages: chat.totalMessages,
+          unreadCount: chat.unreadCount
+        })));
+      }
+    } catch (e) {
+      console.error("Failed to fetch chat history:", e);
     }
   };
 
