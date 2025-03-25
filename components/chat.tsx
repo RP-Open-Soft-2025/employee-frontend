@@ -1,6 +1,5 @@
 "use client";
 
-import type { Attachment } from "ai";
 import { useState, } from "react";
 import { useRouter } from "next/navigation";
 import useSWR, { useSWRConfig } from "swr";
@@ -57,7 +56,6 @@ export function Chat({
   const [messages, setMessages] = useState<SimpleMessage[]>(processedInitialMessages || []);
   const [input, setInput] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'streaming'>('idle');
-  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   
   // Debug initialMessages to see if they're correct
   console.log("Initial messages in Chat component:", initialMessages);
@@ -231,8 +229,6 @@ export function Chat({
               handleSubmit={handleSubmit as any}
               status={status as any}
               stop={stop}
-              attachments={attachments}
-              setAttachments={setAttachments}
               messages={messages.map(msg => ({
                 ...msg,
                 parts: [{ type: 'text', text: msg.content }]
@@ -251,8 +247,6 @@ export function Chat({
         handleSubmit={handleSubmit as any}
         status={status as any}
         stop={stop}
-        attachments={attachments}
-        setAttachments={setAttachments}
         append={append as any}
         messages={messages.map(msg => ({
           ...msg,
