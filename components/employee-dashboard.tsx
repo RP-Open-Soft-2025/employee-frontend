@@ -181,7 +181,7 @@ export function EmployeeDashboard() {
 
   // Normal render for client-side with authentication
   return (
-    <div className="container mx-auto px-2 sm:px-4 md:px-6 py-2 sm:py-4 md:py-6">
+    <div className="container mx-auto p-2 sm:p-4 md:p-6">
       <Header notifications={notifications}>
         <h1 className="text-2xl sm:text-3xl font-bold hidden md:block">
           Welcome, {employeeDetails?.employee_id}
