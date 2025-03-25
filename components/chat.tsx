@@ -14,6 +14,7 @@ import { useArtifactSelector } from "@/hooks/use-artifact";
 import { toast } from "sonner";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/redux/store";
+import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
 
 // Create a simple message type that doesn't depend on the UIMessage type
 interface SimpleMessage {
@@ -40,6 +41,7 @@ export function Chat({
     (state: RootState) => state.auth.isAuthenticated
   );
   const { mutate } = useSWRConfig();
+  const { fetchProtected } = useProtectedApi();
   
   // Process initial messages to ensure they have the right format
   const processedInitialMessages = useRawMessages 
@@ -90,24 +92,14 @@ export function Chat({
       setMessages(prevMessages => [...prevMessages, userMessage]);
       setInput('');
       
-      // Send to backend
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${apiUrl}/llm/chat/message`, {
+      // Send to backend using fetchProtected
+      const data = await fetchProtected('/llm/chat/message', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           chatId: id,
           message: input,
-        }),
+        },
       });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to send message: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
       
       // Add bot response to UI
       const botMessage: SimpleMessage = {
@@ -136,24 +128,14 @@ export function Chat({
     try {
       setStatus('loading');
       
-      // Send to backend
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${apiUrl}/llm/chat/message`, {
+      // Send to backend using fetchProtected
+      const data = await fetchProtected('/llm/chat/message', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           chatId: id,
           message: lastUserMessage.content,
-        }),
+        },
       });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to reload message: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
       
       // Remove last bot message and add new one
       const filteredMessages = messages.filter(
@@ -193,23 +175,13 @@ export function Chat({
     
     if (fullMessage.role === 'user') {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-        const response = await fetch(`${apiUrl}/llm/chat/message`, {
+        const data = await fetchProtected('/llm/chat/message', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+          body: {
             chatId: id,
             message: fullMessage.content,
-          }),
+          },
         });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to append message: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
         
         const botMessage: SimpleMessage = {
           id: `${id}-${Date.now()}-bot`,
