@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, } from "react";
-import { useRouter } from "next/navigation";
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import { ChatHeader } from "@/components/chat-header";
 import type { Vote } from "@/lib/db/schema";
 import { fetcher, } from "@/lib/utils";
@@ -11,8 +10,6 @@ import { MultimodalInput } from "./multimodal-input";
 import { Messages } from "./messages";
 import { useArtifactSelector } from "@/hooks/use-artifact";
 import { toast } from "sonner";
-import { useSelector, useDispatch } from "react-redux";
-import type { RootState } from "@/redux/store";
 import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
 
 // Create a simple message type that doesn't depend on the UIMessage type
@@ -34,12 +31,6 @@ export function Chat({
   isReadonly: boolean;
   useRawMessages?: boolean;
 }) {
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
-  const { mutate } = useSWRConfig();
   const { fetchProtected } = useProtectedApi();
   
   // Process initial messages to ensure they have the right format
@@ -58,8 +49,6 @@ export function Chat({
   const [status, setStatus] = useState<"streaming" | "error" | "submitted" | "ready">('ready');
   
   // Debug initialMessages to see if they're correct
-  console.log("Initial messages in Chat component:", initialMessages);
-  console.log("Processed initial messages:", processedInitialMessages);
   console.log("Current messages state:", messages);
   
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
@@ -108,6 +97,7 @@ export function Chat({
       };
       
       setMessages(prevMessages => [...prevMessages, botMessage]);
+      setStatus('submitted');
     } catch (error) {
       console.error('Failed to send message:', error);
       toast.error('Failed to send message. Please try again.');
