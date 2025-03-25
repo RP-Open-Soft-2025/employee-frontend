@@ -6,7 +6,6 @@ import type React from 'react';
 import {
   useRef,
   useEffect,
-  useState,
   useCallback,
   type Dispatch,
   type SetStateAction,
@@ -18,7 +17,6 @@ import { useLocalStorage, useWindowSize } from 'usehooks-ts';
 import { ArrowUpIcon } from './icons';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
-import equal from 'fast-deep-equal';
 import type { UseChatHelpers, } from '@ai-sdk/react';
 
 function PureMultimodalInput({
