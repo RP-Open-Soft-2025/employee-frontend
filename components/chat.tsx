@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, } from "react";
+import { useState, useEffect } from "react";
 import { ChatHeader } from "@/components/chat-header";
 import type { Vote } from "@/lib/db/schema";
 import { Artifact } from "./artifact";
@@ -13,7 +13,7 @@ import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
 // Create a simple message type that doesn't depend on the UIMessage type
 interface SimpleMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system' | 'function' | 'data';
+  role: "user" | "assistant" | "system" | "function" | "data";
   content: string;
   createdAt: Date | string;
 }
@@ -30,25 +30,29 @@ export function Chat({
   useRawMessages?: boolean;
 }) {
   const { fetchProtected } = useProtectedApi();
-  
+
   // Process initial messages to ensure they have the right format
-  const processedInitialMessages = useRawMessages 
-    ? initialMessages 
+  const processedInitialMessages = useRawMessages
+    ? initialMessages
     : initialMessages.map((msg: any) => ({
         id: msg.id || `${id}-${Date.now()}-${msg.role}`,
         role: msg.role,
         content: msg.content,
         createdAt: msg.createdAt || new Date(),
       }));
-  
+
   // State
-  const [messages, setMessages] = useState<SimpleMessage[]>(processedInitialMessages || []);
-  const [input, setInput] = useState('');
-  const [status, setStatus] = useState<"streaming" | "error" | "submitted" | "ready">('ready');
-  
-  // Debug initialMessages to see if they're correct
-  console.log("Current messages state:", messages);
-  
+  const [messages, setMessages] = useState<SimpleMessage[]>([]);
+  const [input, setInput] = useState("");
+  const [status, setStatus] = useState<
+    "streaming" | "error" | "submitted" | "ready"
+  >("ready");
+
+  // Add effect to log messages when they change
+  useEffect(() => {
+    setMessages(processedInitialMessages);
+  }, [processedInitialMessages]);
+
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
   // const { data: votes } = useSWR<Array<Vote>>(
@@ -61,121 +65,131 @@ export function Chat({
   // Handle message submission
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    
+
     if (!input.trim()) return;
-    
+
     try {
       // Set status to loading
-      setStatus('streaming');
-      
+      setStatus("streaming");
+
       // Add user message to UI
       const userMessage: SimpleMessage = {
         id: `${id}-${Date.now()}-user`,
-        role: 'user',
+        role: "user",
         content: input,
         createdAt: new Date(),
       };
-      
-      setMessages(prevMessages => [...prevMessages, userMessage]);
-      setInput('');
-      
+
+      setMessages((prevMessages) => [...prevMessages, userMessage]);
+      setInput("");
+
       // Send to backend using fetchProtected
-      const data = await fetchProtected('/llm/chat/message', {
-        method: 'POST',
+      const data = await fetchProtected("/llm/chat/message", {
+        method: "POST",
         body: {
           chatId: id,
           message: input,
         },
       });
-      
+
       // Add bot response to UI
       const botMessage: SimpleMessage = {
         id: `${id}-${Date.now()}-bot`,
-        role: 'assistant',
-        content: data.message || 'I received your message.',
+        role: "assistant",
+        content: data.message || "I received your message.",
         createdAt: new Date(),
       };
-      
-      setMessages(prevMessages => [...prevMessages, botMessage]);
-      setStatus('submitted');
+
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
+      setStatus("submitted");
     } catch (error) {
-      console.error('Failed to send message:', error);
-      toast.error('Failed to send message. Please try again.');
+      console.error("Failed to send message:", error);
+      toast.error("Failed to send message. Please try again.");
     } finally {
-      setStatus('ready');
+      setStatus("ready");
     }
   };
-  
+
   // Handle message reload
   const reload = async () => {
     // Find the last user message
-    const lastUserMessage = [...messages].reverse().find(m => m.role === 'user');
-    
+    const lastUserMessage = [...messages]
+      .reverse()
+      .find((m) => m.role === "user");
+
     if (!lastUserMessage) return;
-    
+
     try {
-      setStatus('streaming');
-      
+      setStatus("streaming");
+
       // Send to backend using fetchProtected
-      const data = await fetchProtected('/llm/chat/message', {
-        method: 'POST',
+      const data = await fetchProtected("/llm/chat/message", {
+        method: "POST",
         body: {
           chatId: id,
           message: lastUserMessage.content,
         },
       });
-      
+
       // Remove last bot message and add new one
       const filteredMessages = messages.filter(
         (_, index) => index !== messages.length - 1
       );
-      
+
       const botMessage: SimpleMessage = {
         id: `${id}-${Date.now()}-bot`,
-        role: 'assistant',
-        content: data.message || 'I received your message.',
+        role: "assistant",
+        content: data.message || "I received your message.",
         createdAt: new Date(),
       };
-      
+
       setMessages([...filteredMessages, botMessage]);
     } catch (error) {
-      console.error('Failed to reload message:', error);
-      toast.error('Failed to reload message. Please try again.');
+      console.error("Failed to reload message:", error);
+      toast.error("Failed to reload message. Please try again.");
     } finally {
-      setStatus('ready');
+      setStatus("ready");
     }
   };
-  
+
   // Simple append function for compatibility
-  const append = async (message: SimpleMessage | { content: string; role: 'user' | 'assistant' }) => {
-    const fullMessage = 'id' in message ? message : {
-      ...message,
-      id: `${id}-${Date.now()}-${message.role}`,
-      createdAt: new Date(),
-    };
-    
-    setMessages(prevMessages => [...prevMessages, fullMessage as SimpleMessage]);
-    
-    if (fullMessage.role === 'user') {
+  const append = async (
+    message: SimpleMessage | { content: string; role: "user" | "assistant" }
+  ) => {
+    const fullMessage =
+      "id" in message
+        ? message
+        : {
+            ...message,
+            id: `${id}-${Date.now()}-${message.role}`,
+            createdAt: new Date(),
+          };
+
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      fullMessage as SimpleMessage,
+    ]);
+
+    if (fullMessage.role === "user") {
       try {
-        const data = await fetchProtected('/llm/chat/message', {
-          method: 'POST',
+        const data = await fetchProtected("/llm/chat/message", {
+          method: "POST",
           body: {
             chatId: id,
             message: fullMessage.content,
           },
         });
-        
+
         const botMessage: SimpleMessage = {
           id: `${id}-${Date.now()}-bot`,
-          role: 'assistant',
-          content: data.message || 'I received your message.',
+          role: "assistant",
+          content: data.message || "I received your message.",
           createdAt: new Date(),
         };
-        
-        setMessages(prevMessages => [...prevMessages, botMessage]);
+
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
       } catch (error) {
-        console.error('Failed to append message:', error);
+        console.error("Failed to append message:", error);
       }
     }
   };
@@ -183,26 +197,25 @@ export function Chat({
   return (
     <>
       <div className="flex flex-col min-w-0 bg-white/70 dark:bg-black/70 h-[calc(100vh-125px)] rounded-lg">
-        <ChatHeader
-          chatId={id}
-          isReadonly={isReadonly}
-        />
+        <ChatHeader chatId={id} isReadonly={isReadonly} />
 
         <Messages
           chatId={id}
           status={status}
           votes={votes}
-          messages={messages.map(msg => ({
-            ...msg,
-            parts: [{ type: 'text', text: msg.content }]
-          })) as any}
+          messages={
+            messages.map((msg) => ({
+              ...msg,
+              parts: [{ type: "text", text: msg.content }],
+            })) as any
+          }
           setMessages={setMessages as any}
           reload={reload as any}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
         />
 
-        <form 
+        <form
           className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl"
           onSubmit={handleSubmit}
         >
@@ -213,10 +226,12 @@ export function Chat({
               setInput={setInput}
               handleSubmit={handleSubmit as any}
               status={status}
-              messages={messages.map(msg => ({
-                ...msg,
-                parts: [{ type: 'text', text: msg.content }]
-              })) as any}
+              messages={
+                messages.map((msg) => ({
+                  ...msg,
+                  parts: [{ type: "text", text: msg.content }],
+                })) as any
+              }
               setMessages={setMessages as any}
               append={append as any}
             />
@@ -231,10 +246,12 @@ export function Chat({
         handleSubmit={handleSubmit as any}
         status={status}
         append={append as any}
-        messages={messages.map(msg => ({
-          ...msg,
-          parts: [{ type: 'text', text: msg.content }]
-        })) as any}
+        messages={
+          messages.map((msg) => ({
+            ...msg,
+            parts: [{ type: "text", text: msg.content }],
+          })) as any
+        }
         setMessages={setMessages as any}
         reload={reload as any}
         votes={votes}
