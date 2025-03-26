@@ -81,15 +81,6 @@ export function ScheduledChatClient() {
 
   const { fetchProtected } = useProtectedApi();
 
-  // Set up a simplified hook to always keep isReadonly as false
-  useEffect(() => {
-    // Always ensure isReadonly is false
-    if (isReadonly) {
-      // console.log("Ensuring isReadonly is always FALSE");
-      setIsReadonly(false);
-    }
-  }, [isReadonly]);
-
   // Initial data loading
   useEffect(() => {
     if (isAuthenticated) {
@@ -135,12 +126,6 @@ export function ScheduledChatClient() {
             // Get chat mode for state tracking, but always keep editable
             const chatMode = response.chat_mode || "active";
             console.log("Chat mode from useEffect:", chatMode);
-
-            // SIMPLIFIED: Always keep isReadonly false regardless of mode
-            console.log(
-              "ALWAYS setting isReadonly to FALSE regardless of chat mode"
-            );
-            setIsReadonly(false);
 
             dispatch(setChatStatus(chatMode));
 
@@ -190,25 +175,7 @@ export function ScheduledChatClient() {
           return;
         }
 
-        // Check for alternative active session status values (case insensitive)
-        sessionToUse = result.find(
-          (session: ScheduledSession) =>
-            session.status.toLowerCase() === "active" ||
-            session.status.toLowerCase() === "in_progress" ||
-            session.status.toLowerCase() === "inprogress"
-        );
-
-        if (sessionToUse) {
-          console.log(
-            "Found session with alternative active status:",
-            sessionToUse
-          );
-          setActiveChatId(sessionToUse.chat_id);
-          dispatch(setChatStatus("active"));
-          setIsReadonly(false);
-          await fetchChatMessages(sessionToUse.chat_id);
-          return;
-        }
+        setIsReadonly(true);
 
         // Second priority: Find a pending session
         sessionToUse = result.find(
@@ -222,6 +189,7 @@ export function ScheduledChatClient() {
           setPendingSession(sessionToUse);
         }
       } else {
+        setIsReadonly(true);
         console.log("No scheduled sessions found or empty response");
       }
     } catch (error) {
@@ -273,10 +241,6 @@ export function ScheduledChatClient() {
       setActiveChatId(chatId);
       dispatch(setChatStatus("active"));
 
-      // Mark as active (not read-only)
-      console.log("Setting isReadonly to false for active chat");
-      setIsReadonly(false);
-
       // Call API to initiate the chat
       const response = await fetchProtected("/llm/chat/initiate-chat", {
         method: "PATCH",
@@ -288,15 +252,11 @@ export function ScheduledChatClient() {
 
       console.log("Chat initiation response:", response);
 
-      // Make sure isReadonly is still false before fetching messages
+      // Make isReadonly false
       setIsReadonly(false);
 
       // Load the chat messages
       await fetchChatMessages(chatId);
-
-      // Even after fetching messages, ensure the chat is still editable
-      console.log("Final check - setting isReadonly to false");
-      setIsReadonly(false);
 
       // Clear the pending session since it's now active
       setPendingSession(null);
@@ -349,8 +309,6 @@ export function ScheduledChatClient() {
         }
 
         setAllMessages(allChatMessages);
-
-        console.log("All chat messages:", allChatMessages);
       }
     } catch (e) {
       console.error("Failed to fetch chat history:", e);
@@ -364,12 +322,7 @@ export function ScheduledChatClient() {
     };
   }, [dispatch]);
 
-  if (!isAuthenticated) {
-    return <LoadingScreen />;
-  }
-
-  if (loading) {
-    // Don't reset UI state during loading
+  if (!isAuthenticated || loading) {
     return <LoadingScreen />;
   }
 
@@ -384,7 +337,7 @@ export function ScheduledChatClient() {
         key={chatIdToUse}
         id={chatIdToUse || ""}
         initialMessages={allMessages}
-        isReadonly={false}
+        isReadonly={isReadonly}
         useRawMessages={true}
       />
       <DataStreamHandler id={chatIdToUse || ""} />
