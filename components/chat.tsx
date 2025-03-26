@@ -23,11 +23,19 @@ export function Chat({
   initialMessages,
   isReadonly,
   useRawMessages = false,
+  pendingSession,
+  onStartSession,
 }: {
   id: string;
   initialMessages: Array<any>;
   isReadonly: boolean;
   useRawMessages?: boolean;
+  pendingSession?: {
+    session_id: string;
+    scheduled_at: string;
+    notes: string | null;
+  } | null;
+  onStartSession?: (chatId: string) => void;
 }) {
   const { fetchProtected } = useProtectedApi();
 
@@ -237,6 +245,40 @@ export function Chat({
             />
           )}
         </form>
+
+        {isReadonly && !(id == "" || id === null) && pendingSession && (
+          <div className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl">
+            <div className="flex flex-col w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg border shadow-sm p-4">
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-medium">Scheduled Chat Available</h3>
+                  <span className="text-sm text-muted-foreground">
+                    {new Date(pendingSession.scheduled_at).toLocaleString()}
+                  </span>
+                </div>
+                {pendingSession.notes && (
+                  <p className="text-sm text-muted-foreground">
+                    {pendingSession.notes}
+                  </p>
+                )}
+                <button
+                  onClick={() => onStartSession?.(id)}
+                  className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                >
+                  Start Session
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isReadonly && (id == "" || id === null) && (
+          <div className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl">
+            <div className="flex flex-col w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg border shadow-sm p-4">
+              <p className="text-sm text-muted-foreground text-center">No Active/Scheduled sessions available</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <Artifact

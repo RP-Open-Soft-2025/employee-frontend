@@ -328,7 +328,7 @@ export function ScheduledChatClient() {
 
   // If we have an active chat ID, render the chat interface
   // Use the chat ID that is available (prefer local state but fall back to Redux)
-  const chatIdToUse = activeChatId || reduxActiveChatId;
+  const chatIdToUse = activeChatId || reduxActiveChatId || (pendingSession?.chat_id || null);
   console.log("Rendering chat with ID:", chatIdToUse);
 
   return (
@@ -339,6 +339,8 @@ export function ScheduledChatClient() {
         initialMessages={allMessages}
         isReadonly={isReadonly}
         useRawMessages={true}
+        pendingSession={pendingSession}
+        onStartSession={initiateChat}
       />
       <DataStreamHandler id={chatIdToUse || ""} />
     </>
