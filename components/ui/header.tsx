@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { HeaderUserNav } from "@/components/chat-header";
+import Link from "next/link";
 
 interface HeaderProps {
   notifications?: number;
@@ -12,10 +13,14 @@ interface HeaderProps {
 export function Header({ notifications, children }: HeaderProps) {
   return (
     <div className="flex flex-row justify-between items-center my-4 px-4 md:px-6 py-2 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm dark:bg-dark-mode-bg bg-[#F9FAFC]">
-      <div>{children}</div>
+      <Link href="/">{children}</Link>
       <div className="flex items-center space-x-2">
         {notifications && (
-          <Button variant="outline" size="sm" className="relative hidden md:flex">
+          <Button
+            variant="outline"
+            size="sm"
+            className="relative hidden md:flex"
+          >
             <Bell className="size-4 mr-2" />
             Notifications
             {notifications > 0 && (

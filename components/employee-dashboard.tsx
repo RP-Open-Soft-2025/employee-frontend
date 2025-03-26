@@ -475,11 +475,14 @@ export function EmployeeDashboard() {
               </div>
             </CardContent>
             <CardFooter>
-              <Link href="/chat" className="w-full">
-                <Button variant="outline" size="sm" className="w-full">
-                  Open Chat
-                </Button>
-              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => router.push("/chat")}
+              >
+                Open Chat
+              </Button>
             </CardFooter>
           </Card>
         </div>

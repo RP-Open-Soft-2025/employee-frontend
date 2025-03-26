@@ -95,7 +95,6 @@ export function HeaderUserNav() {
           className="cursor-pointer"
           onSelect={() => {
             router.push("/chat");
-            router.refresh();
           }}
         >
           <MessageSquare className="mr-2 size-4" />
