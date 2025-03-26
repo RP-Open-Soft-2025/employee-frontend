@@ -88,8 +88,6 @@ export function Chat({
       console.log("Chat initiation response:", response);
       dispatch(setChatStatus("active"));
 
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-
       // Add bot's initial message to UI
       const botMessage: SimpleMessage = {
         id: `${chatId}-${Date.now()}-bot`,
