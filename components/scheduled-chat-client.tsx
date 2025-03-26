@@ -10,16 +10,6 @@ import type { RootState } from "@/redux/store";
 import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
 import type { UIMessage } from "ai";
 import { setMessages, setChatStatus, clearChat } from "@/redux/features/chat";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { formatDate } from "@/lib/utils";
 
 interface ScheduledSession {
   session_id: string;
@@ -273,7 +263,7 @@ export function ScheduledChatClient() {
     try {
       const result = await fetchProtected("/employee/chats");
       console.log("Chat history:", result);
-      if (result && result.chats && Array.isArray(result.chats)) {
+      if (result?.chats && Array.isArray(result.chats)) {
         // sort chats based on date with latest chat at the end
         result.chats.sort((a: ChatHistoryResponse, b: ChatHistoryResponse) => {
           return (
