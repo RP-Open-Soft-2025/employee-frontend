@@ -67,7 +67,6 @@ export function ScheduledChatClient() {
   const [initialMessages, setInitialMessages] = useState<UIMessage[]>([]);
   const [allMessages, setAllMessages] = useState<UIMessage[]>([]);
   const [initiatingChat, setInitiatingChat] = useState<string | null>(null);
-  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
 
   // Get authentication status and active chat ID from Redux
   const isAuthenticated = useSelector(
@@ -317,10 +316,13 @@ export function ScheduledChatClient() {
       if (result && result.chats && Array.isArray(result.chats)) {
         // sort chats based on date with latest chat at the end
         result.chats.sort((a: ChatHistoryResponse, b: ChatHistoryResponse) => {
-          return new Date(a.last_message_time).getTime() - new Date(b.last_message_time).getTime();
+          return (
+            new Date(a.last_message_time).getTime() -
+            new Date(b.last_message_time).getTime()
+          );
         });
 
-        const history = result.chats.map((chat: ChatHistoryResponse) => ({
+        const chats = result.chats.map((chat: ChatHistoryResponse) => ({
           id: chat.chat_id,
           lastMessage: chat.last_message,
           lastMessageTime: chat.last_message_time,
@@ -330,19 +332,14 @@ export function ScheduledChatClient() {
           unreadCount: chat.unread_count,
         }));
 
-        setChatHistory(history);
-
-        console.log("Chat history messages:", history);
-
         // Fetch messages for all chats
         const allChatMessages: UIMessage[] = [];
-        for (const chat of history) {
+        for (const chat of chats) {
           try {
             const messages = await fetchChatMessages(chat.id);
             if (messages) {
               allChatMessages.push(...messages);
             }
-            console.log("All chat messages:", allChatMessages);
           } catch (error) {
             console.error(
               `Failed to fetch messages for chat ${chat.id}:`,
