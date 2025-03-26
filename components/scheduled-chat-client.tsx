@@ -56,7 +56,6 @@ export function ScheduledChatClient() {
   const [isReadonly, setIsReadonly] = useState(false);
   const [initialMessages, setInitialMessages] = useState<UIMessage[]>([]);
   const [allMessages, setAllMessages] = useState<UIMessage[]>([]);
-  const [initiatingChat, setInitiatingChat] = useState<string | null>(null);
 
   // Get authentication status and active chat ID from Redux
   const isAuthenticated = useSelector(
@@ -221,43 +220,6 @@ export function ScheduledChatClient() {
     }
   };
 
-  // Initiate a pending chat session
-  const initiateChat = async (chatId: string) => {
-    try {
-      console.log("Initiating chat with ID:", chatId);
-      setInitiatingChat(chatId);
-
-      // Update local state and Redux
-      setActiveChatId(chatId);
-      dispatch(setChatStatus("active"));
-
-      // Call API to initiate the chat
-      const response = await fetchProtected("/llm/chat/initiate-chat", {
-        method: "PATCH",
-        body: {
-          chatId,
-          status: "bot",
-        },
-      });
-
-      console.log("Chat initiation response:", response);
-
-      // Make isReadonly false
-      setIsReadonly(false);
-
-      // Load the chat messages
-      await fetchChatMessages(chatId);
-
-      // Clear the pending session since it's now active
-      setPendingSession(null);
-    } catch (error) {
-      console.error("Failed to initiate chat:", error);
-      // Don't clear activeChatId on error
-    } finally {
-      setInitiatingChat(null);
-    }
-  };
-
   // Modified fetchChatHistory function to also fetch messages for each chat
   const fetchChatHistory = async () => {
     try {
@@ -329,8 +291,7 @@ export function ScheduledChatClient() {
         initialMessages={allMessages}
         isReadonly={isReadonly}
         useRawMessages={true}
-        pendingSession={pendingSession}
-        onStartSession={initiateChat}
+        onReadonlyChange={setIsReadonly}
       />
       <DataStreamHandler id={chatIdToUse || ""} />
     </>
