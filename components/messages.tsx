@@ -69,6 +69,7 @@ function PureMessages({
         ([messageChatId, chatMessages], groupIndex) => (
           <div
             key={messageChatId}
+            id={`chat-${messageChatId}`}
             className={`flex flex-col gap-6 ${
               groupIndex !== Object.entries(groupedMessages).length - 1
                 ? "mb-5"

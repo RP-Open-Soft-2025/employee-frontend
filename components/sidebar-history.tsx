@@ -51,16 +51,24 @@ const PureChatItem = ({
   chat,
   isActive,
   setOpenMobile,
+  onChatClick,
 }: {
   chat: ChatHistory;
   isActive: boolean;
   setOpenMobile: (open: boolean) => void;
+  onChatClick: (chatId: string) => void;
 }) => {
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={isActive}>
-        {/* <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}> */}
-        <div className="flex items-center justify-between w-full">
+      <SidebarMenuButton 
+        asChild 
+        isActive={isActive}
+        onClick={() => {
+          onChatClick(chat.id);
+          setOpenMobile(false);
+        }}
+      >
+        <div className="flex items-center justify-between w-full cursor-pointer">
           <div className="flex items-center gap-2">
             <MessageSquare className="size-4" />
             <div className="flex flex-col">
@@ -81,7 +89,6 @@ const PureChatItem = ({
             )}
           </div>
         </div>
-        {/* </Link> */}
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
@@ -91,6 +98,7 @@ export const ChatItem = memo(PureChatItem, (prevProps, nextProps) => {
   if (prevProps.isActive !== nextProps.isActive) return false;
   if (prevProps.chat.unreadCount !== nextProps.chat.unreadCount) return false;
   if (prevProps.chat.lastMessage !== nextProps.chat.lastMessage) return false;
+  if (prevProps.onChatClick !== nextProps.onChatClick) return false;
   return true;
 });
 
@@ -101,6 +109,14 @@ export function SidebarHistory({ user }: { user: any }) {
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const [loading, setLoading] = useState(false);
   const { fetchProtected } = useProtectedApi();
+
+  const handleChatClick = (chatId: string) => {
+    // Find the chat element by its ID
+    const chatElement = document.getElementById(`chat-${chatId}`);
+    if (chatElement) {
+      chatElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const fetchChatHistory = async () => {
     try {
@@ -238,6 +254,7 @@ export function SidebarHistory({ user }: { user: any }) {
                     chat={chat}
                     isActive={chat.id === id}
                     setOpenMobile={setOpenMobile}
+                    onChatClick={handleChatClick}
                   />
                 ))}
               </>
@@ -254,6 +271,7 @@ export function SidebarHistory({ user }: { user: any }) {
                     chat={chat}
                     isActive={chat.id === id}
                     setOpenMobile={setOpenMobile}
+                    onChatClick={handleChatClick}
                   />
                 ))}
               </>
@@ -270,6 +288,7 @@ export function SidebarHistory({ user }: { user: any }) {
                     chat={chat}
                     isActive={chat.id === id}
                     setOpenMobile={setOpenMobile}
+                    onChatClick={handleChatClick}
                   />
                 ))}
               </>
@@ -286,6 +305,7 @@ export function SidebarHistory({ user }: { user: any }) {
                     chat={chat}
                     isActive={chat.id === id}
                     setOpenMobile={setOpenMobile}
+                    onChatClick={handleChatClick}
                   />
                 ))}
               </>
@@ -302,6 +322,7 @@ export function SidebarHistory({ user }: { user: any }) {
                     chat={chat}
                     isActive={chat.id === id}
                     setOpenMobile={setOpenMobile}
+                    onChatClick={handleChatClick}
                   />
                 ))}
               </>
