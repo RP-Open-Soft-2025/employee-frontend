@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -362,9 +361,9 @@ export function EmployeeDashboard() {
             <CardContent>
               <div className="grid gap-3">
                 {employeeDetails?.company_data?.activity?.map(
-                  (activity, index) => (
+                  (activity) => (
                     <div
-                      key={index}
+                      key={`activity-${activity.Date}`}
                       className="border-b pb-2 last:border-b-0 last:pb-0"
                     >
                       <div className="flex justify-between items-start">
@@ -457,10 +456,10 @@ export function EmployeeDashboard() {
                       </p>
                       <div className="grid gap-2">
                         {employeeDetails.mood_stats.last_5_scores.map(
-                          (score, index) => (
-                            <div key={index} className="flex flex-col">
+                          (score, scoreIndex) => (
+                            <div key={`mood-score-${scoreIndex}-${score}`} className="flex flex-col">
                               <div className="flex justify-between items-center mb-1">
-                                <span className="text-sm">Score {index + 1}</span>
+                                <span className="text-sm">Score {scoreIndex + 1}</span>
                                 <span className="text-sm font-medium">{score}/5</span>
                               </div>
                               <div className="w-full bg-muted/50 dark:bg-muted/30 rounded-full h-2">
@@ -514,8 +513,8 @@ export function EmployeeDashboard() {
             <CardContent>
               <div className="grid gap-3">
                 {employeeDetails?.company_data?.onboarding?.map(
-                  (onboarding, index) => (
-                    <div key={index} className="space-y-2">
+                  (onboarding) => (
+                    <div key={`onboarding-${onboarding.Joining_Date}`} className="space-y-2">
                       <div className="flex justify-between items-center">
                         <p className="font-medium">Joining Date</p>
                         <p className="text-sm text-muted-foreground">
@@ -562,9 +561,9 @@ export function EmployeeDashboard() {
             <CardContent>
               <div className="grid gap-3">
                 {employeeDetails?.company_data?.rewards?.map(
-                  (reward, index) => (
+                  (reward) => (
                     <div
-                      key={index}
+                      key={`reward-${reward.Award_Date}-${reward.Award_Type}`}
                       className="border-b pb-2 last:border-b-0 last:pb-0"
                     >
                       <div className="flex justify-between items-start">
