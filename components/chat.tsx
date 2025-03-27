@@ -37,6 +37,31 @@ export function Chat({
   const dispatch = useDispatch();
   const [initiatingChat, setInitiatingChat] = useState<string | null>(null);
 
+  // Add ping effect for active chats
+  useEffect(() => {
+    let pingInterval: NodeJS.Timeout;
+
+    if (!isReadonly && id) {
+      // Start ping interval
+      pingInterval = setInterval(async () => {
+        try {
+          await fetchProtected("/employee/ping", {
+            method: "GET",
+          });
+        } catch (error) {
+          console.error("Failed to ping employee endpoint:", error);
+        }
+      }, 30000); // 30 seconds
+    }
+
+    // Cleanup interval on unmount or when chat becomes readonly
+    return () => {
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+    };
+  }, [isReadonly, id, fetchProtected]);
+
   // Process initial messages to ensure they have the right format
   const processedInitialMessages = useRawMessages
     ? initialMessages
