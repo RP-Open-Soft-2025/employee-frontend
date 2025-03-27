@@ -14,8 +14,13 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 export default function ResetPasswordPage() {
   const router = useRouter();
   const params = useParams();
-  const token = params.token as string;
   const [isSuccessful, setIsSuccessful] = useState(false);
+  const token = params?.token as string | undefined;
+
+  if (!token) {
+    router.push('/login');
+    return null;
+  }
 
   const handleSubmit = async (formData: FormData) => {
     const password = formData.get("password") as string;
