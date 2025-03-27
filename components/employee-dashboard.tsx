@@ -21,6 +21,8 @@ import {
   FileText,
   User,
   BarChart,
+  Award,
+  Activity,
 } from "lucide-react";
 import { Header } from "@/components/ui/header";
 import { LoadingScreen } from "./loading-screen";
@@ -38,47 +40,55 @@ interface EmployeeDetails {
   mood_stats: {
     average_score: number;
     total_sessions: number;
-    emotion_distribution: {
-      "Sad Zone": number;
-      "Leaning to Sad Zone": number;
-      "Neutral Zone (OK)": number;
-      "Leaning to Happy Zone": number;
-      "Happy Zone": number;
-    };
     last_5_scores: number[];
   };
   chat_summary: {
     chat_id: string;
-    last_message: string;
-    last_message_time: string;
+    last_message: string | null;
+    last_message_time: string | null;
+    unread_count: number;
+    total_messages: number;
     chat_mode: string;
     is_escalated: boolean;
-    total_messages: number;
-    unread_count: number;
   };
+  upcoming_meets: number;
+  upcoming_sessions: number;
   company_data: {
-    activity: any[];
+    activity: Array<{
+      Date: string;
+      Teams_Messages_Sent: number;
+      Emails_Sent: number;
+      Meetings_Attended: number;
+      Work_Hours: number;
+    }>;
     leave: Array<{
       Leave_Type: string;
       Leave_Days: number;
       Leave_Start_Date: string;
       Leave_End_Date: string;
     }>;
-    onboarding: any[];
+    onboarding: Array<{
+      Joining_Date: string;
+      Onboarding_Feedback: string;
+      Mentor_Assigned: boolean;
+      Initial_Training_Completed: boolean;
+    }>;
     performance: Array<{
       Review_Period: string;
       Performance_Rating: number;
       Manager_Feedback: string;
+      Promotion_Consideration: boolean;
     }>;
-    rewards: any[];
+    rewards: Array<{
+      Award_Type: string;
+      Award_Date: string;
+      Reward_Points: number;
+    }>;
     vibemeter: Array<{
       Response_Date: string;
       Vibe_Score: number;
-      Emotion_Zone: string;
     }>;
   };
-  upcoming_meets: number;
-  upcoming_sessions: number;
 }
 
 export function EmployeeDashboard() {
@@ -158,7 +168,6 @@ export function EmployeeDashboard() {
     fetchEmployeeDetails();
     fetchEmployeeScheduledMeets();
     fetchEmployeeScheduledSessions();
-    fetchEmployeeChatMessages("CHATE54BE3");
     fetchEmployeeChats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -206,6 +215,14 @@ export function EmployeeDashboard() {
               <div className="grid gap-2 sm:gap-3">
                 <div>
                   <p className="text-xs sm:text-sm text-muted-foreground">
+                    Name
+                  </p>
+                  <p className="text-sm sm:text-base font-medium">
+                    {employeeDetails?.name}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Employee ID
                   </p>
                   <p className="text-sm sm:text-base font-medium">
@@ -236,6 +253,11 @@ export function EmployeeDashboard() {
                     {employeeDetails?.manager_id}
                   </p>
                 </div>
+                {employeeDetails?.is_blocked && (
+                  <div className="text-sm text-red-500 dark:text-red-400">
+                    Account is blocked
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -266,7 +288,7 @@ export function EmployeeDashboard() {
                           {new Date(leave.Leave_End_Date).toLocaleDateString()}
                         </p>
                       </div>
-                      <span className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
+                      <span className="text-sm bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-1 rounded">
                         {leave.Leave_Days} days
                       </span>
                     </div>
@@ -287,7 +309,7 @@ export function EmployeeDashboard() {
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center">
                 <BarChart className="size-5 mr-2" />
-                Performance & Vibe
+                Performance
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -325,31 +347,71 @@ export function EmployeeDashboard() {
                     </div>
                   </div>
                 )}
+              </div>
+            </CardContent>
+          </Card>
 
-                {employeeDetails?.company_data?.vibemeter?.[0] && (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Latest Vibe Check
-                    </p>
-                    <div className="space-y-2">
-                      <div>
-                        <p className="text-sm font-medium">
-                          {
-                            employeeDetails.company_data.vibemeter[0]
-                              .Emotion_Zone
-                          }
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Score:{" "}
-                          {employeeDetails.company_data.vibemeter[0].Vibe_Score}
-                          /5 •{" "}
-                          {new Date(
-                            employeeDetails.company_data.vibemeter[0].Response_Date
-                          ).toLocaleDateString()}
-                        </p>
+          {/* Activity Card */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center">
+                <Activity className="size-5 mr-2" />
+                Recent Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3">
+                {employeeDetails?.company_data?.activity?.map(
+                  (activity, index) => (
+                    <div
+                      key={index}
+                      className="border-b pb-2 last:border-b-0 last:pb-0"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">
+                            {new Date(activity.Date).toLocaleDateString()}
+                          </p>
+                          <div className="grid grid-cols-2 gap-2 mt-1">
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                Teams Messages
+                              </p>
+                              <p className="text-sm">
+                                {activity.Teams_Messages_Sent}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                Emails Sent
+                              </p>
+                              <p className="text-sm">{activity.Emails_Sent}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                Meetings
+                              </p>
+                              <p className="text-sm">
+                                {activity.Meetings_Attended}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                Work Hours
+                              </p>
+                              <p className="text-sm">{activity.Work_Hours}</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )
+                )}
+                {(!employeeDetails?.company_data?.activity ||
+                  employeeDetails.company_data.activity.length === 0) && (
+                  <p className="text-sm text-muted-foreground">
+                    No recent activity
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -358,12 +420,12 @@ export function EmployeeDashboard() {
 
         {/* Right Column */}
         <div className="grid grid-cols-1 gap-4">
-          {/* Mood Stats Card */}
+          {/* Mood & Vibe Card */}
           <Card className="h-full">
             <CardHeader className="pb-2 space-y-1">
               <CardTitle className="flex items-center text-lg sm:text-xl">
                 <BarChart className="size-4 sm:size-5 mr-2" />
-                Mood Statistics
+                Mood & Vibe Statistics
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -371,10 +433,10 @@ export function EmployeeDashboard() {
                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <p className="text-xs sm:text-sm text-muted-foreground">
-                      Average Score
+                      Average Mood Score
                     </p>
                     <p className="text-xl sm:text-2xl font-medium">
-                      {employeeDetails?.mood_stats.average_score}
+                      {employeeDetails?.mood_stats?.average_score || 0}
                     </p>
                   </div>
                   <div>
@@ -382,44 +444,149 @@ export function EmployeeDashboard() {
                       Total Sessions
                     </p>
                     <p className="text-xl sm:text-2xl font-medium">
-                      {employeeDetails?.mood_stats.total_sessions}
+                      {employeeDetails?.mood_stats?.total_sessions || 0}
                     </p>
                   </div>
                 </div>
 
-                <div>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Emotion Distribution
-                  </p>
-                  <div className="grid gap-2">
-                    {employeeDetails?.mood_stats.emotion_distribution &&
-                      Object.entries(
-                        employeeDetails.mood_stats.emotion_distribution
-                      ).map(([emotion, count]) => (
-                        <div key={emotion} className="flex flex-col">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-sm">{emotion}</span>
-                            <span className="text-sm font-medium">{count}</span>
-                          </div>
-                          <div className="w-full bg-muted rounded-full h-2">
-                            <div
-                              className="bg-primary h-2 rounded-full"
-                              style={{
-                                width: `${
-                                  (count /
-                                    Object.values(
-                                      employeeDetails.mood_stats
-                                        .emotion_distribution
-                                    ).reduce((a, b) => a + b, 0)) *
-                                  100
-                                }%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
+                {employeeDetails?.mood_stats?.last_5_scores &&
+                  employeeDetails.mood_stats.last_5_scores.length > 0 && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Last 5 Mood Scores
+                      </p>
+                      <div className="grid gap-2">
+                        {employeeDetails.mood_stats.last_5_scores.map(
+                          (score, index) => (
+                            <div key={index} className="flex flex-col">
+                              <div className="flex justify-between items-center mb-1">
+                                <span className="text-sm">Score {index + 1}</span>
+                                <span className="text-sm font-medium">{score}/5</span>
+                              </div>
+                              <div className="w-full bg-muted/50 dark:bg-muted/30 rounded-full h-2">
+                                <div
+                                  className="bg-primary/80 dark:bg-primary/90 h-2 rounded-full transition-all duration-300"
+                                  style={{
+                                    width: `${(score / 5) * 100}%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                {employeeDetails?.company_data?.vibemeter?.[0] && (
+                  <div className="mt-4 pt-4 border-t">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Latest Vibe Check
+                    </p>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-sm font-medium">
+                          {new Date(
+                            employeeDetails.company_data.vibemeter[0].Response_Date
+                          ).toLocaleDateString()}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Score:{" "}
+                          {employeeDetails.company_data.vibemeter[0].Vibe_Score}
+                          /5
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Onboarding Card */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center">
+                <FileText className="size-5 mr-2" />
+                Onboarding Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3">
+                {employeeDetails?.company_data?.onboarding?.map(
+                  (onboarding, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <p className="font-medium">Joining Date</p>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(
+                            onboarding.Joining_Date
+                          ).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <p className="font-medium">Feedback</p>
+                        <p className="text-sm text-muted-foreground">
+                          {onboarding.Onboarding_Feedback}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <p className="font-medium">Mentor Assigned</p>
+                        <p className="text-sm text-muted-foreground">
+                          {onboarding.Mentor_Assigned ? "Yes" : "No"}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <p className="font-medium">Initial Training</p>
+                        <p className="text-sm text-muted-foreground">
+                          {onboarding.Initial_Training_Completed
+                            ? "Completed"
+                            : "Pending"}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Rewards Card */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center">
+                <Award className="size-5 mr-2" />
+                Rewards & Recognition
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3">
+                {employeeDetails?.company_data?.rewards?.map(
+                  (reward, index) => (
+                    <div
+                      key={index}
+                      className="border-b pb-2 last:border-b-0 last:pb-0"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">{reward.Award_Type}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(reward.Award_Date).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <span className="text-sm bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-1 rounded">
+                          {reward.Reward_Points} points
+                        </span>
+                      </div>
+                    </div>
+                  )
+                )}
+                {(!employeeDetails?.company_data?.rewards ||
+                  employeeDetails.company_data.rewards.length === 0) && (
+                  <p className="text-sm text-muted-foreground">
+                    No rewards yet
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -448,9 +615,11 @@ export function EmployeeDashboard() {
                               : "HR Chat"}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {new Date(
-                              employeeDetails.chat_summary.last_message_time
-                            ).toLocaleString()}
+                            {employeeDetails.chat_summary.last_message_time
+                              ? new Date(
+                                  employeeDetails.chat_summary.last_message_time
+                                ).toLocaleString()
+                              : "No recent messages"}
                           </p>
                         </div>
                       </div>
@@ -461,7 +630,8 @@ export function EmployeeDashboard() {
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2">
-                      {employeeDetails.chat_summary.last_message}
+                      {employeeDetails.chat_summary.last_message ||
+                        "No messages yet"}
                     </p>
                     {employeeDetails.chat_summary.is_escalated && (
                       <div className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
@@ -485,72 +655,6 @@ export function EmployeeDashboard() {
             </CardFooter>
           </Card>
         </div>
-
-        {/* Quick Actions Card - Full Width Bottom */}
-        <Card className="col-span-1 lg:col-span-2">
-          <CardHeader className="pb-2 space-y-1">
-            <CardTitle className="flex items-center text-lg sm:text-xl">
-              <FileText className="size-4 sm:size-5 mr-2" />
-              Quick Actions
-            </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
-              Common tasks and resources
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-              <Button
-                variant="outline"
-                className="h-auto flex flex-col items-center justify-center p-3 sm:py-4"
-              >
-                <FileText className="size-5 sm:size-6 mb-1 sm:mb-2" />
-                <span className="text-sm sm:text-base">Documents</span>
-                {(employeeDetails?.company_data?.activity?.length ?? 0) > 0 && (
-                  <span className="text-[10px] sm:text-xs text-muted-foreground mt-1">
-                    {employeeDetails?.company_data?.activity?.length} updates
-                  </span>
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                className="h-auto flex flex-col items-center justify-center p-3 sm:py-4"
-              >
-                <Calendar className="size-5 sm:size-6 mb-1 sm:mb-2" />
-                <span className="text-sm sm:text-base">Schedule</span>
-                {(employeeDetails?.upcoming_meets ?? 0) > 0 && (
-                  <span className="text-[10px] sm:text-xs text-muted-foreground mt-1">
-                    {employeeDetails?.upcoming_meets} upcoming
-                  </span>
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                className="h-auto flex flex-col items-center justify-center p-3 sm:py-4 w-full"
-              >
-                <Bell className="size-5 sm:size-6 mb-1 sm:mb-2" />
-                <span className="text-sm sm:text-base">Sessions</span>
-                {(employeeDetails?.upcoming_sessions ?? 0) > 0 && (
-                  <span className="text-[10px] sm:text-xs text-muted-foreground mt-1">
-                    {employeeDetails?.upcoming_sessions} scheduled
-                  </span>
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                className="h-auto flex flex-col items-center justify-center p-3 sm:py-4"
-                onClick={() => router.push("/chat")}
-              >
-                <MessageSquare className="size-5 sm:size-6 mb-1 sm:mb-2" />
-                <span className="text-sm sm:text-base">Chat</span>
-                {(employeeDetails?.chat_summary?.unread_count ?? 0) > 0 && (
-                  <span className="text-[10px] sm:text-xs text-muted-foreground mt-1">
-                    {employeeDetails?.chat_summary?.unread_count} unread
-                  </span>
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
