@@ -64,7 +64,7 @@ const PureChatItem = ({
             <MessageSquare className="size-4" />
             <div className="flex flex-col">
               <span className="text-sm truncate">{chat.id}</span>
-              <span className="text-xs text-muted-foreground truncate">
+              <span className="text-xs text-sidebar-foreground/80 truncate">
                 {chat.lastMessage}
               </span>
             </div>

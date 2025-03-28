@@ -91,7 +91,7 @@ export function HeaderUserNav() {
           <LayoutDashboard className="mr-2 size-4" />
           Dashboard
         </DropdownMenuItem>
-        <DropdownMenuItem
+        {/* <DropdownMenuItem
           className="cursor-pointer"
           onSelect={() => {
             router.push("/chat");
@@ -99,7 +99,7 @@ export function HeaderUserNav() {
         >
           <MessageSquare className="mr-2 size-4" />
           Open Chat
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <DropdownMenuItem
           className="cursor-pointer"
           onSelect={() => setTheme(theme === "dark" ? "light" : "dark")}
