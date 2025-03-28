@@ -73,7 +73,7 @@
     --button-tint-border: 84 40% 30%;
     --button-tint-text: 0 0% 98%;
     --foreground: 0 0% 98%;
-    --card: 240 5.9% 10%;
+    --card: 84 53% 5% / 0.7;
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
@@ -216,6 +216,13 @@
 }
 
 @layer components {
+  .bg-card,
+  .card,
+  div[class*="bg-card"],
+  div[class*="card"] {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
 
   .bg-card button,
   .card button,
