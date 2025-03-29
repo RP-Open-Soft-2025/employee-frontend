@@ -21,6 +21,7 @@ interface ChatHistoryResponse {
   total_messages: number;
   chat_mode: string;
   is_escalated: boolean;
+  created_at: string;
 }
 
 interface ChatsApiResponse {
@@ -36,6 +37,7 @@ interface ChatHistory {
   isEscalated: boolean;
   totalMessages: number;
   unreadCount: number;
+  created_at: string;
 }
 
 const PureChatItem = ({
@@ -49,6 +51,16 @@ const PureChatItem = ({
   setOpenMobile: (open: boolean) => void;
   onChatClick: (chatId: string) => void;
 }) => {
+  const formattedDate = chat.created_at
+    ? new Date(chat.created_at).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : chat.id;
+
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
@@ -63,7 +75,7 @@ const PureChatItem = ({
           <div className="flex items-center gap-2">
             <MessageSquare className="size-4" />
             <div className="flex flex-col">
-              <span className="text-sm truncate">{chat.id}</span>
+              <span className="text-sm truncate">{formattedDate}</span>
               <span className="text-xs text-sidebar-foreground/80 truncate">
                 {chat.lastMessage}
               </span>
@@ -117,8 +129,8 @@ export function SidebarHistory({ user }: { user: any }) {
         // sort chats based on date with latest chat at the end
         result.chats.sort((a: ChatHistoryResponse, b: ChatHistoryResponse) => {
           return (
-            new Date(a.last_message_time).getTime() -
-            new Date(b.last_message_time).getTime()
+            new Date(a.created_at).getTime() -
+            new Date(b.created_at).getTime()
           );
         });
 
@@ -131,6 +143,7 @@ export function SidebarHistory({ user }: { user: any }) {
             isEscalated: chat.is_escalated,
             totalMessages: chat.total_messages,
             unreadCount: chat.unread_count,
+            created_at: chat.created_at,
           }))
         );
       }
