@@ -9,7 +9,23 @@ import type { UseChatHelpers } from "@ai-sdk/react";
 import { cn } from "@/lib/utils";
 
 // Chat separator component
-const ChatSeparator = ({ chatId }: { chatId: string }) => {
+const ChatSeparator = ({
+  chatId,
+  createdAt,
+}: {
+  chatId: string;
+  createdAt: string;
+}) => {
+  const formattedDate = createdAt
+    ? new Date(createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : null;
+
   return (
     <div className="flex items-center justify-center">
       <div
@@ -19,7 +35,7 @@ const ChatSeparator = ({ chatId }: { chatId: string }) => {
           "dark:bg-secondary/50 dark:text-muted-foreground/80"
         )}
       >
-        Chat ID: {chatId}
+        {formattedDate ? formattedDate : chatId}
       </div>
     </div>
   );
@@ -48,15 +64,35 @@ function PureMessages({
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
-  // Group messages by chat ID
+  // console.log("Messages:", messages);
+
+  // Group messages by chat ID and extract created_at from message ID
   const groupedMessages = messages.reduce((acc, message) => {
-    const messageChatId = message.id.split("-")[0];
+    const messageId = message.id;
+
+    // First split by the last hyphen to separate the message number
+    const [chatIdAndDate, messageNumber] = messageId.split(/(?=-[0-9]+$)/);
+    // chatIdAndDate = "CHATE54BE2-2025-03-22T06:45:44.055000Z"
+    // messageNumber = "-1"
+
+    // Then split by the first hyphen to get chat ID and date
+    const [messageChatId, createdAt] = chatIdAndDate.split(/(?<=^[^-]+)-/);
+    // chatId = "CHATE54BE2"
+    // date = "2025-03-22T06:45:44.055000Z"
+
+    // console.log(chatIdAndDate, messageNumber, messageChatId, createdAt);
+
     if (!acc[messageChatId]) {
-      acc[messageChatId] = [];
+      acc[messageChatId] = {
+        messages: [],
+        createdAt,
+      };
     }
-    acc[messageChatId].push(message);
+    acc[messageChatId].messages.push(message);
     return acc;
-  }, {} as Record<string, UIMessage[]>);
+  }, {} as Record<string, { messages: UIMessage[]; createdAt: string }>);
+
+  console.log("Grouped messages:", groupedMessages);
 
   return (
     <div
@@ -66,7 +102,10 @@ function PureMessages({
       {messages.length === 0 && <Overview />}
 
       {Object.entries(groupedMessages).map(
-        ([messageChatId, chatMessages], groupIndex) => (
+        (
+          [messageChatId, { messages: chatMessages, createdAt }],
+          groupIndex
+        ) => (
           <div
             key={messageChatId}
             id={`chat-${messageChatId}`}
@@ -76,7 +115,7 @@ function PureMessages({
                 : ""
             }`}
           >
-            <ChatSeparator chatId={messageChatId} />
+            <ChatSeparator chatId={messageChatId} createdAt={createdAt} />
             {chatMessages.map((message, index) => (
               <PreviewMessage
                 key={message.id}

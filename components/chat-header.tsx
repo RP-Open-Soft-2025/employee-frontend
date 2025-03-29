@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useWindowSize } from "usehooks-ts";
-import { ChevronUp, LayoutDashboard, MessageSquare } from "lucide-react";
+import { ChevronUp, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useDispatch, useSelector } from "react-redux";

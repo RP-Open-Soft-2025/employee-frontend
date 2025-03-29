@@ -43,6 +43,7 @@ interface ChatHistoryResponse {
   total_messages: number;
   chat_mode: string;
   is_escalated: boolean;
+  created_at: string;
 }
 
 export function ScheduledChatClient() {
@@ -193,7 +194,7 @@ export function ScheduledChatClient() {
     try {
       console.log("Fetching messages for chat ID:", id);
       const response = await fetchProtected(`/employee/chats/${id}/messages`);
-      console.log("Chat messages response:", response);
+      // console.log("Chat messages response:", response);
 
       if (response?.messages) {
         const uiMessages: UIMessage[] = response.messages.map(
@@ -229,8 +230,8 @@ export function ScheduledChatClient() {
         // sort chats based on date with latest chat at the end
         result.chats.sort((a: ChatHistoryResponse, b: ChatHistoryResponse) => {
           return (
-            new Date(a.last_message_time).getTime() -
-            new Date(b.last_message_time).getTime()
+            new Date(a.created_at).getTime() -
+            new Date(b.created_at).getTime()
           );
         });
 
@@ -242,7 +243,10 @@ export function ScheduledChatClient() {
           isEscalated: chat.is_escalated,
           totalMessages: chat.total_messages,
           unreadCount: chat.unread_count,
+          created_at: chat.created_at,
         }));
+
+        // console.log("Chats:", chats);
 
         // Fetch messages for all chats
         const allChatMessages: UIMessage[] = [];
@@ -250,7 +254,12 @@ export function ScheduledChatClient() {
           try {
             const messages = await fetchChatMessages(chat.id);
             if (messages) {
-              allChatMessages.push(...messages);
+              // Add created_at to each message's ID
+              const messagesWithCreatedAt = messages.map(msg => ({
+                ...msg,
+                id: `${chat.id}-${chat.created_at}-${msg.id.split('-').pop()}`
+              }));
+              allChatMessages.push(...messagesWithCreatedAt);
             }
           } catch (error) {
             console.error(
@@ -259,7 +268,7 @@ export function ScheduledChatClient() {
             );
           }
         }
-
+        // console.log("All chat messages:", allChatMessages);
         setAllMessages(allChatMessages);
       }
     } catch (e) {
