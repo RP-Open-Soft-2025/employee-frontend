@@ -357,7 +357,7 @@ export function EmployeeDashboard() {
                         </p>
                       </div>
                       <span className="text-sm bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-1 rounded">
-                        {leave.Leave_Days} days
+                        Total leave{leave.Leave_Days !== 1 ? 's' : ''}: {leave.Leave_Days} day{leave.Leave_Days !== 1 ? 's' : ''}
                       </span>
                     </div>
                   </div>
