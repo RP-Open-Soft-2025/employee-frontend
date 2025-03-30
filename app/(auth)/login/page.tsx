@@ -57,7 +57,7 @@ export default function Page() {
       // );
       // console.log("Logged in successfully");
 
-      console.log(API_URL)
+      console.log(API_URL);
 
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -77,11 +77,11 @@ export default function Page() {
           const refreshToken = result.refresh_token;
           const role = result.role;
           dispatch(
-            loginSuccess({ 
-              role, 
+            loginSuccess({
+              role,
               employee_id: data.employee_id,
               accessToken,
-              refreshToken
+              refreshToken,
             })
           );
           console.log("Logged in successfully");
@@ -102,6 +102,15 @@ export default function Page() {
           type: "error",
           description: result.detail,
         });
+      } else if (response.status === 307) {
+        console.log("First time login - redirecting to password reset");
+        toast({
+          type: "error",
+          description: "First time login - Please reset your password",
+        });
+        const redirectUrl = result.redirect_url;
+        router.push(redirectUrl);
+        return;
       } else {
         console.error("Login failed: Server error");
         toast({
@@ -128,7 +137,9 @@ export default function Page() {
       } else {
         toast({
           type: "error",
-          description: (error instanceof Error ? error.message : String(error)) || "An error occurred during login",
+          description:
+            (error instanceof Error ? error.message : String(error)) ||
+            "An error occurred during login",
         });
       }
 
