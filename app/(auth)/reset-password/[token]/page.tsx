@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
   const token = params?.token as string | undefined;
 
   if (!token) {
-    router.push('/login');
+    router.push("/login");
     return null;
   }
 
@@ -59,10 +59,8 @@ export default function ResetPasswordPage() {
           type: "success",
           description: result.message || "Password reset successful",
         });
-        // Redirect to login page after a delay
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
+        // Redirect to login page
+        router.push("/login");
       } else if (response.status === 400) {
         toast({
           type: "error",
@@ -71,8 +69,9 @@ export default function ResetPasswordPage() {
       } else if (response.status === 404) {
         toast({
           type: "error",
-          description: "Invalid reset token",
+          description: "Invalid reset password link",
         });
+        router.push("/login");
       } else {
         toast({
           type: "error",
@@ -83,7 +82,9 @@ export default function ResetPasswordPage() {
       console.error("Reset password error:", error);
       toast({
         type: "error",
-        description: (error instanceof Error ? error.message : String(error)) || "An error occurred",
+        description:
+          (error instanceof Error ? error.message : String(error)) ||
+          "An error occurred",
       });
     }
   };
@@ -146,11 +147,11 @@ export default function ResetPasswordPage() {
                   required
                 />
               </div>
-              
+
               <SubmitButton isSuccessful={isSuccessful}>
                 Save New Password
               </SubmitButton>
-              
+
               <div className="flex flex-col items-center mt-4">
                 <Link
                   href="/login"
@@ -165,4 +166,4 @@ export default function ResetPasswordPage() {
       </div>
     </div>
   );
-} 
+}
