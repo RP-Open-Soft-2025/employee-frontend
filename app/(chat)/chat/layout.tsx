@@ -6,8 +6,8 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import Script from "next/script";
 import Image from "next/image";
 import { Header } from "@/components/ui/header";
-import logo from "./deloitte-logo.svg";
-import logoDark from "./deloitte-logo-dark.svg";
+import logo from "@/public/images/deloitte-logo.svg";
+import logoDark from "@/public/images/deloitte-logo-dark.svg";
 
 export const experimental_ppr = true;
 

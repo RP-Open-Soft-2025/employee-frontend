@@ -26,6 +26,9 @@ import {
 import { Header } from "@/components/ui/header";
 import { LoadingScreen } from "./loading-screen";
 import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
+import Image from "next/image";
+import logo from "@/public/images/deloitte-logo.svg";
+import logoDark from "@/public/images/deloitte-logo-dark.svg";
 
 interface EmployeeDetails {
   employee_id: string;
@@ -100,7 +103,6 @@ interface Notification {
 export function EmployeeDashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth.user);
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
@@ -110,11 +112,6 @@ export function EmployeeDashboard() {
   // Add client-side only indicator to prevent hydration mismatch
   const [isClientSide, setIsClientSide] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  const employeeId = user?.employee_id;
-  const userRole = user?.userRole;
-  const accessToken = user?.accessToken;
-  const refreshToken = user?.refreshToken;
 
   const { fetchProtected } = useProtectedApi();
 
@@ -281,14 +278,22 @@ export function EmployeeDashboard() {
         onNotificationClick={markNotificationAsRead}
         onMarkAllAsRead={markAllNotificationsAsRead}
       >
-        <h1 className="text-2xl sm:text-3xl font-bold hidden md:block">
-          Welcome, {employeeDetails?.employee_id}
-        </h1>
-        <p className="text-muted-foreground hidden md:block">
-          Your employee dashboard
-        </p>
-        <h1 className="text-xl sm:text-2xl font-bold md:hidden">Dashboard</h1>
+        <Image src={logo} alt="Logo" className="h-8 w-auto dark:hidden" />
+        <Image src={logoDark} alt="Logo" className="h-8 w-auto hidden dark:block" />
       </Header>
+
+      <Card>
+        <CardContent>
+          <div className="flex flex-col items-center text-center space-y-2 pt-6">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              Welcome back, <span className="text-primary dark:text-primary-foreground text-nowrap">{employeeDetails?.name}</span>
+            </h1>
+            <p className="text-xl sm:text-2xl font-semibold text-muted-foreground max-w-screen-toast-mobile">
+              Your employee dashboard
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mt-4">
         {/* Left Column */}
