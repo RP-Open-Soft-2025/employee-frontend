@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Bell, CheckCircle2, Circle } from "lucide-react";
+import { Bell, Mail, MailOpen } from "lucide-react";
 import { HeaderUserNav } from "@/components/chat-header";
 import Link from "next/link";
 import {
@@ -103,9 +103,9 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
                       <div className="flex justify-between w-full items-start">
                         <div className="flex items-center gap-2">
                           {notification.status === 'unread' ? (
-                            <Circle className="size-4 text-muted-foreground" />
+                            <Mail className="size-4 text-muted-foreground" />
                           ) : (
-                            <CheckCircle2 className="size-4 text-muted-foreground" />
+                            <MailOpen className="size-4 text-muted-foreground" />
                           )}
                           <h4 className="font-medium">{notification.title}</h4>
                         </div>
