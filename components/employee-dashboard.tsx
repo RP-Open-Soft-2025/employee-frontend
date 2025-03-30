@@ -120,7 +120,8 @@ export function EmployeeDashboard() {
 
   // Add ping effect for active chats
   useEffect(() => {
-    let pingInterval: NodeJS.Timeout;
+    // biome-ignore lint/style/useConst: We need let here as the variable is assigned later
+    let pingInterval: NodeJS.Timeout | undefined;
 
     // Function to handle ping
     const handlePing = async () => {
