@@ -14,17 +14,17 @@ export function Header({ notifications, children }: HeaderProps) {
   return (
     <div className="flex flex-row justify-between items-center my-4 px-4 md:px-6 py-2 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm dark:bg-dark-mode-bg bg-[#F9FAFC]">
       <Link href="/">{children}</Link>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-5">
         {notifications && (
           <Button
             variant="outline"
             size="sm"
             className="relative hidden md:flex"
           >
-            <Bell className="size-4 mr-2" />
+            <Bell className="size-4" />
             Notifications
             {notifications > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full size-5 flex items-center justify-center text-xs">
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full size-5 flex items-center justify-center text-xs">
                 {notifications}
               </span>
             )}
