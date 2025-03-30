@@ -2,8 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useWindowSize } from "usehooks-ts";
-import { ChevronUp, LayoutDashboard } from "lucide-react";
-import Image from "next/image";
+import { ChevronDown, LayoutDashboard, UserCircle } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, checkAuth } from "@/redux/features/auth";
@@ -69,15 +68,9 @@ export function HeaderUserNav() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white flex py-1.5 px-4 h-fit order-4 md:ml-auto gap-2">
-          <Image
-            src={`https://avatar.vercel.sh/${user?.employee_id}`}
-            alt={user?.employee_id ?? "User Avatar"}
-            width={24}
-            height={24}
-            className="rounded-full"
-          />
+          <UserCircle className="size-5" />
           <span className="truncate hidden md:block">{user?.employee_id}</span>
-          <ChevronUp className="size-4" />
+          <ChevronDown className="size-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
