@@ -109,6 +109,7 @@ export function EmployeeDashboard() {
     useState<EmployeeDetails | null>(null);
   // Add client-side only indicator to prevent hydration mismatch
   const [isClientSide, setIsClientSide] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const employeeId = user?.employee_id;
   const userRole = user?.userRole;
@@ -224,10 +225,17 @@ export function EmployeeDashboard() {
   };
 
   useEffect(() => {
-    fetchEmployeeDetails();
-    fetchEmployeeScheduledMeets();
-    fetchEmployeeScheduledSessions();
-    fetchEmployeeChats();
+    const fetchData = async () => {
+      await Promise.all([
+        fetchEmployeeDetails(),
+        fetchEmployeeScheduledMeets(),
+        fetchEmployeeScheduledSessions(),
+        fetchEmployeeChats(),
+      ]);
+      setLoading(false);
+    };
+
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -242,7 +250,7 @@ export function EmployeeDashboard() {
   }, [dispatch, isAuthenticated, router]);
 
   // If not authenticated or still on server, show a placeholder with matching structure
-  if (!isClientSide || !isAuthenticated) {
+  if (loading || !isClientSide || !isAuthenticated) {
     return <LoadingScreen />;
   }
 

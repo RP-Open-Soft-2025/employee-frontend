@@ -25,16 +25,6 @@ interface ScheduledSession {
   notes: string | null;
 }
 
-interface ChatHistory {
-  id: string;
-  lastMessage: string;
-  lastMessageTime: string;
-  mode: string;
-  isEscalated: boolean;
-  totalMessages: number;
-  unreadCount: number;
-}
-
 interface ChatHistoryResponse {
   chat_id: string;
   last_message: string;
@@ -48,8 +38,7 @@ interface ChatHistoryResponse {
 
 export function ScheduledChatClient() {
   const dispatch = useDispatch();
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [pendingSession, setPendingSession] = useState<ScheduledSession | null>(
     null
   );
@@ -66,83 +55,26 @@ export function ScheduledChatClient() {
     (state: RootState) => state.chat.activeChatId
   );
 
-  // Get chat status from Redux
-  const chatStatus = useSelector((state: RootState) => state.chat.chatStatus);
-
   const { fetchProtected } = useProtectedApi();
 
   // Initial data loading
   useEffect(() => {
-    if (isAuthenticated) {
-      console.log(
-        "Authenticated, fetching scheduled sessions and chat history"
-      );
-      fetchScheduledSession();
-      fetchChatHistory();
-    }
+    const fetchData = async () => {
+      if (isAuthenticated) {
+        console.log(
+          "Authenticated, fetching scheduled sessions and chat history"
+        );
+        await Promise.all([fetchScheduledSession(), fetchChatHistory()]);
+        setLoading(false);
+      }
+    };
+    fetchData();
     // eslint-disable-next-line
   }, [isAuthenticated]);
-
-  // Handle active chat from Redux
-  useEffect(() => {
-    const chatId = activeChatId;
-    console.log("activeChatId effect running:", chatId);
-
-    if (chatId && !loading) {
-      console.log("Fetching messages for active chat:", chatId);
-
-      // Use inline function to avoid stale closure issues
-      (async () => {
-        try {
-          setLoading(true);
-          const response = await fetchProtected(
-            `/employee/chats/${chatId}/messages`
-          );
-          console.log("Chat messages response:", response);
-
-          // Process messages only if component is still mounted and chatId hasn't changed
-          if (response?.messages && chatId === activeChatId) {
-            const uiMessages: UIMessage[] = response.messages.map(
-              (message: any, index: number) => ({
-                id: `${chatId}-msg-${index}`,
-                role: message.sender === "bot" ? "assistant" : "user",
-                content: message.text,
-                createdAt: new Date(message.timestamp).toISOString(),
-              })
-            );
-
-            setInitialMessages(uiMessages);
-
-            // Get chat mode for state tracking, but always keep editable
-            const chatMode = response.chat_mode || "active";
-            console.log("Chat mode from useEffect:", chatMode);
-
-            dispatch(setChatStatus(chatMode));
-
-            // Only update messages in Redux, but don't affect activeChatId
-            dispatch(setMessages(uiMessages));
-
-            if (response.is_escalated) {
-              console.log("Chat is escalated to HR");
-            }
-          }
-        } catch (error) {
-          console.error("Failed to fetch messages:", error);
-        } finally {
-          // Only set loading to false if component is still mounted and chatId hasn't changed
-          if (chatId === activeChatId) {
-            setLoading(false);
-          }
-        }
-      })();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeChatId]); // Only depend on activeChatId, use refs for other dependencies
 
   // Fetch scheduled session and check status
   const fetchScheduledSession = async () => {
     try {
-      setLoading(true);
       const result = await fetchProtected("/employee/scheduled-sessions");
 
       console.log("Scheduled sessions response:", result);
@@ -184,8 +116,6 @@ export function ScheduledChatClient() {
       }
     } catch (error) {
       console.error("Failed to fetch scheduled sessions:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -230,8 +160,7 @@ export function ScheduledChatClient() {
         // sort chats based on date with latest chat at the end
         result.chats.sort((a: ChatHistoryResponse, b: ChatHistoryResponse) => {
           return (
-            new Date(a.created_at).getTime() -
-            new Date(b.created_at).getTime()
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
           );
         });
 
@@ -255,9 +184,9 @@ export function ScheduledChatClient() {
             const messages = await fetchChatMessages(chat.id);
             if (messages) {
               // Add created_at to each message's ID
-              const messagesWithCreatedAt = messages.map(msg => ({
+              const messagesWithCreatedAt = messages.map((msg) => ({
                 ...msg,
-                id: `${chat.id}-${chat.created_at}-${msg.id.split('-').pop()}`
+                id: `${chat.id}-${chat.created_at}-${msg.id.split("-").pop()}`,
               }));
               allChatMessages.push(...messagesWithCreatedAt);
             }
@@ -289,7 +218,8 @@ export function ScheduledChatClient() {
 
   // If we have an active chat ID, render the chat interface
   // Use the chat ID that is available (prefer local state but fall back to Redux)
-  const chatIdToUse = activeChatId || reduxActiveChatId || (pendingSession?.chat_id || null);
+  const chatIdToUse =
+    activeChatId || reduxActiveChatId || pendingSession?.chat_id || null;
   console.log("Rendering chat with ID:", chatIdToUse);
 
   return (
