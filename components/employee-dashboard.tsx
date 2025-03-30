@@ -27,8 +27,6 @@ import { Header } from "@/components/ui/header";
 import { LoadingScreen } from "./loading-screen";
 import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
 interface EmployeeDetails {
   employee_id: string;
   name: string;
@@ -90,6 +88,15 @@ interface EmployeeDetails {
   };
 }
 
+interface Notification {
+  id: string;
+  employee_id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  status: string;
+}
+
 export function EmployeeDashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -97,7 +104,7 @@ export function EmployeeDashboard() {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
-  const [notifications, setNotifications] = useState(3);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [employeeDetails, setEmployeeDetails] =
     useState<EmployeeDetails | null>(null);
   // Add client-side only indicator to prevent hydration mismatch
@@ -109,6 +116,69 @@ export function EmployeeDashboard() {
   const refreshToken = user?.refreshToken;
 
   const { fetchProtected } = useProtectedApi();
+
+  // Add ping effect for active chats
+  useEffect(() => {
+    let pingInterval: NodeJS.Timeout;
+
+    // Function to handle ping
+    const handlePing = async () => {
+      try {
+        console.log("Making ping request");
+        const response = await fetchProtected("/employee/ping", {
+          method: "GET",
+        });
+        console.log("Ping response:", response);
+
+        // sort the notifications by created_at date
+        const sortedNotifications = response.notifications.sort(
+          (a: Notification, b: Notification) => {
+            return (
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+            );
+          }
+        );
+
+        setNotifications(sortedNotifications);
+      } catch (error) {
+        console.error("Failed to ping employee endpoint:", error);
+      }
+    };
+
+    // Call ping immediately
+    handlePing();
+
+    // Set up interval for subsequent pings
+    pingInterval = setInterval(handlePing, 30000); // 30 seconds
+
+    // Cleanup interval on unmount
+    return () => {
+      if (pingInterval) {
+        // console.log("Cleaning up ping interval");
+        clearInterval(pingInterval);
+      }
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const markNotificationAsRead = async (notificationId: string) => {
+    try {
+      const result = await fetchProtected(`/employee/notification/${notificationId}/read`, {
+        method: "PATCH",
+      });
+
+      // update the notifications state
+      setNotifications(notifications.map(notification => 
+        notification.id === notificationId ? { ...notification, status: "read" } : notification
+      ));
+
+      console.log("Notification marked as read:", result);
+    } catch (e) {
+      console.error("Failed to mark notification as read:", e);
+    }
+  };
 
   const fetchEmployeeDetails = async () => {
     try {
@@ -153,16 +223,6 @@ export function EmployeeDashboard() {
     }
   };
 
-  const fetchEmployeeChatMessages = async (chatId: string) => {
-    try {
-      const result = await fetchProtected(`/employee/chats/${chatId}/messages`);
-      console.log("Employee chat messages:", result);
-      // Process the result here
-    } catch (e) {
-      console.error("Failed to fetch employee chat messages:", e);
-    }
-  };
-
   useEffect(() => {
     fetchEmployeeDetails();
     fetchEmployeeScheduledMeets();
@@ -189,7 +249,7 @@ export function EmployeeDashboard() {
   // Normal render for client-side with authentication
   return (
     <div className="container mx-auto p-2 sm:p-4 md:p-6">
-      <Header notifications={notifications}>
+      <Header notifications={notifications} onNotificationClick={markNotificationAsRead}>
         <h1 className="text-2xl sm:text-3xl font-bold hidden md:block">
           Welcome, {employeeDetails?.employee_id}
         </h1>
@@ -360,52 +420,50 @@ export function EmployeeDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-3">
-                {employeeDetails?.company_data?.activity?.map(
-                  (activity) => (
-                    <div
-                      key={`activity-${activity.Date}`}
-                      className="border-b pb-2 last:border-b-0 last:pb-0"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">
-                            {new Date(activity.Date).toLocaleDateString()}
-                          </p>
-                          <div className="grid grid-cols-2 gap-2 mt-1">
-                            <div>
-                              <p className="text-xs text-muted-foreground">
-                                Teams Messages
-                              </p>
-                              <p className="text-sm">
-                                {activity.Teams_Messages_Sent}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-muted-foreground">
-                                Emails Sent
-                              </p>
-                              <p className="text-sm">{activity.Emails_Sent}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-muted-foreground">
-                                Meetings
-                              </p>
-                              <p className="text-sm">
-                                {activity.Meetings_Attended}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-muted-foreground">
-                                Work Hours
-                              </p>
-                              <p className="text-sm">{activity.Work_Hours}</p>
-                            </div>
+                {employeeDetails?.company_data?.activity?.map((activity) => (
+                  <div
+                    key={`activity-${activity.Date}`}
+                    className="border-b pb-2 last:border-b-0 last:pb-0"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium">
+                          {new Date(activity.Date).toLocaleDateString()}
+                        </p>
+                        <div className="grid grid-cols-2 gap-2 mt-1">
+                          <div>
+                            <p className="text-xs text-muted-foreground">
+                              Teams Messages
+                            </p>
+                            <p className="text-sm">
+                              {activity.Teams_Messages_Sent}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">
+                              Emails Sent
+                            </p>
+                            <p className="text-sm">{activity.Emails_Sent}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">
+                              Meetings
+                            </p>
+                            <p className="text-sm">
+                              {activity.Meetings_Attended}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">
+                              Work Hours
+                            </p>
+                            <p className="text-sm">{activity.Work_Hours}</p>
                           </div>
                         </div>
                       </div>
                     </div>
-                  )
-                )}
+                  </div>
+                ))}
                 {(!employeeDetails?.company_data?.activity ||
                   employeeDetails.company_data.activity.length === 0) && (
                   <p className="text-sm text-muted-foreground">
@@ -457,10 +515,17 @@ export function EmployeeDashboard() {
                       <div className="grid gap-2">
                         {employeeDetails.mood_stats.last_5_scores.map(
                           (score, scoreIndex) => (
-                            <div key={`mood-score-${scoreIndex}-${score}`} className="flex flex-col">
+                            <div
+                              key={`mood-score-${scoreIndex}-${score}`}
+                              className="flex flex-col"
+                            >
                               <div className="flex justify-between items-center mb-1">
-                                <span className="text-sm">Score {scoreIndex + 1}</span>
-                                <span className="text-sm font-medium">{score}/5</span>
+                                <span className="text-sm">
+                                  Score {scoreIndex + 1}
+                                </span>
+                                <span className="text-sm font-medium">
+                                  {score}/5
+                                </span>
                               </div>
                               <div className="w-full bg-muted/50 dark:bg-muted/30 rounded-full h-2">
                                 <div
@@ -514,7 +579,10 @@ export function EmployeeDashboard() {
               <div className="grid gap-3">
                 {employeeDetails?.company_data?.onboarding?.map(
                   (onboarding) => (
-                    <div key={`onboarding-${onboarding.Joining_Date}`} className="space-y-2">
+                    <div
+                      key={`onboarding-${onboarding.Joining_Date}`}
+                      className="space-y-2"
+                    >
                       <div className="flex justify-between items-center">
                         <p className="font-medium">Joining Date</p>
                         <p className="text-sm text-muted-foreground">
@@ -560,26 +628,24 @@ export function EmployeeDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-3">
-                {employeeDetails?.company_data?.rewards?.map(
-                  (reward) => (
-                    <div
-                      key={`reward-${reward.Award_Date}-${reward.Award_Type}`}
-                      className="border-b pb-2 last:border-b-0 last:pb-0"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">{reward.Award_Type}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(reward.Award_Date).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <span className="text-sm bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-1 rounded">
-                          {reward.Reward_Points} points
-                        </span>
+                {employeeDetails?.company_data?.rewards?.map((reward) => (
+                  <div
+                    key={`reward-${reward.Award_Date}-${reward.Award_Type}`}
+                    className="border-b pb-2 last:border-b-0 last:pb-0"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium">{reward.Award_Type}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(reward.Award_Date).toLocaleDateString()}
+                        </p>
                       </div>
+                      <span className="text-sm bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-1 rounded">
+                        {reward.Reward_Points} points
+                      </span>
                     </div>
-                  )
-                )}
+                  </div>
+                ))}
                 {(!employeeDetails?.company_data?.rewards ||
                   employeeDetails.company_data.rewards.length === 0) && (
                   <p className="text-sm text-muted-foreground">
