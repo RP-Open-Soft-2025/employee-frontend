@@ -91,16 +91,16 @@ export default function Page() {
           console.error("Login failed: No access token received");
           toast({
             type: "error",
-            description: "Invalid credentials!",
+            description: result.detail,
           });
           dispatch(loginFailure({ error: "Invalid login" }));
         }
       } else if (response.status === 403) {
-        console.error("Login failed: Invalid credentials");
+        console.error("Login failed: ", result.detail);
         dispatch(loginFailure({ error: "Invalid login" }));
         toast({
           type: "error",
-          description: "Invalid credentials!",
+          description: result.detail,
         });
       } else {
         console.error("Login failed: Server error");
