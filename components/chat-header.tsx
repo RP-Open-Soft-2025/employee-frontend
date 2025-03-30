@@ -82,7 +82,7 @@ export function HeaderUserNav() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[--radix-popper-anchor-width] whitespace-nowrap"
+        className="w-[--radix-popper-anchor-width] min-w-[180px] whitespace-nowrap"
       >
         <DropdownMenuItem
           className="cursor-pointer"
