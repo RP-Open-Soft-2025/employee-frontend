@@ -41,22 +41,25 @@ export function Chat({
   useEffect(() => {
     let pingInterval: NodeJS.Timeout;
 
-    // console.log("Ping effect running with:", { isReadonly, id });
+    // Function to handle ping
+    const handlePing = async () => {
+      try {
+        console.log("Making ping request");
+        const response = await fetchProtected("/employee/ping", {
+          method: "GET",
+        });
+        console.log("Ping response:", response);
+      } catch (error) {
+        console.error("Failed to ping employee endpoint:", error);
+      }
+    };
 
     if (!isReadonly && id) {
-      // console.log("Starting ping interval");
-      // Start ping interval
-      pingInterval = setInterval(async () => {
-        try {
-          console.log("Making ping request");
-          const response = await fetchProtected("/employee/ping", {
-            method: "GET",
-          });
-          console.log("Ping response:", response);
-        } catch (error) {
-          console.error("Failed to ping employee endpoint:", error);
-        }
-      }, 30000); // 30 seconds
+      // Call ping immediately
+      handlePing();
+
+      // Set up interval for subsequent pings
+      pingInterval = setInterval(handlePing, 30000); // 30 seconds
     }
 
     // Cleanup interval on unmount or when chat becomes readonly
