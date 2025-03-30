@@ -103,17 +103,17 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
                       <div className="flex justify-between w-full items-start">
                         <div className="flex items-center gap-2">
                           {notification.status === 'unread' ? (
-                            <Mail className="size-4 text-muted-foreground" />
+                            <Mail className="size-4" />
                           ) : (
-                            <MailOpen className="size-4 text-muted-foreground" />
+                            <MailOpen className="size-4" />
                           )}
                           <h4 className="font-medium">{notification.title}</h4>
                         </div>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs">
                           {formatNotificationTime(notification.created_at)}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      <p className="text-sm mt-1 line-clamp-2">
                         {notification.description}
                       </p>
                     </DropdownMenuItem>
