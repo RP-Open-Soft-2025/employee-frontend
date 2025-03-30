@@ -164,14 +164,21 @@ export function EmployeeDashboard() {
 
   const markNotificationAsRead = async (notificationId: string) => {
     try {
-      const result = await fetchProtected(`/employee/notification/${notificationId}/read`, {
-        method: "PATCH",
-      });
+      const result = await fetchProtected(
+        `/employee/notification/${notificationId}/read`,
+        {
+          method: "PATCH",
+        }
+      );
 
       // update the notifications state
-      setNotifications(notifications.map(notification => 
-        notification.id === notificationId ? { ...notification, status: "read" } : notification
-      ));
+      setNotifications(
+        notifications.map((notification) =>
+          notification.id === notificationId
+            ? { ...notification, status: "read" }
+            : notification
+        )
+      );
 
       console.log("Notification marked as read:", result);
     } catch (e) {
@@ -181,16 +188,21 @@ export function EmployeeDashboard() {
 
   const markAllNotificationsAsRead = async () => {
     try {
-      const result = await fetchProtected("/employee/notification/mark_all_as_read", {
-        method: "PATCH",
-      });
-      
+      const result = await fetchProtected(
+        "/employee/notification/mark_all_as_read",
+        {
+          method: "PATCH",
+        }
+      );
+
       // Update all notifications to read status
-      setNotifications(notifications.map(notification => ({
-        ...notification,
-        status: "read"
-      })));
-      
+      setNotifications(
+        notifications.map((notification) => ({
+          ...notification,
+          status: "read",
+        }))
+      );
+
       console.log("All notifications marked as read:", result);
     } catch (e) {
       console.error("Failed to mark all notifications as read:", e);
@@ -273,20 +285,27 @@ export function EmployeeDashboard() {
   // Normal render for client-side with authentication
   return (
     <div className="container mx-auto p-2 sm:p-4 md:p-6">
-      <Header 
-        notifications={notifications} 
+      <Header
+        notifications={notifications}
         onNotificationClick={markNotificationAsRead}
         onMarkAllAsRead={markAllNotificationsAsRead}
       >
         <Image src={logo} alt="Logo" className="h-8 w-auto dark:hidden" />
-        <Image src={logoDark} alt="Logo" className="h-8 w-auto hidden dark:block" />
+        <Image
+          src={logoDark}
+          alt="Logo"
+          className="h-8 w-auto hidden dark:block"
+        />
       </Header>
 
       <Card>
         <CardContent>
           <div className="flex flex-col items-center text-center space-y-2 pt-6">
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              Welcome back, <span className="text-primary dark:text-primary-foreground text-nowrap">{employeeDetails?.name}</span>
+              Welcome back,{" "}
+              <span className="text-primary dark:text-primary-foreground text-nowrap">
+                {employeeDetails?.name}
+              </span>
             </h1>
             <p className="text-xl sm:text-2xl font-semibold text-muted-foreground max-w-screen-toast-mobile">
               Your employee dashboard
@@ -384,7 +403,9 @@ export function EmployeeDashboard() {
                         </p>
                       </div>
                       <span className="text-sm bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-1 rounded">
-                        Total leave{leave.Leave_Days !== 1 ? 's' : ''}: {leave.Leave_Days} day{leave.Leave_Days !== 1 ? 's' : ''}
+                        Total leave{leave.Leave_Days !== 1 ? "s" : ""}:{" "}
+                        {leave.Leave_Days} day
+                        {leave.Leave_Days !== 1 ? "s" : ""}
                       </span>
                     </div>
                   </div>
@@ -701,48 +722,51 @@ export function EmployeeDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-3">
-                {employeeDetails?.chat_summary && (
-                  <>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                          <MessageSquare className="size-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium">
-                            {employeeDetails.chat_summary.chat_mode === "bot"
-                              ? "AI Assistant"
-                              : "HR Chat"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {employeeDetails.chat_summary.last_message_time
-                              ? new Date(
-                                  employeeDetails.chat_summary.last_message_time
-                                ).toLocaleString()
-                              : "No recent messages"}
-                          </p>
-                        </div>
+              {employeeDetails?.chat_summary && (
+                <div
+                  className="grid gap-3 cursor-pointer"
+                  onClick={() =>
+                    router.push(
+                      `/chat?id=${employeeDetails.chat_summary.chat_id}`
+                    )
+                  }
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <MessageSquare className="size-5 text-primary" />
                       </div>
-                      {employeeDetails.chat_summary.unread_count > 0 && (
-                        <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                          {employeeDetails.chat_summary.unread_count}
-                        </span>
-                      )}
+                      <div>
+                        <p className="font-medium">
+                          {employeeDetails.chat_summary.chat_id}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {employeeDetails.chat_summary.last_message_time
+                            ? new Date(
+                                employeeDetails.chat_summary.last_message_time
+                              ).toLocaleString()
+                            : "No recent messages"}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {employeeDetails.chat_summary.last_message ||
-                        "No messages yet"}
-                    </p>
-                    {employeeDetails.chat_summary.is_escalated && (
-                      <div className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
-                        <Bell className="size-4" />
-                        Escalated to HR
-                      </div>
+                    {employeeDetails.chat_summary.unread_count > 0 && (
+                      <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
+                        {employeeDetails.chat_summary.unread_count}
+                      </span>
                     )}
-                  </>
-                )}
-              </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {employeeDetails.chat_summary.last_message ||
+                      "No messages yet"}
+                  </p>
+                  {employeeDetails.chat_summary.is_escalated && (
+                    <div className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
+                      <Bell className="size-4" />
+                      Escalated to HR
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
             <CardFooter>
               <Button

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useSearchParams } from "next/navigation";
 import { Chat } from "@/components/chat";
 import { DataStreamHandler } from "@/components/data-stream-handler";
 import { LoadingScreen } from "@/components/loading-screen";
@@ -36,6 +37,7 @@ interface ChatHistoryResponse {
 }
 
 export function ScheduledChatClient() {
+  const searchParams = useSearchParams();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [pendingSession, setPendingSession] = useState<ScheduledSession | null>(
@@ -53,6 +55,37 @@ export function ScheduledChatClient() {
   const reduxActiveChatId = useSelector(
     (state: RootState) => state.chat.activeChatId
   );
+
+  // Add effect to handle URL parameter and scroll to specific chat
+  useEffect(() => {
+    if (!loading) {
+      const chatId = searchParams.get("id");
+      console.log("Chat ID from URL:", chatId);
+      if (chatId) {
+        // Add a small delay to ensure DOM is updated
+        setTimeout(() => {
+          const element = document.getElementById(`chat-${chatId}`);
+          console.log("Looking for element:", `chat-${chatId}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+            console.log("Scrolling to chat:", chatId);
+          } else {
+            console.log("Element not found, retrying in 500ms...");
+            // Retry once after a longer delay
+            setTimeout(() => {
+              const retryElement = document.getElementById(`chat-${chatId}`);
+              if (retryElement) {
+                retryElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                console.log("Successfully scrolled to chat on retry:", chatId);
+              } else {
+                console.log("Element still not found after retry");
+              }
+            }, 500);
+          }
+        }, 1000);
+      }
+    }
+  }, [searchParams, loading]);
 
   const { fetchProtected } = useProtectedApi();
 
