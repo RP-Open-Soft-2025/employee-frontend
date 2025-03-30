@@ -23,10 +23,11 @@ interface Notification {
 interface HeaderProps {
   notifications?: Notification[];
   onNotificationClick?: (notificationId: string) => void;
+  onMarkAllAsRead?: () => void;
   children: React.ReactNode;
 }
 
-export function Header({ notifications, onNotificationClick, children }: HeaderProps) {
+export function Header({ notifications, onNotificationClick, onMarkAllAsRead, children }: HeaderProps) {
   const unreadCount = notifications?.filter(n => n.status === 'unread').length || 0;
 
   const handleNotificationClick = (notification: Notification) => {
@@ -82,32 +83,42 @@ export function Header({ notifications, onNotificationClick, children }: HeaderP
                   No notifications
                 </div>
               ) : (
-                notifications.map((notification) => (
-                  <DropdownMenuItem
-                    key={notification.id}
-                    className={`flex flex-col items-start p-4 cursor-pointer ${
-                      notification.status === 'unread' ? 'bg-accent/50' : ''
-                    }`}
-                    onClick={() => handleNotificationClick(notification)}
-                  >
-                    <div className="flex justify-between w-full items-start">
-                      <div className="flex items-center gap-2">
-                        {notification.status === 'unread' ? (
-                          <Circle className="size-4 text-muted-foreground" />
-                        ) : (
-                          <CheckCircle2 className="size-4 text-muted-foreground" />
-                        )}
-                        <h4 className="font-medium">{notification.title}</h4>
+                <div className="flex flex-col gap-1">
+                  {unreadCount > 0 && (
+                    <DropdownMenuItem
+                      className="flex items-center justify-center p-2 cursor-pointer border-b"
+                      onClick={() => onMarkAllAsRead?.()}
+                    >
+                      <span className="text-sm">Mark all as read</span>
+                    </DropdownMenuItem>
+                  )}
+                  {notifications.map((notification) => (
+                    <DropdownMenuItem
+                      key={notification.id}
+                      className={`flex flex-col items-start p-4 cursor-pointer ${
+                        notification.status === 'unread' ? 'bg-accent/50' : ''
+                      }`}
+                      onClick={() => handleNotificationClick(notification)}
+                    >
+                      <div className="flex justify-between w-full items-start">
+                        <div className="flex items-center gap-2">
+                          {notification.status === 'unread' ? (
+                            <Circle className="size-4 text-muted-foreground" />
+                          ) : (
+                            <CheckCircle2 className="size-4 text-muted-foreground" />
+                          )}
+                          <h4 className="font-medium">{notification.title}</h4>
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {formatNotificationTime(notification.created_at)}
+                        </span>
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {formatNotificationTime(notification.created_at)}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                      {notification.description}
-                    </p>
-                  </DropdownMenuItem>
-                ))
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                        {notification.description}
+                      </p>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
