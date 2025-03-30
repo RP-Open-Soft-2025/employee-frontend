@@ -182,6 +182,24 @@ export function EmployeeDashboard() {
     }
   };
 
+  const markAllNotificationsAsRead = async () => {
+    try {
+      const result = await fetchProtected("/employee/notification/mark_all_as_read", {
+        method: "PATCH",
+      });
+      
+      // Update all notifications to read status
+      setNotifications(notifications.map(notification => ({
+        ...notification,
+        status: "read"
+      })));
+      
+      console.log("All notifications marked as read:", result);
+    } catch (e) {
+      console.error("Failed to mark all notifications as read:", e);
+    }
+  };
+
   const fetchEmployeeDetails = async () => {
     try {
       const result = await fetchProtected("/employee/profile");
@@ -258,7 +276,11 @@ export function EmployeeDashboard() {
   // Normal render for client-side with authentication
   return (
     <div className="container mx-auto p-2 sm:p-4 md:p-6">
-      <Header notifications={notifications} onNotificationClick={markNotificationAsRead}>
+      <Header 
+        notifications={notifications} 
+        onNotificationClick={markNotificationAsRead}
+        onMarkAllAsRead={markAllNotificationsAsRead}
+      >
         <h1 className="text-2xl sm:text-3xl font-bold hidden md:block">
           Welcome, {employeeDetails?.employee_id}
         </h1>
