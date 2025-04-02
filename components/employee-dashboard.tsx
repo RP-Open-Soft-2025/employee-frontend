@@ -729,7 +729,7 @@ export function EmployeeDashboard() {
                   className="grid gap-3 cursor-pointer p-3 rounded-lg bg-white/5 hover:bg-white/10 dark:bg-black/5 dark:hover:bg-black/10 transition-colors border border-black/5 dark:border-white/5 shadow-sm hover:shadow-md dark:shadow-zinc-900 backdrop-blur-sm"
                   onClick={() =>
                     router.push(
-                      `/chat?id=${employeeDetails.chat_summary.chat_id}`
+                      `/session?id=${employeeDetails.chat_summary.chat_id}`
                     )
                   }
                 >
@@ -775,9 +775,9 @@ export function EmployeeDashboard() {
                 variant="outline"
                 size="sm"
                 className="w-full"
-                onClick={() => router.push("/chat")}
+                onClick={() => router.push("/session")}
               >
-                Open Chat
+                View Sessions
               </Button>
             </CardFooter>
           </Card>

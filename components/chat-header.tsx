@@ -91,11 +91,11 @@ export function HeaderUserNav() {
         {/* <DropdownMenuItem
           className="cursor-pointer"
           onSelect={() => {
-            router.push("/chat");
+            router.push("/session");
           }}
         >
           <MessageSquare className="mr-2 size-4" />
-          Open Chat
+          View Session
         </DropdownMenuItem> */}
         <DropdownMenuItem
           className="cursor-pointer"

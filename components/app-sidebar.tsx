@@ -25,9 +25,9 @@ export function AppSidebar() {
     <Sidebar className="group-data-[side=left]:border-r-0">
       <SidebarHeader>
         <SidebarMenu>
-          <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row justify-center items-center">
             <span className="text-lg font-semibold px-2 rounded-md cursor-pointer">
-              Previous Sessions
+              All Sessions
             </span>
           </div>
         </SidebarMenu>
