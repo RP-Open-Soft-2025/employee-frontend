@@ -22,6 +22,7 @@ import {
   BarChart,
   Award,
   Activity,
+  Send,
 } from "lucide-react";
 import { Header } from "@/components/ui/header";
 import { LoadingScreen } from "./loading-screen";
@@ -716,16 +717,16 @@ export function EmployeeDashboard() {
 
           {/* Chat Summary Card */}
           <Card className="h-full">
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-4">
               <CardTitle className="flex items-center">
                 <MessageSquare className="size-5 mr-2" />
-                Recent Chat
+                Recent Session
               </CardTitle>
             </CardHeader>
             <CardContent>
               {employeeDetails?.chat_summary && (
                 <div
-                  className="grid gap-3 cursor-pointer"
+                  className="grid gap-3 cursor-pointer p-3 rounded-lg bg-white/5 hover:bg-white/10 dark:bg-black/5 dark:hover:bg-black/10 transition-colors border border-black/5 dark:border-white/5 shadow-sm hover:shadow-md dark:shadow-zinc-900 backdrop-blur-sm"
                   onClick={() =>
                     router.push(
                       `/chat?id=${employeeDetails.chat_summary.chat_id}`
@@ -735,7 +736,7 @@ export function EmployeeDashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                        <MessageSquare className="size-5 text-primary" />
+                        <Send className="size-5 text-primary" />
                       </div>
                       <div>
                         <p className="font-medium">
