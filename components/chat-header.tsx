@@ -67,7 +67,11 @@ export function HeaderUserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white flex py-1.5 px-4 h-fit order-4 md:ml-auto gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white flex py-1.5 px-4 order-4 md:ml-auto gap-2"
+        >
           <UserCircle className="size-5" />
           <span className="truncate hidden md:block">{user?.employee_id}</span>
           <ChevronDown className="size-5" />
