@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "@/components/toast";
 import { SubmitButton } from "@/components/submit-button";
 import DeloitteLogo from "../../login/deloitte-logo.svg"; // Adjust path for the nested folder structure
+import { LoadingScreen } from "@/components/loading-screen";
 
 // Use environment variable for API URL with fallback
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
@@ -15,10 +16,61 @@ export default function ResetPasswordPage() {
   const router = useRouter();
   const params = useParams();
   const [isSuccessful, setIsSuccessful] = useState(false);
+  const [isValidating, setIsValidating] = useState(true);
+  const [isValidToken, setIsValidToken] = useState(false);
   const token = params?.token as string | undefined;
 
-  if (!token) {
-    router.push("/login");
+  useEffect(() => {
+    const validateToken = async () => {
+      if (!token) {
+        toast({
+          type: "error",
+          description: "Invalid empty reset password token",
+        });
+        router.push("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_URL}/auth/validate-reset-token/${token}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          setIsValidToken(true);
+        } else {
+          toast({
+            type: "error",
+            description: "Invalid or expired reset password link",
+          });
+          router.push("/login");
+        }
+      } catch (error) {
+        console.error("Token validation error:", error);
+        toast({
+          type: "error",
+          description: "Failed to validate reset token",
+        });
+        router.push("/login");
+      } finally {
+        setIsValidating(false);
+      }
+    };
+
+    validateToken();
+  }, [token, router]);
+
+  if (isValidating) {
+    return <LoadingScreen />;
+  }
+
+  if (!token || !isValidToken) {
     return null;
   }
 
