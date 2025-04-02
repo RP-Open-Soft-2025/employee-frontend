@@ -166,7 +166,7 @@ export function Chat({
       setMessages((prevMessages) => [...prevMessages, userMessage]);
       setInput("");
 
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      // await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Send to backend using fetchProtected
       const data = await fetchProtected("/llm/chat/message", {

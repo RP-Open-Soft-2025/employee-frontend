@@ -202,7 +202,7 @@ export const ThinkingMessage = () => {
               animate={{ opacity: [1, 0.5, 1] }}
               transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
             >
-              Hmmm...
+              Typing...
             </motion.span>
           </div>
         </div>
