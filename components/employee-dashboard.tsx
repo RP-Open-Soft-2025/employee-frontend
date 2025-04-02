@@ -388,7 +388,7 @@ export function EmployeeDashboard() {
               <div className="grid gap-4">
                 {employeeDetails?.company_data?.leave && employeeDetails.company_data.leave.length > 0 && (
                   <div className="border-b pb-4">
-                    <p className="text-sm text-muted-foreground mb-1">Total Leave Days</p>
+                    <p className="text-sm text-muted-foreground my-1">Total Leave Days</p>
                     <p className="text-lg font-semibold text-primary dark:text-primary-foreground">
                       {employeeDetails.company_data.leave.reduce((latest, current) => 
                         new Date(current.Leave_Start_Date) > new Date(latest.Leave_Start_Date) ? current : latest
