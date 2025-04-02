@@ -385,37 +385,38 @@ export function EmployeeDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-3">
-                {employeeDetails?.company_data?.leave?.map((leave, index) => (
-                  <div
-                    key={`${leave.Leave_Type}-${leave.Leave_Start_Date}`}
-                    className="border-b pb-2 last:border-b-0 last:pb-0"
-                  >
-                    <div className="flex justify-between items-start">
+              <div className="grid gap-4">
+                {employeeDetails?.company_data?.leave && employeeDetails.company_data.leave.length > 0 && (
+                  <div className="border-b pb-4">
+                    <p className="text-sm text-muted-foreground mb-1">Total Leave Days</p>
+                    <p className="text-lg font-semibold text-primary dark:text-primary-foreground">
+                      {employeeDetails.company_data.leave.reduce((latest, current) => 
+                        new Date(current.Leave_Start_Date) > new Date(latest.Leave_Start_Date) ? current : latest
+                      ).Leave_Days} days
+                    </p>
+                  </div>
+                )}
+                <div className="space-y-2">
+                  {employeeDetails?.company_data?.leave?.map((leave, index) => (
+                    <div
+                      key={`${leave.Leave_Type}-${leave.Leave_Start_Date}`}
+                      className="flex justify-between items-center py-2 border-b last:border-b-0"
+                    >
                       <div>
                         <p className="font-medium">{leave.Leave_Type}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(
-                            leave.Leave_Start_Date
-                          ).toLocaleDateString()}{" "}
-                          -{" "}
-                          {new Date(leave.Leave_End_Date).toLocaleDateString()}
-                        </p>
                       </div>
-                      <span className="text-sm bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-1 rounded">
-                        Total leave{leave.Leave_Days !== 1 ? "s" : ""}:{" "}
-                        {leave.Leave_Days} day
-                        {leave.Leave_Days !== 1 ? "s" : ""}
+                      <span className="text-sm text-muted-foreground">
+                        {new Date(leave.Leave_Start_Date).toLocaleDateString()} - {new Date(leave.Leave_End_Date).toLocaleDateString()}
                       </span>
                     </div>
-                  </div>
-                ))}
-                {(!employeeDetails?.company_data?.leave ||
-                  employeeDetails.company_data.leave.length === 0) && (
-                  <p className="text-sm text-muted-foreground">
-                    No leave records found
-                  </p>
-                )}
+                  ))}
+                  {(!employeeDetails?.company_data?.leave ||
+                    employeeDetails.company_data.leave.length === 0) && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No leave records found
+                    </p>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
