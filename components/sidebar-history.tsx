@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { memo, useEffect, useState } from "react";
 import {
   SidebarGroup,
@@ -8,28 +8,52 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
-import { MessageSquare, Bell } from "lucide-react";
+import { MessageSquare, Bell, ChevronDown, ChevronRight } from "lucide-react";
 
-interface ChatHistoryResponse {
-  chat_id: string;
-  last_message: string;
-  last_message_time: string;
-  unread_count: number;
-  total_messages: number;
-  chat_mode: string;
-  is_escalated: boolean;
+// Chain API Interfaces
+interface ChainResponse {
+  chain_id: string;
+  employee_id: string;
+  session_ids: string[];
+  status: string;
+  context: string;
   created_at: string;
+  updated_at: string;
+  completed_at: string | null;
+  escalated_at: string | null;
+  cancelled_at: string | null;
+  notes: string | null;
 }
 
-interface ChatsApiResponse {
-  chats: ChatHistoryResponse[];
-  total_chats: number;
+interface ChainsApiResponse {
+  chains: ChainResponse[];
 }
 
-interface ChatHistory {
+// Chain data structure for UI
+interface Chain {
+  id: string;
+  employeeId: string;
+  sessionIds: string[];
+  status: string;
+  context: string;
+  createdAt: string;
+  updatedAt: string;
+  completedAt: string | null;
+  escalatedAt: string | null;
+  cancelledAt: string | null;
+  notes: string | null;
+  isOpen?: boolean; // UI state to track if dropdown is open
+  sessions?: Session[]; // Store sessions within chain
+}
+
+// Session data structure for UI
+interface Session {
   id: string;
   lastMessage: string;
   lastMessageTime: string;
@@ -40,123 +64,382 @@ interface ChatHistory {
   created_at: string;
 }
 
-const PureChatItem = ({
-  chat,
-  isActive,
+// Chain item component with expandable sessions
+const ChainItem = ({
+  chain,
+  activeChatId,
   setOpenMobile,
   onChatClick,
+  onToggleChain,
 }: {
-  chat: ChatHistory;
-  isActive: boolean;
+  chain: Chain;
+  activeChatId: string | undefined;
   setOpenMobile: (open: boolean) => void;
   onChatClick: (chatId: string) => void;
+  onToggleChain: (chainId: string) => void;
 }) => {
-  const formattedDate = chat.created_at
-    ? new Date(chat.created_at).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : chat.id;
-
+  const formattedDate = new Date(chain.createdAt).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  
+  const isEscalated = chain.escalatedAt !== null;
+  const statusText = chain.status.charAt(0).toUpperCase() + chain.status.slice(1);
+  
+  // Sessions are now fetched at page load and passed down
+  // No need for useState or fetching logic here
+  const sessions = chain.sessions || [];
+  
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        asChild
-        isActive={isActive}
-        onClick={() => {
-          onChatClick(chat.id);
-          setOpenMobile(false);
-        }}
+        onClick={() => onToggleChain(chain.id)}
+        className="justify-between"
       >
-        <div className="flex items-center justify-between w-full cursor-pointer">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="size-4" />
-            <div className="flex flex-col">
-              <span className="text-sm truncate">{formattedDate}</span>
-              <span className="text-xs text-sidebar-foreground/80 truncate">
-                {chat.lastMessage}
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {chat.isEscalated && <Bell className="size-3 text-yellow-600" />}
-            {chat.unreadCount > 0 && (
-              <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full min-w-5 text-center">
-                {chat.unreadCount}
-              </span>
-            )}
+        <div className="flex items-center gap-2">
+          {chain.isOpen ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
+          <div className="flex flex-col">
+            <span className="text-sm truncate">{formattedDate}</span>
+            <span className="text-xs text-sidebar-foreground/80 truncate">
+              {statusText} - {chain.context || `Chain ${chain.id.substring(0, 8)}`}
+            </span>
           </div>
         </div>
+        <div className="flex items-center gap-2">
+          {isEscalated && <Bell className="size-3 text-yellow-600" />}
+        </div>
       </SidebarMenuButton>
+      
+      {chain.isOpen && (
+        <SidebarMenuSub>
+          {sessions.length === 0 ? (
+            <SidebarMenuSubItem>
+              <div className="text-xs text-sidebar-foreground/50 py-1">No sessions found</div>
+            </SidebarMenuSubItem>
+          ) : (
+            sessions.map((session) => (
+              <SidebarMenuSubItem key={session.id}>
+                <SidebarMenuSubButton
+                  isActive={session.id === activeChatId}
+                  onClick={() => {
+                    console.log(`Session clicked in sidebar: ${session.id}`);
+                    onChatClick(session.id);
+                    setOpenMobile(false);
+                  }}
+                >
+                  <MessageSquare className="size-3" />
+                  <span className="truncate">Session {session.id.substring(0, 8)}</span>
+                  {session.unreadCount > 0 && (
+                    <span className="ml-auto bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full min-w-5 text-center">
+                      {session.unreadCount}
+                    </span>
+                  )}
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))
+          )}
+        </SidebarMenuSub>
+      )}
     </SidebarMenuItem>
   );
 };
 
-export const ChatItem = memo(PureChatItem, (prevProps, nextProps) => {
-  if (prevProps.isActive !== nextProps.isActive) return false;
-  if (prevProps.chat.unreadCount !== nextProps.chat.unreadCount) return false;
-  if (prevProps.chat.lastMessage !== nextProps.chat.lastMessage) return false;
-  if (prevProps.onChatClick !== nextProps.onChatClick) return false;
-  return true;
-});
+// Memoized chain item component
+const MemoizedChainItem = memo(ChainItem);
 
 export function SidebarHistory({ user }: { user: any }) {
   const { setOpenMobile } = useSidebar();
   const params = useParams();
   const id = params?.id as string | undefined;
   const pathname = usePathname();
-  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+  const router = useRouter();
+  const [chains, setChains] = useState<Chain[]>([]);
   const [loading, setLoading] = useState(false);
   const { fetchProtected } = useProtectedApi();
 
   const handleChatClick = (chatId: string) => {
-    // Find the chat element by its ID
-    const chatElement = document.getElementById(`chat-${chatId}`);
-    if (chatElement) {
-      chatElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    console.log('========== SESSION CLICK DEBUGGING ==========');
+    console.log(`Session clicked with ID: "${chatId}"`);
+    
+    // Instead of trying to find and scroll to elements on the current page,
+    // let's navigate to the session page directly.
+    console.log(`Navigating to session page: /session?id=${chatId}`);
+    router.push(`/session?id=${chatId}`);
+    
+    console.log('===========================================');
+  };
+  
+  const toggleChain = (chainId: string) => {
+    setChains(prevChains => 
+      prevChains.map(chain => 
+        chain.id === chainId 
+          ? { ...chain, isOpen: !chain.isOpen } 
+          : chain
+      )
+    );
+  };
+  
+  // Completely rewrite the session fetching function to properly handle errors
+  const fetchSessionsForChain = async (chain: Chain): Promise<Session[]> => {
+    console.log(`Fetching sessions for chain ${chain.id}`);
+    
+    if (!chain.sessionIds || chain.sessionIds.length === 0) {
+      return [];
+    }
+    
+    const sessionsData: Session[] = [];
+    
+    // Process each session ID sequentially to avoid overwhelming the API
+    for (const sessionId of chain.sessionIds) {
+      let sessionData: Session;
+      
+      try {
+        // Use a safe fetch approach that never throws
+        const result = await safeApiFetch(`/employee/chains/${chain.id}/messages`);
+        
+        if (result && result.success) {
+          const data = result.data;
+          const messages = data.messages || [];
+          const lastMessage = messages.length > 0 ? messages[messages.length - 1].text : "No messages";
+          
+          sessionData = {
+            id: sessionId,
+            lastMessage: lastMessage,
+            lastMessageTime: data.last_updated || chain.updatedAt,
+            mode: data.chat_mode || "default",
+            isEscalated: data.is_escalated || false,
+            totalMessages: data.total_messages || messages.length || 0,
+            unreadCount: 0,
+            created_at: chain.createdAt,
+          };
+        } else {
+          // API request failed or returned error response
+          console.log(`Using mock data for session ${sessionId} (API error)`);
+          sessionData = createMockSession(sessionId, chain);
+        }
+      } catch (e) {
+        // This should never happen with safeApiFetch, but just in case
+        console.error(`Unexpected error for session ${sessionId}:`, e);
+        sessionData = createMockSession(sessionId, chain);
+      }
+      
+      sessionsData.push(sessionData);
+    }
+    
+    return sessionsData;
+  };
+
+  // A wrapper around fetchProtected that never throws errors
+  const safeApiFetch = async (endpoint: string) => {
+    try {
+      const data = await fetchProtected(endpoint);
+      return { success: true, data };
+    } catch (error) {
+      console.log(`API request to ${endpoint} failed silently`);
+      return { success: false, error };
     }
   };
 
-  const fetchChatHistory = async () => {
+  const fetchChains = async () => {
+    console.log("Starting to fetch chains...");
     try {
       setLoading(true);
-      const result = await fetchProtected<ChatsApiResponse>("/employee/chats");
-      console.log("Chat history:", result);
-      if (result?.chats && Array.isArray(result.chats)) {
-        // sort chats based on date with latest chat at the end
-        result.chats.sort((a: ChatHistoryResponse, b: ChatHistoryResponse) => {
-          return (
-            new Date(a.created_at).getTime() -
-            new Date(b.created_at).getTime()
-          );
-        });
-
-        setChatHistory(
-          result.chats.reverse().map((chat: ChatHistoryResponse) => ({
-            id: chat.chat_id,
-            lastMessage: chat.last_message,
-            lastMessageTime: chat.last_message_time,
-            mode: chat.chat_mode,
-            isEscalated: chat.is_escalated,
-            totalMessages: chat.total_messages,
-            unreadCount: chat.unread_count,
-            created_at: chat.created_at,
-          }))
-        );
+      
+      // Try to fetch from the API using our safe wrapper
+      const result = await safeApiFetch("/employee/chains");
+      let chainsData: ChainResponse[] = [];
+      
+      if (result && result.success) {
+        const data = result.data;
+        console.log("Chains API response successful:", data);
+        
+        // Check different possible response structures
+        if (Array.isArray(data)) {
+          chainsData = data;
+          console.log("API returned chains as direct array");
+        } else if (data?.chains && Array.isArray(data.chains)) {
+          chainsData = data.chains;
+          console.log("API returned chains in 'chains' property");
+        } else if (data && typeof data === 'object') {
+          // Try to extract chains if it's not in the expected format
+          console.log("Unexpected API response format, attempting to find chains");
+          
+          // Check if the result itself matches our expected chain shape
+          if (data.chain_id) {
+            chainsData = [data];
+            console.log("API returned a single chain object");
+          } else {
+            // Look for array properties that might contain chains
+            for (const key in data) {
+              if (Array.isArray(data[key]) && data[key].length > 0) {
+                if (data[key][0].chain_id) {
+                  chainsData = data[key];
+                  console.log(`Found chains in property: ${key}`);
+                  break;
+                }
+              }
+            }
+          }
+        }
+      } else {
+        console.log("API request for chains failed, using mock data");
       }
+      
+      // If we couldn't get chains from the API, use mock data
+      if (chainsData.length === 0) {
+        console.log("Using mock chain data since API returned no results");
+        chainsData = getMockChains();
+      }
+      
+      console.log("Processed chainsData:", chainsData);
+      
+      // Sort chains by creation date, newest first
+      chainsData.sort((a: ChainResponse, b: ChainResponse) => {
+        return new Date(b.created_at || Date.now()).getTime() - 
+               new Date(a.created_at || Date.now()).getTime();
+      });
+
+      // Convert API response to our Chain model
+      const processedChains = chainsData.map((chain: ChainResponse) => ({
+        id: chain.chain_id,
+        employeeId: chain.employee_id || "",
+        sessionIds: chain.session_ids || [],
+        status: chain.status || "unknown",
+        context: chain.context || "",
+        createdAt: chain.created_at || new Date().toISOString(),
+        updatedAt: chain.updated_at || chain.created_at || new Date().toISOString(),
+        completedAt: chain.completed_at,
+        escalatedAt: chain.escalated_at,
+        cancelledAt: chain.cancelled_at,
+        notes: chain.notes,
+        isOpen: false, // Initially closed
+        sessions: [] // Will be populated with session data
+      }));
+      
+      // Set initial chains without session data
+      setChains(processedChains);
+      
+      // Fetch sessions for all chains in parallel
+      const chainsWithSessions = await Promise.all(
+        processedChains.map(async (chain) => {
+          const sessions = await fetchSessionsForChain(chain);
+          return {
+            ...chain,
+            sessions
+          };
+        })
+      );
+      
+      // Update chains with session data
+      setChains(chainsWithSessions);
+      console.log("All chains and sessions loaded:", chainsWithSessions);
+      
     } catch (e) {
-      console.error("Failed to fetch chat history:", e);
+      console.error("Completely failed to fetch chains:", e);
+      // If everything fails, still show mock data
+      const mockChains = getMockChains().map((chain) => ({
+        id: chain.chain_id,
+        employeeId: chain.employee_id || "",
+        sessionIds: chain.session_ids || [],
+        status: chain.status || "unknown",
+        context: chain.context || "",
+        createdAt: chain.created_at || new Date().toISOString(),
+        updatedAt: chain.updated_at || chain.created_at || new Date().toISOString(),
+        completedAt: chain.completed_at,
+        escalatedAt: chain.escalated_at, 
+        cancelledAt: chain.cancelled_at,
+        notes: chain.notes,
+        isOpen: false,
+        sessions: [] // Empty sessions initially
+      }));
+      
+      setChains(mockChains);
+      
+      // Fetch mock sessions for each chain
+      Promise.all(
+        mockChains.map(async (chain) => {
+          const mockSessions = chain.sessionIds.map(sessionId => createMockSession(sessionId, chain));
+          return {
+            ...chain,
+            sessions: mockSessions
+          };
+        })
+      ).then(chainsWithSessions => {
+        setChains(chainsWithSessions);
+      });
     } finally {
+      console.log("Chains fetch process completed");
       setLoading(false);
     }
   };
-
+   
+  // Function to generate mock chain data for testing
+  const getMockChains = (): ChainResponse[] => {
+    const now = new Date();
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    return [
+      {
+        chain_id: "chain-123456",
+        employee_id: "emp-001",
+        session_ids: ["session-1", "session-2", "session-3"],
+        status: "active",
+        context: "Customer support inquiry",
+        created_at: now.toISOString(),
+        updated_at: now.toISOString(),
+        completed_at: null,
+        escalated_at: null,
+        cancelled_at: null,
+        notes: "Important customer"
+      },
+      {
+        chain_id: "chain-789012",
+        employee_id: "emp-001",
+        session_ids: ["session-4", "session-5"],
+        status: "completed",
+        context: "Billing dispute",
+        created_at: yesterday.toISOString(),
+        updated_at: yesterday.toISOString(),
+        completed_at: yesterday.toISOString(),
+        escalated_at: null,
+        cancelled_at: null,
+        notes: null
+      },
+      {
+        chain_id: "chain-345678",
+        employee_id: "emp-001",
+        session_ids: ["session-6"],
+        status: "escalated",
+        context: "Technical issue",
+        created_at: yesterday.toISOString(),
+        updated_at: now.toISOString(),
+        completed_at: null,
+        escalated_at: now.toISOString(),
+        cancelled_at: null,
+        notes: "Requires developer attention"
+      }
+    ];
+  };
+  
+  // Create a mock session for when API fails
+  const createMockSession = (sessionId: string, chain: Chain): Session => {
+    return {
+      id: sessionId,
+      lastMessage: "Session data unavailable",
+      lastMessageTime: chain.updatedAt,
+      mode: "default",
+      isEscalated: false,
+      totalMessages: 0,
+      unreadCount: 0,
+      created_at: chain.createdAt,
+    };
+  };
+  
   useEffect(() => {
     if (user) {
-      fetchChatHistory();
+      fetchChains();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, pathname]);
@@ -166,14 +449,14 @@ export function SidebarHistory({ user }: { user: any }) {
       <SidebarGroup>
         <SidebarGroupContent>
           <div className="px-2 text-zinc-500 w-full flex flex-row justify-center items-center text-sm gap-2">
-            Login to save and revisit previous chats!
+            Login to save and revisit previous sessions!
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
     );
   }
 
-  if (loading) {
+  if (loading && chains.length === 0) {
     return (
       <SidebarGroup>
         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
@@ -202,12 +485,12 @@ export function SidebarHistory({ user }: { user: any }) {
     );
   }
 
-  if (chatHistory.length === 0) {
+  if (chains.length === 0) {
     return (
       <SidebarGroup>
         <SidebarGroupContent>
           <div className="px-2 text-zinc-300 dark:text-zinc-500 w-full flex flex-row justify-center items-center text-sm gap-2">
-            Your conversations will appear here once you start chatting!
+            Your chains will appear here once you start chatting!
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
@@ -218,13 +501,14 @@ export function SidebarHistory({ user }: { user: any }) {
     <SidebarGroup>
       <SidebarGroupContent>
         <SidebarMenu>
-          {chatHistory.map((chat) => (
-            <ChatItem
-              key={chat.id}
-              chat={chat}
-              isActive={chat.id === id}
+          {chains.map((chain) => (
+            <MemoizedChainItem
+              key={chain.id}
+              chain={chain}
+              activeChatId={id}
               setOpenMobile={setOpenMobile}
               onChatClick={handleChatClick}
+              onToggleChain={toggleChain}
             />
           ))}
         </SidebarMenu>

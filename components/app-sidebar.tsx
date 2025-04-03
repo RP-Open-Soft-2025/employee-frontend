@@ -27,7 +27,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <div className="flex flex-row justify-center items-center">
             <span className="text-lg font-semibold px-2 rounded-md cursor-pointer">
-              All Sessions
+              All Chains
             </span>
           </div>
         </SidebarMenu>
