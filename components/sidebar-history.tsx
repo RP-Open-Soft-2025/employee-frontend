@@ -54,7 +54,8 @@ interface Chain {
 
 // Session data structure for UI
 interface Session {
-  id: string;
+  id: string;  // This remains as sessionId for backward compatibility
+  chatId: string;  // Add chatId field
   lastMessage: string;
   lastMessageTime: string;
   mode: string;
@@ -64,6 +65,16 @@ interface Session {
   created_at: string;
 }
 
+function formatDate(date: Date): string {
+  const pad = (n: number) => n.toString().padStart(2, '0');
+
+  // const day = pad(date.getDate());
+  // const month = pad(date.getMonth() + 1); // Months are 0-indexed
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  // const year = pad(date.getUTCFullYear());
+  return `${hours}:${minutes}`;
+}
 // Chain item component with expandable sessions
 const ChainItem = ({
   chain,
@@ -121,15 +132,15 @@ const ChainItem = ({
             sessions.map((session) => (
               <SidebarMenuSubItem key={session.id}>
                 <SidebarMenuSubButton
-                  isActive={session.id === activeChatId}
+                  isActive={session.chatId === activeChatId}
                   onClick={() => {
-                    console.log(`Session clicked in sidebar: ${session.id}`);
-                    onChatClick(session.id);
+                    console.log(`Session clicked in sidebar: ${session.id}, Chat ID: ${session.chatId}`);
+                    onChatClick(session.chatId);
                     setOpenMobile(false);
                   }}
                 >
                   <MessageSquare className="size-3" />
-                  <span className="truncate">Session {session.id.substring(0, 8)}</span>
+                  <span className="truncate">Chat On {formatDate(new Date(session.lastMessageTime))}</span>
                   {session.unreadCount > 0 && (
                     <span className="ml-auto bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full min-w-5 text-center">
                       {session.unreadCount}
@@ -151,7 +162,8 @@ const MemoizedChainItem = memo(ChainItem);
 export function SidebarHistory({ user }: { user: any }) {
   const { setOpenMobile } = useSidebar();
   const params = useParams();
-  const id = params?.id as string | undefined;
+  // This id from URL params represents a chat ID, not a session ID
+  const activeChatId = params?.id as string | undefined;
   const pathname = usePathname();
   const router = useRouter();
   const [chains, setChains] = useState<Chain[]>([]);
@@ -159,11 +171,11 @@ export function SidebarHistory({ user }: { user: any }) {
   const { fetchProtected } = useProtectedApi();
 
   const handleChatClick = (chatId: string) => {
-    console.log('========== SESSION CLICK DEBUGGING ==========');
-    console.log(`Session clicked with ID: "${chatId}"`);
+    console.log('========== CHAT CLICK DEBUGGING ==========');
+    console.log(`Chat clicked with ID: "${chatId}"`);
     
     // Instead of trying to find and scroll to elements on the current page,
-    // let's navigate to the session page directly.
+    // navigate to the session page directly, using chatId instead of sessionId
     console.log(`Navigating to session page: /session?id=${chatId}`);
     router.push(`/session?id=${chatId}`);
     
@@ -192,8 +204,6 @@ export function SidebarHistory({ user }: { user: any }) {
     
     // Process each session ID sequentially to avoid overwhelming the API
     for (const sessionId of chain.sessionIds) {
-      let sessionData: Session;
-      
       try {
         // Use a safe fetch approach that never throws
         const result = await safeApiFetch(`/employee/chains/${chain.id}/messages`);
@@ -203,8 +213,13 @@ export function SidebarHistory({ user }: { user: any }) {
           const messages = data.messages || [];
           const lastMessage = messages.length > 0 ? messages[messages.length - 1].text : "No messages";
           
-          sessionData = {
+          // Find the session data from the response that matches this sessionId
+          const sessionInfo = data.sessions?.find((s: any) => s.session_id === sessionId);
+          const chatId = sessionInfo?.chat_id || sessionId; // Fall back to sessionId if chat_id not found
+          
+          sessionsData.push({
             id: sessionId,
+            chatId: chatId,  // Store the chat_id
             lastMessage: lastMessage,
             lastMessageTime: data.last_updated || chain.updatedAt,
             mode: data.chat_mode || "default",
@@ -212,19 +227,17 @@ export function SidebarHistory({ user }: { user: any }) {
             totalMessages: data.total_messages || messages.length || 0,
             unreadCount: 0,
             created_at: chain.createdAt,
-          };
+          });
         } else {
           // API request failed or returned error response
           console.log(`Using mock data for session ${sessionId} (API error)`);
-          sessionData = createMockSession(sessionId, chain);
+          sessionsData.push(createMockSession(sessionId, chain));
         }
       } catch (e) {
         // This should never happen with safeApiFetch, but just in case
         console.error(`Unexpected error for session ${sessionId}:`, e);
-        sessionData = createMockSession(sessionId, chain);
+        sessionsData.push(createMockSession(sessionId, chain));
       }
-      
-      sessionsData.push(sessionData);
     }
     
     return sessionsData;
@@ -427,6 +440,7 @@ export function SidebarHistory({ user }: { user: any }) {
   const createMockSession = (sessionId: string, chain: Chain): Session => {
     return {
       id: sessionId,
+      chatId: sessionId, // For mock data, use sessionId as chatId
       lastMessage: "Session data unavailable",
       lastMessageTime: chain.updatedAt,
       mode: "default",
@@ -505,7 +519,7 @@ export function SidebarHistory({ user }: { user: any }) {
             <MemoizedChainItem
               key={chain.id}
               chain={chain}
-              activeChatId={id}
+              activeChatId={activeChatId}
               setOpenMobile={setOpenMobile}
               onChatClick={handleChatClick}
               onToggleChain={toggleChain}
