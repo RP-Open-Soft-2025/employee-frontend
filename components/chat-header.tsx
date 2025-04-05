@@ -70,7 +70,7 @@ export function HeaderUserNav() {
         <Button
           variant="outline"
           size="sm"
-          className="bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-zinc-800 text-black dark:text-white flex py-1.5 px-4 order-4 md:ml-auto gap-2"
+          className="bg-white dark:bg-[hsl(var(--deep-blue-dark))] hover:bg-gray-100 dark:hover:bg-[hsl(var(--deep-blue))] text-black dark:text-white flex py-1.5 px-4 order-4 md:ml-auto gap-2 border-gray-200 dark:border-[hsl(var(--deep-blue))]"
         >
           <UserCircle className="size-5" />
           <span className="truncate hidden md:block">{user?.employee_id}</span>
@@ -79,13 +79,13 @@ export function HeaderUserNav() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[--radix-popper-anchor-width] min-w-fit whitespace-nowrap"
+        className="w-[--radix-popper-anchor-width] min-w-fit whitespace-nowrap notification-dropdown-content"
       >
         <DropdownMenuItem
-          className="cursor-pointer"
+          className="cursor-pointer notification-item"
           onSelect={() => router.push("/")}
         >
-          <LayoutDashboard className="mr-2 size-4" />
+        <LayoutDashboard className="mr-2 size-4" />
           Dashboard
         </DropdownMenuItem>
         {/* <DropdownMenuItem
@@ -98,7 +98,7 @@ export function HeaderUserNav() {
           View Session
         </DropdownMenuItem> */}
         <DropdownMenuItem
-          className="cursor-pointer"
+          className="cursor-pointer notification-item"
           onSelect={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
           {`Toggle ${theme === "light" ? "dark" : "light"} mode`}
@@ -107,7 +107,7 @@ export function HeaderUserNav() {
         <DropdownMenuItem asChild>
           <button
             type="button"
-            className="w-full cursor-pointer"
+            className="w-full cursor-pointer notification-item"
             onClick={handleLogOut}
           >
             Sign out

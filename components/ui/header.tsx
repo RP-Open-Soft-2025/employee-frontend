@@ -57,7 +57,7 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
   };
 
   return (
-    <div className="flex flex-row justify-between items-center my-4 px-4 md:px-6 py-2 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm dark:bg-dark-mode-bg bg-[#F9FAFC]">
+    <div className="flex flex-row justify-between items-center my-4 px-4 md:px-6 py-2 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm bg-[#F9FAFC] dark:bg-[hsl(var(--deep-blue-darker))]">
       <Link href="/">{children}</Link>
       <div className="flex items-center space-x-5">
         {notifications && (
@@ -66,18 +66,18 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
               <Button
                 variant="outline"
                 size="sm"
-                className="relative hidden md:flex"
+                className="relative hidden md:flex bg-white dark:bg-[hsl(var(--deep-blue-dark))] hover:bg-gray-100 dark:hover:bg-[hsl(var(--deep-blue))] border-gray-200 dark:border-[hsl(var(--deep-blue))]"
               >
                 <Bell className="size-4" />
                 Notifications
                 {unreadCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full size-5 flex items-center justify-center text-xs">
+                  <span className="absolute -top-2 -right-2 bg-[hsl(var(--deep-blue-accent))] text-white rounded-full size-5 flex items-center justify-center text-xs">
                     {unreadCount}
                   </span>
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 max-h-[400px] overflow-y-auto">
+            <DropdownMenuContent align="end" className="w-80 max-h-[400px] overflow-y-auto notification-dropdown-content">
               {notifications.length === 0 ? (
                 <div className="p-4 text-center text-sm text-muted-foreground">
                   No notifications
@@ -86,7 +86,7 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
                 <div className="flex flex-col gap-1">
                   {unreadCount > 0 && (
                     <DropdownMenuItem
-                      className="flex items-center justify-center p-2 cursor-pointer border-b"
+                      className="flex items-center justify-center p-2 cursor-pointer border-b notification-item"
                       onClick={() => onMarkAllAsRead?.()}
                     >
                       <span className="text-sm">Mark all as read</span>
@@ -95,15 +95,15 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
                   {notifications.map((notification) => (
                     <DropdownMenuItem
                       key={notification.id}
-                      className={`flex flex-col items-start p-4 cursor-pointer ${
-                        notification.status === 'unread' ? 'bg-accent/50' : ''
+                      className={`flex flex-col items-start p-4 cursor-pointer notification-item ${
+                        notification.status === 'unread' ? 'unread' : ''
                       }`}
                       onClick={() => handleNotificationClick(notification)}
                     >
                       <div className="flex justify-between w-full items-start">
                         <div className="flex items-center gap-2">
                           {notification.status === 'unread' ? (
-                            <Mail className="size-4" />
+                            <Mail className="size-4 text-[hsl(var(--deep-blue-accent))]" />
                           ) : (
                             <MailOpen className="size-4" />
                           )}
