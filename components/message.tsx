@@ -8,7 +8,7 @@ import type { Vote } from '@/lib/db/schema';
 import { DocumentToolCall, DocumentToolResult } from './document';
 import { SparklesIcon } from './icons';
 import { Markdown } from './markdown';
-import { MessageActions } from './message-actions';
+// import { MessageActions } from './message-actions';
 import equal from 'fast-deep-equal';
 import { cn } from '@/lib/utils';
 import { DocumentPreview } from './document-preview';
