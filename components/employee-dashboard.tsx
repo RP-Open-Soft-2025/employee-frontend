@@ -330,18 +330,18 @@ export function EmployeeDashboard() {
               <UserCircle className="size-5 text-gray-700 dark:text-gray-300" />
               Employee Information
             </h4>
-          </div>
+                </div>
 
           <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
               <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                 <User className="size-3.5" />
-                Employee ID
-              </p>
+                    Employee ID
+                  </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {employeeDetails?.employee_id}
-              </p>
-            </div>
+                    {employeeDetails?.employee_id}
+                  </p>
+                </div>
 
             <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
               <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
@@ -356,47 +356,47 @@ export function EmployeeDashboard() {
             <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
               <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                 <Mail className="size-3.5" />
-                Email
-              </p>
+                    Email
+                  </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {employeeDetails?.email}
-              </p>
-            </div>
+                    {employeeDetails?.email}
+                  </p>
+                </div>
 
             <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
               <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                 <Briefcase className="size-3.5" />
-                Role
-              </p>
+                    Role
+                  </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize">
-                {employeeDetails?.role}
-              </p>
-            </div>
+                    {employeeDetails?.role}
+                  </p>
+                </div>
 
             <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
               <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                 <Shield className="size-3.5" />
-                Manager ID
-              </p>
+                    Manager ID
+                  </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {employeeDetails?.manager_id}
-              </p>
-            </div>
+                    {employeeDetails?.manager_id}
+                  </p>
+                </div>
 
-            {employeeDetails?.is_blocked && (
+                {employeeDetails?.is_blocked && (
               <div className="group p-3 rounded-lg bg-red-50 dark:bg-red-900/20 transition-colors duration-200">
                 <p className="mb-2 text-lg leading-normal text-red-500 dark:text-red-400 flex items-center gap-1.5">
                   <AlertCircle className="h-3.5 w-3.5" />
                   Account Status
                 </p>
                 <p className="text-sm font-medium text-red-600 dark:text-red-400">
-                  Account is blocked
+                    Account is blocked
                 </p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
         </div>
-      </Card>
+          </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mt-4">
         {/* Left Column */}
@@ -406,8 +406,8 @@ export function EmployeeDashboard() {
             <div className="flex flex-col gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-4 flex items-center">
-                  <Calendar className="size-5 mr-2" />
-                  Leave Information
+                <Calendar className="size-5 mr-2" />
+                Leave Information
                 </h4>
 
                 {/* Leave Summary */}
@@ -418,18 +418,18 @@ export function EmployeeDashboard() {
                         Total Leave Days
                       </p>
                       <p className="mt-1 text-base font-medium text-gray-800 dark:text-white/90">
-                        {employeeDetails.company_data.leave.reduce((total, leave) => total + leave.Leave_Days, 0)} days
+                        {employeeDetails.company_data.leave[employeeDetails.company_data.leave.length - 1].Leave_Days} days
                       </p>
                     </div>
                   </div>
                 )}
-
+                
                 {/* Leave Records */}
                 <div>
                   <h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
                     Leave Records
                   </h5>
-                  <div className="space-y-2">
+                  <div className="space-y-2 h-[140px] overflow-y-auto pr-1 custom-scrollbar">
                     {employeeDetails?.company_data?.leave?.map((leave, index) => {
                       // Get appropriate color based on leave type
                       const getLeaveTypeColor = (type: string) => {
@@ -449,47 +449,44 @@ export function EmployeeDashboard() {
                       return (
                         <div
                           key={`leave-${leave.Leave_Type}-${leave.Leave_Start_Date}`}
-                          className="flex justify-between items-center py-2 px-3 rounded-lg border bg-background/50 hover:bg-background/80 transition-colors"
-                        >
-                          <div className="flex items-center">
-                            {leave.Leave_Type.toLowerCase().includes('sick') ? (
-                              <div className="mr-3 p-2 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full">
-                                <AlertCircle className="size-4" />
-                              </div>
+                      className="flex justify-between items-center py-2 px-3 rounded-lg border bg-background/50 hover:bg-background/80 transition-colors"
+                    >
+                      <div className="flex items-center">
+                        {leave.Leave_Type.toLowerCase().includes('sick') ? (
+                          <div className="mr-3 p-2 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full">
+                            <AlertCircle className="size-4" />
+                          </div>
                             ) : leave.Leave_Type.toLowerCase().includes('vacation') || leave.Leave_Type.toLowerCase().includes('annual') ? (
-                              <div className="mr-3 p-2 bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full">
-                                <Calendar className="size-4" />
-                              </div>
-                            ) : (
-                              <div className="mr-3 p-2 bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full">
-                                <Clock className="size-4" />
-                              </div>
-                            )}
-                            <div>
+                          <div className="mr-3 p-2 bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full">
+                            <Calendar className="size-4" />
+                          </div>
+                        ) : (
+                          <div className="mr-3 p-2 bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full">
+                            <Clock className="size-4" />
+                          </div>
+                        )}
+                        <div>
                               <p className="font-medium">
                                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getLeaveTypeColor(leave.Leave_Type)}`}>
                                   {leave.Leave_Type}
                                 </span>
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {new Date(leave.Leave_Start_Date).toLocaleDateString()} - {new Date(leave.Leave_End_Date).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="bg-primary/10 dark:bg-primary/20 px-2 py-1 rounded-full">
-                            <span className="text-sm font-medium">{leave.Leave_Days} days</span>
-                          </div>
+                            {new Date(leave.Leave_Start_Date).toLocaleDateString()} - {new Date(leave.Leave_End_Date).toLocaleDateString()}
+                          </p>
                         </div>
+                      </div>
+                      </div>
                       );
                     })}
-                    {(!employeeDetails?.company_data?.leave ||
-                      employeeDetails.company_data.leave.length === 0) && (
-                      <p className="text-sm text-muted-foreground text-center py-4">
-                        No leave records found
-                      </p>
-                    )}
-                  </div>
+                  {(!employeeDetails?.company_data?.leave ||
+                    employeeDetails.company_data.leave.length === 0) && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No leave records found
+                    </p>
+                  )}
                 </div>
+              </div>
               </div>
             </div>
           </Card>
@@ -499,7 +496,7 @@ export function EmployeeDashboard() {
             <div className="flex flex-col gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4 2xl:text-lg xl:text-base lg:text-sm md:text-sm flex items-center">
-                  <BarChart className="size-5 mr-2" />
+                <BarChart className="size-5 mr-2" />
                   Performance Overview
                 </h4>
 
@@ -552,7 +549,7 @@ export function EmployeeDashboard() {
                           ))}
                         </div>
                       </div>
-
+                      
                       <div className="rounded-lg border border-gray-200 bg-white p-2.5 dark:border-gray-700 dark:bg-gray-800 sm:col-span-2 lg:col-span-1">
                         <p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
                           Manager Feedback
@@ -605,19 +602,19 @@ export function EmployeeDashboard() {
                               />
                               <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-700 dark:text-gray-300 2xl:text-[10px] xl:text-[10px] lg:text-[8px] md:text-[8px]">
                                 {performance.Performance_Rating.toFixed(1)}
-                              </div>
-                            </div>
+                          </div>
+                          </div>
                             <span className="mt-2 text-xs text-gray-500 dark:text-gray-400 2xl:text-[10px] xl:text-[10px] lg:text-[8px] md:text-[8px]">
                               {performance.Review_Period}
                             </span>
-                          </div>
+                        </div>
                         ))}
                       </div>
+                      </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
           </Card>
 
           {/* Enhanced Activity Card */}
@@ -625,93 +622,106 @@ export function EmployeeDashboard() {
             <div className="flex flex-col gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6 flex items-center">
-                  <Activity className="size-5 mr-2" />
-                  Recent Activity
+                <Activity className="size-5 mr-2" />
+                Recent Activity
                 </h4>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-gray-800">
-                      <tr>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
-                        >
-                          Date
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
-                        >
-                          Teams Messages
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
-                        >
-                          Emails Sent
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
-                        >
-                          Meetings Attended
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
-                        >
-                          Work Hours
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
-                      {employeeDetails?.company_data?.activity?.map((activity, index) => (
-                        <tr key={`activity-row-${activity.Date}`}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
-                            {new Date(activity.Date).toLocaleDateString('en-GB')}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
-                            {activity.Teams_Messages_Sent}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
-                            {activity.Emails_Sent}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
-                            {activity.Meetings_Attended}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
-                            {activity.Work_Hours}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                {employeeDetails?.company_data?.activity && employeeDetails.company_data.activity.length > 0 ? (
+                  <>
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                            >
+                              Date
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                            >
+                                Teams Messages
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                            >
+                              Emails Sent
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                            >
+                              Meetings Attended
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                            >
+                              Work Hours
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
+                          {employeeDetails?.company_data?.activity?.map((activity, index) => (
+                            <tr key={`activity-row-${activity.Date}`}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
+                                {new Date(activity.Date).toLocaleDateString('en-GB')}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
+                                {activity.Teams_Messages_Sent}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
+                                {activity.Emails_Sent}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
+                                {activity.Meetings_Attended}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
+                                {activity.Work_Hours}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                            </div>
 
-                <div className="mt-6">
-                  <h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Activity Overview
-                  </h5>
-                  <div className="flex h-10 items-end space-x-2">
-                    {employeeDetails?.company_data?.activity?.map((activity, index) => (
-                      <div
-                        key={`activity-chart-${activity.Date}`}
-                        className="relative flex flex-col items-center"
-                      >
-                        <div
-                          className="w-8 bg-blue-500 dark:bg-blue-600 rounded-t-sm"
-                          style={{ height: `${activity.Teams_Messages_Sent / 2}px` }}
-                        />
-                        <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          {new Date(activity.Date).getDate()}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+                    <div className="mt-6">
+                      <h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Activity Overview
+                      </h5>
+                      <div className="flex h-10 items-end space-x-2">
+                        {employeeDetails?.company_data?.activity?.map((activity, index) => (
+                          <div
+                            key={`activity-chart-${activity.Date}`}
+                            className="relative flex flex-col items-center"
+                          >
+                            <div
+                              className="w-8 bg-blue-500 dark:bg-blue-600 rounded-t-sm"
+                              style={{ height: `${activity.Teams_Messages_Sent / 2}px` }}
+                            />
+                            <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                              {new Date(activity.Date).getDate()}
+                            </span>
+                            </div>
+                        ))}
+                          </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-center">
+                    <div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
+                      <Activity className="size-10 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      No activity data available
+                    </p>
+                            </div>
+                )}
+                            </div>
+                          </div>
           </Card>
         </div>
 
@@ -719,128 +729,139 @@ export function EmployeeDashboard() {
         <div className="grid grid-cols-1 gap-4">
           {/* Onboarding Card */}
           <Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
-            <div>
+                          <div>
               <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
                 Onboarding & Integration
               </h4>
 
-              {employeeDetails?.company_data?.onboarding?.map((onboarding) => (
-                <div key={`onboarding-${onboarding.Joining_Date}`}>
-                  <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Joining Date
-                      </p>
-                      <p className="mt-1 text-base font-medium text-gray-800 dark:text-white/90">
-                        {new Date(onboarding.Joining_Date).toLocaleDateString('en-GB')}
-                      </p>
-                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                        {Math.ceil(Math.abs(new Date().getTime() - new Date(onboarding.Joining_Date).getTime()) / (1000 * 60 * 60 * 24))} days ago
-                      </p>
-                    </div>
-
-                    <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Onboarding Feedback
-                      </p>
-                      <div className="mt-2 flex items-center">
-                        <div
-                          className={`h-3 w-3 rounded-full ${
-                            onboarding.Onboarding_Feedback === "EXCELLENT"
-                              ? "bg-green-500 dark:bg-green-600"
-                              : onboarding.Onboarding_Feedback === "GOOD"
-                              ? "bg-blue-500 dark:bg-blue-600"
-                              : onboarding.Onboarding_Feedback === "AVERAGE"
-                              ? "bg-yellow-500 dark:bg-yellow-600"
-                              : "bg-red-500 dark:bg-red-600"
-                          }`}
-                        ></div>
-                        <p className="ml-2 text-base font-medium text-gray-800 dark:text-white/90">
-                          {onboarding.Onboarding_Feedback}
+              {employeeDetails?.company_data?.onboarding && employeeDetails.company_data.onboarding.length > 0 ? (
+                employeeDetails.company_data.onboarding.map((onboarding) => (
+                  <div key={`onboarding-${onboarding.Joining_Date}`}>
+                    <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Joining Date
                         </p>
-                      </div>
-                    </div>
-                  </div>
+                        <p className="mt-1 text-base font-medium text-gray-800 dark:text-white/90">
+                          {new Date(onboarding.Joining_Date).toLocaleDateString('en-GB')}
+                        </p>
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          {Math.ceil(Math.abs(new Date().getTime() - new Date(onboarding.Joining_Date).getTime()) / (1000 * 60 * 60 * 24))} days ago
+                        </p>
+                            </div>
 
-                  <div>
-                    <h5 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Onboarding Status
-                    </h5>
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <div
-                          className={`flex h-6 w-6 items-center justify-center rounded-full border ${
-                            onboarding.Mentor_Assigned
-                              ? "border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30"
-                              : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
-                          }`}
-                        >
-                          {onboarding.Mentor_Assigned && (
-                            <svg
-                              className="h-4 w-4 text-green-500 dark:text-green-400"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                          )}
+                      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Onboarding Feedback
+                        </p>
+                        <div className="mt-2 flex items-center">
+                          <div
+                            className={`h-3 w-3 rounded-full ${
+                              onboarding.Onboarding_Feedback === "EXCELLENT"
+                                ? "bg-green-500 dark:bg-green-600"
+                                : onboarding.Onboarding_Feedback === "GOOD"
+                                ? "bg-blue-500 dark:bg-blue-600"
+                                : onboarding.Onboarding_Feedback === "AVERAGE"
+                                ? "bg-yellow-500 dark:bg-yellow-600"
+                                : "bg-red-500 dark:bg-red-600"
+                            }`}
+                              ></div>
+                          <p className="ml-2 text-base font-medium text-gray-800 dark:text-white/90">
+                            {onboarding.Onboarding_Feedback}
+                          </p>
+                            </div>
+                          </div>
+                    </div>
+
+                          <div>
+                      <h5 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Onboarding Status
+                      </h5>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div
+                            className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+                              onboarding.Mentor_Assigned
+                                ? "border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30"
+                                : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
+                            }`}
+                          >
+                            {onboarding.Mentor_Assigned && (
+                              <svg
+                                className="h-4 w-4 text-green-500 dark:text-green-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            )}
+                          </div>
+                          <p
+                            className={`ml-3 text-sm ${
+                              onboarding.Mentor_Assigned
+                                ? "text-gray-800 dark:text-white/90"
+                                : "text-gray-500 dark:text-gray-400"
+                            }`}
+                          >
+                            Mentor Assigned
+                          </p>
+                            </div>
+
+                        <div className="flex items-center">
+                          <div
+                            className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+                              onboarding.Initial_Training_Completed
+                                ? "border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30"
+                                : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
+                            }`}
+                          >
+                            {onboarding.Initial_Training_Completed && (
+                              <svg
+                                className="h-4 w-4 text-green-500 dark:text-green-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            )}
+                            </div>
+                          <p
+                            className={`ml-3 text-sm ${
+                              onboarding.Initial_Training_Completed
+                                ? "text-gray-800 dark:text-white/90"
+                                : "text-gray-500 dark:text-gray-400"
+                            }`}
+                          >
+                            Initial Training Completed
+                          </p>
+                          </div>
                         </div>
-                        <p
-                          className={`ml-3 text-sm ${
-                            onboarding.Mentor_Assigned
-                              ? "text-gray-800 dark:text-white/90"
-                              : "text-gray-500 dark:text-gray-400"
-                          }`}
-                        >
-                          Mentor Assigned
-                        </p>
-                      </div>
-
-                      <div className="flex items-center">
-                        <div
-                          className={`flex h-6 w-6 items-center justify-center rounded-full border ${
-                            onboarding.Initial_Training_Completed
-                              ? "border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30"
-                              : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
-                          }`}
-                        >
-                          {onboarding.Initial_Training_Completed && (
-                            <svg
-                              className="h-4 w-4 text-green-500 dark:text-green-400"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                          )}
-                        </div>
-                        <p
-                          className={`ml-3 text-sm ${
-                            onboarding.Initial_Training_Completed
-                              ? "text-gray-800 dark:text-white/90"
-                              : "text-gray-500 dark:text-gray-400"
-                          }`}
-                        >
-                          Initial Training Completed
-                        </p>
                       </div>
                     </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
+                    <User className="size-10 text-muted-foreground" />
                   </div>
+                  <p className="text-sm text-muted-foreground">
+                    No onboarding data available
+                  </p>
                 </div>
-              ))}
-            </div>
+                )}
+              </div>
           </Card>
 
           {/* Enhanced Rewards Card */}
@@ -862,7 +883,7 @@ export function EmployeeDashboard() {
                       </span>
                     </div>
                   )}
-                </div>
+        </div>
 
                 {employeeDetails?.company_data?.rewards && employeeDetails.company_data.rewards.length > 0 ? (
                   <>
@@ -876,8 +897,8 @@ export function EmployeeDashboard() {
                             {/* Using a fallback icon display since we don't have actual icons */}
                             <div className="size-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
                               {reward.Award_Type.charAt(0)}
-                            </div>
-                          </div>
+                    </div>
+                  </div>
                           
                           {/* Also fix the star icon */}
                           <svg
@@ -889,10 +910,10 @@ export function EmployeeDashboard() {
                           </svg>
                           <span className="ml-1 text-xs font-medium text-gray-800 dark:text-white/90">
                             {reward.Reward_Points} pts
-                          </span>
-                        </div>
-                      ))}
+                      </span>
                     </div>
+                      ))}
+                </div>
 
                     <div className="mt-6">
                       <h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -901,7 +922,13 @@ export function EmployeeDashboard() {
                       <div className="h-4 w-full rounded-full bg-gray-200 dark:bg-gray-700">
                         <div
                           className="h-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600"
-                          style={{ width: `${(employeeDetails.company_data.rewards.reduce((total, r) => total + r.Reward_Points, 0) / 2000) * 100}%` }}
+                          style={{ 
+                            width: `${(() => {
+                              const currentPoints = employeeDetails.company_data.rewards.reduce((total, r) => total + r.Reward_Points, 0);
+                              const goalPoints = Math.ceil(currentPoints / 500) * 500;
+                              return (currentPoints / goalPoints) * 100;
+                            })()}%` 
+                          }}
                         />
                       </div>
                       <div className="mt-2 flex justify-between">
@@ -909,7 +936,7 @@ export function EmployeeDashboard() {
                           Current: {employeeDetails.company_data.rewards.reduce((total, r) => total + r.Reward_Points, 0)}
                         </span>
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          Goal: 2000
+                          Goal: {Math.ceil(employeeDetails.company_data.rewards.reduce((total, r) => total + r.Reward_Points, 0) / 500) * 500}
                         </span>
                       </div>
                     </div>
@@ -918,12 +945,183 @@ export function EmployeeDashboard() {
                   <div className="flex flex-col items-center justify-center py-6 text-center">
                     <div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
                       <Award className="size-10 text-muted-foreground" />
-                    </div>
+                              </div>
                     <p className="text-sm text-muted-foreground">
                       No rewards yet. Keep up the good work!
                     </p>
+                            </div>
+                        )}
+                      </div>
+                    </div>
+          </Card>
+
+          {/* Enhanced Mood & Vibe Card */}
+          <Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
+            <div className="flex flex-col">
+              <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-6 flex items-center">
+                <BarChart className="size-5 mr-2" />
+                Mood & Vibe Statistics
+              </h4>
+
+              <div className="grid gap-4">
+                {employeeDetails?.company_data?.vibemeter?.[0] && (
+                  <div className="flex flex-col items-center justify-center p-6">
+                    <div className="mb-6 text-center">
+                      {/* Determine color based on score */}
+                      {(() => {
+                        const score = employeeDetails.company_data.vibemeter[0].Vibe_Score;
+                        const normalizedScore = score > 5 ? score / 2 : score;
+                        
+                        const getColorForScore = () => {
+                          if (normalizedScore >= 4.5) return 'bg-emerald-500';
+                          if (normalizedScore >= 3.5) return 'bg-blue-500';
+                          if (normalizedScore >= 2.5) return 'bg-amber-500';
+                          if (normalizedScore >= 1.5) return 'bg-orange-500';
+                          return 'bg-red-500';
+                        };
+                        
+                        const getTextColorForScore = () => {
+                          if (normalizedScore >= 4.5) return 'text-emerald-500';
+                          if (normalizedScore >= 3.5) return 'text-blue-500';
+                          if (normalizedScore >= 2.5) return 'text-amber-500';
+                          if (normalizedScore >= 1.5) return 'text-orange-500';
+                          return 'text-red-500';
+                        };
+                        
+                        const getLabelForScore = () => {
+                          if (normalizedScore >= 4.5) return 'Excellent';
+                          if (normalizedScore >= 3.5) return 'Good';
+                          if (normalizedScore >= 2.5) return 'Satisfactory';
+                          if (normalizedScore >= 1.5) return 'Needs Improvement';
+                          return 'Critical';
+                        };
+                        
+                        return (
+                          <>
+                            <div className={`rounded-full ${getColorForScore()} size-32 flex items-center justify-center shadow-lg`}>
+                              <span className="text-white text-4xl font-bold">{normalizedScore.toFixed(1)}</span>
+                        </div>
+                        
+                            <h3 className={`text-2xl font-bold mt-4 ${getTextColorForScore()}`}>
+                              {getLabelForScore()}
+                            </h3>
+                          </>
+                        );
+                      })()}
+                        </div>
+                        
+                    <div className="mt-6 flex flex-col items-center w-full max-w-md">
+                      <div className="flex items-center justify-between w-full mb-2 p-1">
+                        <span className="text-xs text-red-500 font-medium">Critical</span>
+                        <span className="text-xs text-emerald-500 font-medium">Excellent</span>
+                      </div>
+                      
+                      {/* Colorful bar with gradient background */}
+                      <div className="w-full h-4 rounded-full mb-4 relative bg-gradient-to-r from-red-500 via-orange-500 via-amber-500 via-blue-500 to-emerald-500">
+                        {/* Score marker/indicator */}
+                        <div 
+                          className="absolute bottom-full mb-1"
+                          style={{ 
+                            left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score -1) * 25+1}% - 8px)`,
+                            transition: 'left 0.3s ease-in-out'
+                          }}
+                        >
+                          <div className="size-0 border-x-[8px] border-t-[8px] border-transparent border-t-gray-800 dark:border-t-white mx-auto" />
+                        </div>
+                      </div>
+                      
+                      {/* Score points with colored indicators */}
+                      <div className="flex justify-between w-full px-0 relative">
+                        {[1, 2, 3, 4, 5].map((value) => {
+                          const score = employeeDetails.company_data.vibemeter[0].Vibe_Score;
+                          const normalizedScore = score;
+                          
+                          const getColorForPoint = (point: number) => {
+                            switch(point) {
+                              case 1: return 'bg-red-500';
+                              case 2: return 'bg-orange-500';
+                              case 3: return 'bg-amber-500';
+                              case 4: return 'bg-green-300';
+                              case 5: return 'bg-emerald-500';
+                              default: return 'bg-gray-400';
+                            }
+                          };
+                          
+                          const getTextColorForPoint = (point: number) => {
+                            switch(point) {
+                              case 1: return 'text-red-500';
+                              case 2: return 'text-orange-500';
+                              case 3: return 'text-amber-500';
+                              case 4: return 'text-green-300';
+                              case 5: return 'text-emerald-500';
+                              default: return 'text-gray-400';
+                            }
+                          };
+                          
+                          return (
+                            <div key={value} className="flex flex-col items-center">
+                              <div 
+                                className={`size-4 rounded-full mb-1 ${
+                                  getColorForPoint(value) }`}
+                              />
+                              <div className={`text-xs font-medium ${ getTextColorForPoint(value) }`}>
+                                {value}
+                      </div>
+                      </div>
+                          );
+                        })}
+                      </div>
+                      </div>
+                    
+                    <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg w-full max-w-md">
+                      <div className="flex justify-between mb-2">
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Current Score
+                        </p>
+                        <p className={`text-sm font-semibold ${(() => {
+                          const score = employeeDetails.company_data.vibemeter[0].Vibe_Score;
+                          const normalizedScore = score > 5 ? score / 2 : score;
+                          
+                          if (normalizedScore >= 4.5) return 'text-emerald-500';
+                          if (normalizedScore >= 3.5) return 'text-blue-500';
+                          if (normalizedScore >= 2.5) return 'text-amber-500';
+                          if (normalizedScore >= 1.5) return 'text-orange-500';
+                          return 'text-red-500';
+                        })()}`}>
+                          {(employeeDetails.company_data.vibemeter[0].Vibe_Score > 5 
+                            ? employeeDetails.company_data.vibemeter[0].Vibe_Score / 2 
+                            : employeeDetails.company_data.vibemeter[0].Vibe_Score).toFixed(1)}/5
+                        </p>
                   </div>
+                  
+                      <div className="flex justify-between">
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Last Update
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {new Date(employeeDetails.company_data.vibemeter[0].Response_Date).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </p>
+                      </div>
+                      </div>
+                    </div>
                 )}
+
+                {!employeeDetails?.company_data?.vibemeter?.[0] && (
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
+                      <BarChart className="size-10 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                      No vibe data available yet
+                  </p>
+                </div>
+              )}
               </div>
             </div>
           </Card>
@@ -937,7 +1135,7 @@ export function EmployeeDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {employeeDetails?.chat_summary && (
+              {employeeDetails?.chat_summary ? (
                 <div
                   className="grid gap-3 cursor-pointer p-3 rounded-lg bg-white/5 hover:bg-white/10 dark:bg-black/5 dark:hover:bg-black/10 transition-colors border border-black/5 dark:border-white/5 shadow-sm hover:shadow-md dark:shadow-zinc-900 backdrop-blur-sm"
                   onClick={() =>
@@ -980,6 +1178,15 @@ export function EmployeeDashboard() {
                   <p className="text-sm text-muted-foreground line-clamp-2">
                     {employeeDetails.chat_summary.last_message ||
                       "No messages yet"}
+                  </p>
+                    </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
+                    <MessageSquare className="size-10 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    No chat sessions available
                   </p>
                 </div>
               )}
