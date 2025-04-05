@@ -180,10 +180,9 @@ export function SidebarHistory({ user }: { user: any }) {
     console.log('========== CHAT CLICK DEBUGGING ==========');
     console.log(`Chat clicked with ID: "${chatId}"`);
     
-    // Instead of trying to find and scroll to elements on the current page,
-    // navigate to the session page directly, using chatId instead of sessionId
-    console.log(`Navigating to session page: /session?id=${chatId}`);
-    router.push(`/session?id=${chatId}`);
+    // Update to use dynamic routing instead of query params
+    console.log(`Navigating to session page: /session/${chatId}`);
+    router.push(`/session/${chatId}`);
     
     console.log('===========================================');
   };

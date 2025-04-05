@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Chat } from "@/components/chat";
 import { DataStreamHandler } from "@/components/data-stream-handler";
 import { LoadingScreen } from "@/components/loading-screen";
@@ -37,7 +37,8 @@ interface ChatHistoryResponse {
 }
 
 export function ScheduledChatClient() {
-  const searchParams = useSearchParams();
+  const params = useParams();
+  const id = params?.id as string;
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [pendingSession, setPendingSession] = useState<ScheduledSession | null>(
@@ -55,7 +56,6 @@ export function ScheduledChatClient() {
   const reduxActiveChatId = useSelector(
     (state: RootState) => state.chat.activeChatId
   );
-
 
   const { fetchProtected } = useProtectedApi();
 
@@ -130,27 +130,33 @@ export function ScheduledChatClient() {
   useEffect(() => {
     const fetchData = async () => {
       if (isAuthenticated) {
-        // Get the URL parameter
-        const id = searchParams.get("id");
-        
-        // Check if this is a chain ID (starts with "chain-" or your specific format)
-        const isChainId = id && (id.startsWith("CHAIN"));
-        
+        // Get ID from dynamic route params instead of search params
+        console.log("Route ID parameter:", id);
+         
+        // Check if this is a chain ID
+        const isChainId = id && id.startsWith("CHAIN");
         if (isChainId && id) {
           console.log("Chain ID detected in URL, fetching chain-specific messages");
           await fetchChainMessages(id);
           await fetchScheduledSession();
+          console.log("OP")
+        } else if (id) {
+          // Regular chat ID
+          console.log("Regular chat ID, fetching specific chat");
+          setActiveChatId(id);
+          await fetchChatMessages(id);
+          await fetchScheduledSession();
         } else {
-          console.log("Regular chat ID or no ID, fetching all data");
+          console.log("No ID, fetching all data");
           await Promise.all([fetchScheduledSession(), fetchChatHistory()]);
         }
         setLoading(false);
       }
     };
-    
+     
     fetchData();
     // eslint-disable-next-line
-  }, [isAuthenticated]);
+  }, [isAuthenticated, id]);
 
   // Fetch scheduled session and check status
   const fetchScheduledSession = async () => {
@@ -363,6 +369,33 @@ export function ScheduledChatClient() {
       dispatch(clearChat());
     };
   }, [dispatch]);
+
+  // Add effect to handle chat scrolling based on ID
+  useEffect(() => {
+    if (!loading && id) {
+      // Add a small delay to ensure DOM is updated
+      setTimeout(() => {
+        const element = document.getElementById(`chat-${id}`);
+        console.log("Looking for element:", `chat-${id}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+          console.log("Scrolling to chat:", id);
+        } else {
+          console.log("Element not found, retrying in 500ms...");
+          // Retry once after a longer delay
+          setTimeout(() => {
+            const retryElement = document.getElementById(`chat-${id}`);
+            if (retryElement) {
+              retryElement.scrollIntoView({ behavior: "smooth", block: "start" });
+              console.log("Successfully scrolled to chat on retry:", id);
+            } else {
+              console.log("Element still not found after retry");
+            }
+          }, 500);
+        }
+      }, 1000);
+    }
+  }, [id, loading]);
 
   if (!isAuthenticated || loading) {
     return <LoadingScreen />;
