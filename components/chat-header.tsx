@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useWindowSize } from "usehooks-ts";
 import { ChevronDown, LayoutDashboard, UserCircle } from "lucide-react";
-import { useTheme } from "next-themes";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, checkAuth } from "@/redux/features/auth";
 import type { RootState } from "@/redux/store";

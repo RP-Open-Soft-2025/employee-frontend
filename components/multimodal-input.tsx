@@ -113,7 +113,7 @@ function PureMultimodalInput({
         value={input}
         onChange={handleInput}
         className={cx(
-          'min-h-[24px] max-h-[calc(20dvh)] overflow-y-scroll [scrollbar-width:_none] resize-none rounded-2xl !text-base bg-muted/50 dark:bg-[hsl(var(--deep-blue-darker))]/70 dark:border-[hsl(var(--deep-blue-dark))]',
+          'min-h-[24px] max-h-[calc(20dvh)] overflow-y-scroll [scrollbar-width:_none] resize-none rounded-2xl !text-base bg-white text-gray-800 dark:text-white dark:bg-[hsl(var(--deep-blue-darker))] border-gray-200 dark:border-[hsl(var(--deep-blue-dark))] focus:ring-2 focus:ring-[#2563eb] dark:focus:ring-[#3b82f6] focus:ring-opacity-50 focus:border-[#2563eb] dark:focus:border-[#3b82f6] focus:outline-none',
           className,
         )}
         rows={2}
@@ -165,7 +165,7 @@ function PureSendButton({
   return (
     <Button
       data-testid="send-button"
-      className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
+      className="rounded-full p-1.5 h-fit border border-gray-200 dark:border-[hsl(var(--deep-blue-dark))] bg-white dark:bg-[hsl(var(--deep-blue-darker))] text-[#2563eb] dark:text-white"
       onClick={(event) => {
         event.preventDefault();
         submitForm();

@@ -26,11 +26,9 @@ import {
   Star,
   StarHalf,
   Clock,
-  Check,
   AlertCircle,
   UserCircle,
   Shield,
-  CreditCard,
   Mail,
   Briefcase,
 } from "lucide-react";
@@ -334,25 +332,15 @@ export function EmployeeDashboard() {
               <div className="w-full">
                 <div className="flex items-center justify-between mb-5 pb-3 border-b border-gray-100 dark:border-gray-700">
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 flex items-center gap-2">
-                    <UserCircle className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                    <UserCircle className="size-5 text-gray-700 dark:text-gray-300" />
                     Employee Information
                   </h4>
                 </div>
 
-                <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
+                <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                   <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
                     <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <User className="h-3.5 w-3.5 text-2xl" />
-                      Full Name
-                    </p>
-                    <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {employeeDetails?.name}
-                    </p>
-                  </div>
-
-                  <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
-                    <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <CreditCard className="h-3.5 w-3.5" />
+                      <User className="size-3.5" />
                       Employee ID
                     </p>
                     <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -362,17 +350,27 @@ export function EmployeeDashboard() {
 
                   <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
                     <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <Mail className="h-3.5 w-3.5" />
+                      <Mail className="size-3.5" />
                       Email
                     </p>
-                    <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-all">
+                    <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {employeeDetails?.email}
                     </p>
                   </div>
 
                   <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
                     <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <Briefcase className="h-3.5 w-3.5" />
+                      <User className="size-3.5" />
+                      Name
+                    </p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {employeeDetails?.name}
+                    </p>
+                  </div>
+
+                  <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
+                    <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                      <Briefcase className="size-3.5" />
                       Role
                     </p>
                     <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize">
@@ -382,7 +380,7 @@ export function EmployeeDashboard() {
 
                   <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
                     <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <Shield className="h-3.5 w-3.5" />
+                      <Shield className="size-3.5" />
                       Manager ID
                     </p>
                     <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -453,7 +451,7 @@ export function EmployeeDashboard() {
 
                       return (
                         <div
-                          key={`leave-${index}`}
+                          key={`leave-${leave.Leave_Type}-${leave.Leave_Start_Date}`}
                           className="flex justify-between items-center py-2 px-3 rounded-lg border bg-background/50 hover:bg-background/80 transition-colors"
                         >
                           <div className="flex items-center">
@@ -544,7 +542,7 @@ export function EmployeeDashboard() {
                           {[1, 2, 3, 4, 5].map((star) => (
                             <svg
                               key={star}
-                              className={`h-4 w-4 2xl:h-3.5 2xl:w-3.5 xl:h-3 xl:w-3 lg:h-2 lg:w-2 md:h-2.5 md:w-2.5 ${
+                              className={`size-4 2xl:size-3.5 xl:size-3 lg:size-2 md:size-2.5 ${
                                 star <= Math.round(employeeDetails.company_data.performance[0].Performance_Rating) 
                                   ? 'text-yellow-500' 
                                   : 'text-gray-300 dark:text-gray-600'
@@ -592,7 +590,7 @@ export function EmployeeDashboard() {
                       <div className="mt-4 flex items-end space-x-2 h-32">
                         {employeeDetails.company_data.performance.map((performance, index) => (
                           <div
-                            key={index}
+                            key={`perf-${performance.Review_Period}`}
                             className="relative flex flex-col items-center flex-1"
                           >
                             <div className="relative w-full">
@@ -607,7 +605,7 @@ export function EmployeeDashboard() {
                                 style={{
                                   height: `${performance.Performance_Rating * 20}px`,
                                 }}
-                              ></div>
+                              />
                               <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-700 dark:text-gray-300 2xl:text-[10px] xl:text-[10px] lg:text-[8px] md:text-[8px]">
                                 {performance.Performance_Rating.toFixed(1)}
                               </div>
@@ -672,7 +670,7 @@ export function EmployeeDashboard() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
                       {employeeDetails?.company_data?.activity?.map((activity, index) => (
-                        <tr key={index}>
+                        <tr key={`activity-row-${activity.Date}`}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-white/90">
                             {new Date(activity.Date).toLocaleDateString('en-GB')}
                           </td>
@@ -701,13 +699,13 @@ export function EmployeeDashboard() {
                   <div className="flex h-10 items-end space-x-2">
                     {employeeDetails?.company_data?.activity?.map((activity, index) => (
                       <div
-                        key={index}
+                        key={`activity-chart-${activity.Date}`}
                         className="relative flex flex-col items-center"
                       >
                         <div
                           className="w-8 bg-blue-500 dark:bg-blue-600 rounded-t-sm"
                           style={{ height: `${activity.Teams_Messages_Sent / 2}px` }}
-                        ></div>
+                        />
                         <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                           {new Date(activity.Date).getDate()}
                         </span>
@@ -765,7 +763,7 @@ export function EmployeeDashboard() {
                         
                         return (
                           <>
-                            <div className={`rounded-full ${getColorForScore()} w-32 h-32 flex items-center justify-center shadow-lg`}>
+                            <div className={`rounded-full ${getColorForScore()} size-32 flex items-center justify-center shadow-lg`}>
                               <span className="text-white text-4xl font-bold">{normalizedScore.toFixed(1)}</span>
                             </div>
                             
@@ -793,7 +791,7 @@ export function EmployeeDashboard() {
                             transition: 'left 0.3s ease-in-out'
                           }}
                         >
-                          <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-transparent border-t-gray-800 dark:border-t-white mx-auto"></div>
+                          <div className="size-0 border-x-[8px] border-t-[8px] border-transparent border-t-gray-800 dark:border-t-white mx-auto" />
                         </div>
                       </div>
                       
@@ -828,10 +826,10 @@ export function EmployeeDashboard() {
                           return (
                             <div key={value} className="flex flex-col items-center">
                               <div 
-                                className={`w-4 h-4 rounded-full mb-1 ${
+                                className={`size-4 rounded-full mb-1 ${
                                   normalizedScore >= value - 0.5 ? getColorForPoint(value) : 'bg-gray-200 dark:bg-gray-700'
                                 }`}
-                              ></div>
+                              />
                               <div className={`text-xs font-medium ${normalizedScore >= value - 0.5 ? getTextColorForPoint(value) : 'text-gray-500 dark:text-gray-400'}`}>
                                 {value}
                               </div>
@@ -1070,33 +1068,27 @@ export function EmployeeDashboard() {
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                       {employeeDetails.company_data.rewards.map((reward, index) => (
                         <div
-                          key={index}
+                          key={`reward-${reward.Award_Type}-${reward.Award_Date}`}
                           className="flex flex-col items-center rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
                         >
-                          <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+                          <div className="mb-3 flex size-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
                             {/* Using a fallback icon display since we don't have actual icons */}
-                            <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                            <div className="size-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
                               {reward.Award_Type.charAt(0)}
                             </div>
                           </div>
-                          <h5 className="mb-1 text-center text-sm font-medium text-gray-800 dark:text-white/90">
-                            {reward.Award_Type}
-                          </h5>
-                          <p className="text-center text-xs text-gray-500 dark:text-gray-400">
-                            {new Date(reward.Award_Date).toLocaleDateString('en-GB')}
-                          </p>
-                          <div className="mt-2 flex items-center justify-center">
-                            <svg
-                              className="h-4 w-4 text-yellow-500"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                            <span className="ml-1 text-xs font-medium text-gray-800 dark:text-white/90">
-                              {reward.Reward_Points} pts
-                            </span>
-                          </div>
+                          
+                          {/* Also fix the star icon */}
+                          <svg
+                            className="size-4 text-yellow-500"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                          <span className="ml-1 text-xs font-medium text-gray-800 dark:text-white/90">
+                            {reward.Reward_Points} pts
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -1109,7 +1101,7 @@ export function EmployeeDashboard() {
                         <div
                           className="h-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600"
                           style={{ width: `${(employeeDetails.company_data.rewards.reduce((total, r) => total + r.Reward_Points, 0) / 2000) * 100}%` }}
-                        ></div>
+                        />
                       </div>
                       <div className="mt-2 flex justify-between">
                         <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -1152,6 +1144,13 @@ export function EmployeeDashboard() {
                       `/session?id=${employeeDetails.chat_summary.chat_id}`
                     )
                   }
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      router.push(`/session?id=${employeeDetails.chat_summary.chat_id}`);
+                    }
+                  }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
