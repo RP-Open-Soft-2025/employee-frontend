@@ -213,7 +213,7 @@ export function SidebarHistory({ user }: { user: any }) {
         // Use a safe fetch approach that never throws
         const result = await safeApiFetch(`/employee/chains/${chain.id}/messages`);
         
-        if (result && result.success) {
+        if (result?.success) {
           const data = result.data;
           const messages = data.messages || [];
           const lastMessage = messages.length > 0 ? messages[messages.length - 1].text : "No messages";
@@ -268,7 +268,7 @@ export function SidebarHistory({ user }: { user: any }) {
       const result = await safeApiFetch("/employee/chains");
       let chainsData: ChainResponse[] = [];
       
-      if (result && result.success) {
+      if (result?.success) {
         const data = result.data;
         console.log("Chains API response successful:", data);
         

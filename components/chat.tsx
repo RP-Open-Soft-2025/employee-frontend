@@ -51,7 +51,7 @@ export function Chat({
         
         if (result && Array.isArray(result)) {
           chains = result;
-        } else if (result && result.chains && Array.isArray(result.chains)) {
+        } else if (result?.chains && Array.isArray(result.chains)) {
           chains = result.chains;
         }
         
