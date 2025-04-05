@@ -22,22 +22,13 @@ interface Chain {
   // Add other chain properties as needed
 }
 
-interface SearchParams {
-  id?: string;
-}
-
-export default function ChatPage({ searchParams }: { searchParams: SearchParams }) {
+export default function ChatPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { auth } = store.getState() as StoreState;
 
   useEffect(() => {
-    // If there's an id in the query parameters, redirect to the new route pattern
-    if (searchParams?.id) {
-      router.push(`/session/${searchParams.id}`);
-      return;
-    }
 
     // Function to fetch chains
     const fetchChains = async (): Promise<void> => {
@@ -91,7 +82,7 @@ export default function ChatPage({ searchParams }: { searchParams: SearchParams 
     };
 
     fetchChains();
-  }, [router, searchParams, auth.user?.accessToken]);
+  }, [router, auth.user?.accessToken]);
 
   if (isLoading) {
     return (
