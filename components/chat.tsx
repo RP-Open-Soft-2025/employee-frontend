@@ -36,6 +36,45 @@ export function Chat({
   const { fetchProtected } = useProtectedApi();
   const dispatch = useDispatch();
   const [initiatingChat, setInitiatingChat] = useState<string | null>(null);
+  const [chainStatus, setChainStatus] = useState<string | null>(null);
+
+  // Fetch chain status for this chat
+  useEffect(() => {
+    const checkForEscalatedChains = async () => {
+      try {
+        // Fetch all chains
+        const result = await fetchProtected("/employee/chains", {
+          method: "GET",
+        });
+        
+        let chains = [];
+        
+        if (result && Array.isArray(result)) {
+          chains = result;
+        } else if (result && result.chains && Array.isArray(result.chains)) {
+          chains = result.chains;
+        }
+        
+        // Check if ANY chain is escalated
+        const hasEscalatedChain = chains.some((chain: any) => chain.status === "escalated");
+        
+        if (hasEscalatedChain) {
+          console.log("Found escalated chain");
+          console.log("escalated");
+          setChainStatus("escalated");
+        } else {
+          // Set the status of the first chain as fallback
+          if (chains.length > 0) {
+            setChainStatus(chains[0].status);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to check for escalated chains:", error);
+      }
+    };
+    
+    checkForEscalatedChains();
+  }, [fetchProtected]);
 
   // Add ping effect for active chats
   useEffect(() => {
@@ -348,7 +387,11 @@ export function Chat({
           <div className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl">
             <div className="flex flex-col w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg border shadow-sm p-4">
               <p className="text-sm text-muted-foreground text-center">
-                No Active/Scheduled sessions available
+                {chainStatus === "escalated" ? (
+                  "Escalated to HR"
+                ) : (
+                  "No Active/Scheduled sessions available"
+                )}
               </p>
             </div>
           </div>
