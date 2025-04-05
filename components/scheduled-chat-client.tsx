@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Chat } from "@/components/chat";
 import { DataStreamHandler } from "@/components/data-stream-handler";
 import { LoadingScreen } from "@/components/loading-screen";
@@ -37,7 +37,8 @@ interface ChatHistoryResponse {
 }
 
 export function ScheduledChatClient() {
-  const searchParams = useSearchParams();
+  const params = useParams();
+  const id = params?.id as string;
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [pendingSession, setPendingSession] = useState<ScheduledSession | null>(
@@ -56,53 +57,106 @@ export function ScheduledChatClient() {
     (state: RootState) => state.chat.activeChatId
   );
 
-  // Add effect to handle URL parameter and scroll to specific chat
-  useEffect(() => {
-    if (!loading) {
-      const chatId = searchParams.get("id");
-      console.log("Chat ID from URL:", chatId);
-      if (chatId) {
-        // Add a small delay to ensure DOM is updated
-        setTimeout(() => {
-          const element = document.getElementById(`chat-${chatId}`);
-          console.log("Looking for element:", `chat-${chatId}`);
-          if (element) {
-            element.scrollIntoView({ behavior: "smooth", block: "start" });
-            console.log("Scrolling to chat:", chatId);
-          } else {
-            console.log("Element not found, retrying in 500ms...");
-            // Retry once after a longer delay
-            setTimeout(() => {
-              const retryElement = document.getElementById(`chat-${chatId}`);
-              if (retryElement) {
-                retryElement.scrollIntoView({ behavior: "smooth", block: "start" });
-                console.log("Successfully scrolled to chat on retry:", chatId);
-              } else {
-                console.log("Element still not found after retry");
-              }
-            }, 500);
-          }
-        }, 1000);
-      }
-    }
-  }, [searchParams, loading]);
-
   const { fetchProtected } = useProtectedApi();
+
+  // Add a function to fetch messages for a specific chain
+  const fetchChainMessages = async (chainId: string) => {
+    try {
+      console.log(`Fetching messages for chain: ${chainId}`);
+      const response = await fetchProtected(`/employee/chains/${chainId}/messages`);
+      
+      if (!response) {
+        console.error("No data returned for chain:", chainId);
+        return;
+      }
+      
+      console.log("Chain data received:", response);
+      
+      // Clear existing messages
+      setAllMessages([]);
+      
+      // Process all sessions in the chain
+      const allChainMessages: UIMessage[] = [];
+      let firstChatId = null;
+      
+      if (response.sessions && Array.isArray(response.sessions)) {
+        for (const session of response.sessions) {
+          const chatId = session.chat_id;
+          
+          // Store the first chat ID we encounter
+          if (!firstChatId) {
+            firstChatId = chatId;
+          }
+          
+          // Process messages for this session
+          if (session.messages && Array.isArray(session.messages)) {
+            const sessionMessages = session.messages.map((msg: any, index: number) => ({
+              id: `${chatId}-${msg.timestamp}-${index}`,
+              role: msg.sender === "bot" || msg.sender === "hr" ? "assistant" : "user",
+              content: msg.sender === "hr" ? "HR: " + msg.text : msg.text,
+              createdAt: new Date(msg.timestamp).toISOString(),
+              senderType: msg.sender
+            }));
+            
+            allChainMessages.push(...sessionMessages);
+          }
+        }
+      }
+      
+      // Sort messages by timestamp
+      allChainMessages.sort((a, b) => {
+        const dateA = new Date(a.createdAt || Date.now());
+        const dateB = new Date(b.createdAt || Date.now());
+        return dateA.getTime() - dateB.getTime();
+      });
+      
+      console.log(`Found ${allChainMessages.length} messages across ${response.sessions?.length || 0} sessions for chain ${chainId}`);
+      
+      // Set active chat ID if we found one
+      if (firstChatId) {
+        setActiveChatId(firstChatId);
+      }
+      
+      // Update messages and read-only status
+      setAllMessages(allChainMessages);
+      setIsReadonly(response.is_escalated || false);
+      
+    } catch (error) {
+      console.error("Error fetching chain messages:", error);
+    }
+  };
 
   // Initial data loading
   useEffect(() => {
     const fetchData = async () => {
       if (isAuthenticated) {
-        console.log(
-          "Authenticated, fetching scheduled sessions and chat history"
-        );
-        await Promise.all([fetchScheduledSession(), fetchChatHistory()]);
+        // Get ID from dynamic route params instead of search params
+        console.log("Route ID parameter:", id);
+         
+        // Check if this is a chain ID
+        const isChainId = id && id.startsWith("CHAIN");
+        if (isChainId && id) {
+          console.log("Chain ID detected in URL, fetching chain-specific messages");
+          await fetchChainMessages(id);
+          await fetchScheduledSession();
+          console.log("OP")
+        } else if (id) {
+          // Regular chat ID
+          console.log("Regular chat ID, fetching specific chat");
+          setActiveChatId(id);
+          await fetchChatMessages(id);
+          await fetchScheduledSession();
+        } else {
+          console.log("No ID, fetching all data");
+          await Promise.all([fetchScheduledSession(), fetchChatHistory()]);
+        }
         setLoading(false);
       }
     };
+     
     fetchData();
     // eslint-disable-next-line
-  }, [isAuthenticated]);
+  }, [isAuthenticated, id]);
 
   // Fetch scheduled session and check status
   const fetchScheduledSession = async () => {
@@ -111,7 +165,14 @@ export function ScheduledChatClient() {
 
       console.log("Scheduled sessions response:", result);
 
-      if (result && result.length > 0) {
+      // Set readonly to true by default, unless we explicitly find an active session
+      setIsReadonly(true);
+
+      // Clear pending session first
+      setPendingSession(null);
+
+      // Check if we have a valid array with sessions
+      if (result && Array.isArray(result) && result.length > 0) {
         // First priority: Find an active session
         let sessionToUse = result.find(
           (session: ScheduledSession) => session.status === "active"
@@ -120,17 +181,28 @@ export function ScheduledChatClient() {
         console.log("Active session found:", sessionToUse);
 
         if (sessionToUse) {
-          // If an active session exists, load it immediately
-          console.log("Setting active chat ID to:", sessionToUse.chat_id);
-          setActiveChatId(sessionToUse.chat_id);
-          dispatch(setChatStatus("active"));
-          setIsReadonly(false); // Active sessions are not read-only
-          await fetchChatMessages(sessionToUse.chat_id);
+          // Look for chain data that includes this session
+          const chainId = await findChainForSession(sessionToUse.session_id);
+          
+          if (chainId) {
+            console.log(`Found chain ${chainId} for session ${sessionToUse.session_id}`);
+            // If we found a chain, fetch messages using the chain endpoint
+            await fetchChainMessages(chainId);
+            // Active session exists, so not readonly
+            setIsReadonly(false);
+          } else {
+            // Fall back to using the chat ID if we can't find a chain
+            console.log("Setting active chat ID to:", sessionToUse.chat_id);
+            setActiveChatId(sessionToUse.chat_id);
+            dispatch(setChatStatus("active"));
+            setIsReadonly(false); // Active sessions are not read-only
+          }
           return;
         }
 
-        setIsReadonly(true);
-
+        // If no active session, check for pending session
+        console.log("No active session found, looking for pending session");
+        
         // Second priority: Find a pending session
         sessionToUse = result.find(
           (session: ScheduledSession) => session.status === "pending"
@@ -143,38 +215,100 @@ export function ScheduledChatClient() {
           setPendingSession(sessionToUse);
         }
       } else {
+        // No sessions at all or invalid response
+        console.log("No scheduled sessions found or empty response", result);
         setIsReadonly(true);
-        console.log("No scheduled sessions found or empty response");
+        setPendingSession(null);
+        setActiveChatId(null);
       }
     } catch (error) {
       console.error("Failed to fetch scheduled sessions:", error);
+      setIsReadonly(true);
+      setPendingSession(null);
     }
   };
 
-  // Modified fetch chat messages for a specific chat ID
+  // Helper function to find which chain contains a specific session
+  const findChainForSession = async (sessionId: string): Promise<string | null> => {
+    try {
+      // Get all chains
+      const chainsResponse = await fetchProtected("/employee/chains");
+      let chains = [];
+      
+      if (Array.isArray(chainsResponse)) {
+        chains = chainsResponse;
+      } else if (chainsResponse?.chains && Array.isArray(chainsResponse.chains)) {
+        chains = chainsResponse.chains;
+      }
+      
+      // Find a chain that includes this session ID
+      for (const chain of chains) {
+        if (chain.session_ids && chain.session_ids.includes(sessionId)) {
+          return chain.chain_id;
+        }
+      }
+      
+      console.log(`No chain found containing session ${sessionId}`);
+      return null;
+    } catch (error) {
+      console.error("Failed to find chain for session:", error);
+      return null;
+    }
+  };
+
+  // Modified fetch chat messages function to use the chains API endpoint
   const fetchChatMessages = async (id: string): Promise<UIMessage[] | null> => {
     try {
       console.log("Fetching messages for chat ID:", id);
-      const response = await fetchProtected(`/employee/chats/${id}/messages`);
-      // console.log("Chat messages response:", response);
+      
+      // Try to get the chain ID for this chat
+      let chainId = id;
+      
+      // If the ID doesn't look like a chain ID, we need to find the associated chain
+      if (!id.startsWith("chain-") && !id.startsWith("CHAIN")) {
+        // For now, we'll just use the chain messages endpoint directly
+        // In a real implementation, you might need to look up which chain contains this chat
+        console.log("Non-chain ID detected, searching for associated chain...");
+      }
+      
+      // Use the chains endpoint instead of chats endpoint
+      const response = await fetchProtected(`/employee/chains/${chainId}/messages`);
+      console.log("Chain messages response:", response);
 
-      if (response?.messages) {
-        const uiMessages: UIMessage[] = response.messages.map(
-          (message: any, index: number) => ({
-            id: `${id}-msg-${index}`,
-            role: message.sender === "bot" ? "assistant" : "user",
-            content: message.text,
-            createdAt: new Date(message.timestamp).toISOString(),
-          })
-        );
+      if (response?.sessions) {
+        // Create a flat array of all messages from all sessions
+        const allMessages: UIMessage[] = [];
+        
+        for (const session of response.sessions) {
+          if (session.messages && Array.isArray(session.messages)) {
+            const sessionMessages = session.messages.map(
+              (message: any, index: number) => ({
+                id: `${session.chat_id}-msg-${index}`,
+                role: message.sender === "bot" || message.sender === "hr" ? "assistant" : "user",
+                content: message.sender === "hr" ? "HR: " + message.text : message.text,
+                createdAt: new Date(message.timestamp).toISOString(),
+                senderType: message.sender
+              })
+            );
+            
+            allMessages.push(...sessionMessages);
+          }
+        }
+        
+        // Sort messages by timestamp
+        allMessages.sort((a, b) => {
+          const dateA = new Date(a.createdAt || Date.now());
+          const dateB = new Date(b.createdAt || Date.now());
+          return dateA.getTime() - dateB.getTime();
+        });
 
         // If this is the active chat, update initialMessages
         if (id === activeChatId) {
-          setInitialMessages(uiMessages);
-          dispatch(setMessages(uiMessages));
+          setInitialMessages(allMessages);
+          dispatch(setMessages(allMessages));
         }
 
-        return uiMessages;
+        return allMessages;
       }
       return null;
     } catch (error) {
@@ -183,54 +317,46 @@ export function ScheduledChatClient() {
     }
   };
 
-  // Modified fetchChatHistory function to also fetch messages for each chat
+  // Modified fetchChatHistory function to use chains endpoint
   const fetchChatHistory = async () => {
     try {
-      const result = await fetchProtected("/employee/chats");
-      console.log("Chat history:", result);
-      if (result?.chats && Array.isArray(result.chats)) {
-        // sort chats based on date with latest chat at the end
-        result.chats.sort((a: ChatHistoryResponse, b: ChatHistoryResponse) => {
+      // Get all chains instead of chats
+      const result = await fetchProtected("/employee/chains");
+      console.log("Chains history:", result);
+      
+      let chains = [];
+      if (result && Array.isArray(result)) {
+        chains = result;
+      } else if (result?.chains && Array.isArray(result.chains)) {
+        chains = result.chains;
+      }
+      
+      if (chains.length > 0) {
+        // Sort chains based on date with latest chain at the end
+        chains.sort((a: any, b: any) => {
           return (
             new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
           );
         });
 
-        const chats = result.chats.map((chat: ChatHistoryResponse) => ({
-          id: chat.chat_id,
-          lastMessage: chat.last_message,
-          lastMessageTime: chat.last_message_time,
-          mode: chat.chat_mode,
-          isEscalated: chat.is_escalated,
-          totalMessages: chat.total_messages,
-          unreadCount: chat.unread_count,
-          created_at: chat.created_at,
-        }));
-
-        // console.log("Chats:", chats);
-
-        // Fetch messages for all chats
-        const allChatMessages: UIMessage[] = [];
-        for (const chat of chats) {
+        // Fetch messages for all chains
+        const allChainMessages: UIMessage[] = [];
+        for (const chain of chains) {
           try {
-            const messages = await fetchChatMessages(chat.id);
+            const messages = await fetchChatMessages(chain.chain_id);
             if (messages) {
-              // Add created_at to each message's ID
-              const messagesWithCreatedAt = messages.map((msg) => ({
-                ...msg,
-                id: `${chat.id}-${chat.created_at}-${msg.id.split("-").pop()}`,
-              }));
-              allChatMessages.push(...messagesWithCreatedAt);
+              allChainMessages.push(...messages);
             }
           } catch (error) {
             console.error(
-              `Failed to fetch messages for chat ${chat.id}:`,
+              `Failed to fetch messages for chain ${chain.chain_id}:`,
               error
             );
           }
         }
-        // console.log("All chat messages:", allChatMessages);
-        setAllMessages(allChatMessages);
+        
+        console.log("All chain messages:", allChainMessages);
+        setAllMessages(allChainMessages);
       }
     } catch (e) {
       console.error("Failed to fetch chat history:", e);
@@ -243,6 +369,33 @@ export function ScheduledChatClient() {
       dispatch(clearChat());
     };
   }, [dispatch]);
+
+  // Add effect to handle chat scrolling based on ID
+  useEffect(() => {
+    if (!loading && id) {
+      // Add a small delay to ensure DOM is updated
+      setTimeout(() => {
+        const element = document.getElementById(`chat-${id}`);
+        console.log("Looking for element:", `chat-${id}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+          console.log("Scrolling to chat:", id);
+        } else {
+          console.log("Element not found, retrying in 500ms...");
+          // Retry once after a longer delay
+          setTimeout(() => {
+            const retryElement = document.getElementById(`chat-${id}`);
+            if (retryElement) {
+              retryElement.scrollIntoView({ behavior: "smooth", block: "start" });
+              console.log("Successfully scrolled to chat on retry:", id);
+            } else {
+              console.log("Element still not found after retry");
+            }
+          }, 500);
+        }
+      }, 1000);
+    }
+  }, [id, loading]);
 
   if (!isAuthenticated || loading) {
     return <LoadingScreen />;
