@@ -77,7 +77,7 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuContent align="end" className="w-80 max-h-[400px] overflow-y-auto">
               {notifications.length === 0 ? (
                 <div className="p-4 text-center text-sm text-muted-foreground">
                   No notifications
