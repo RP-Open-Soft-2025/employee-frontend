@@ -56,45 +56,6 @@ export function ScheduledChatClient() {
     (state: RootState) => state.chat.activeChatId
   );
 
-  // Add effect to handle URL parameter
-  useEffect(() => {
-    if (!loading) {
-      const id = searchParams.get("id");
-      console.log("ID from URL:", id);
-      
-      // Check if this is a chain ID
-      const isChainId = id && (id.startsWith("chain-") || id.startsWith("CHAIN"));
-      
-      if (id) {
-        if (isChainId) {
-          // If this is a chain ID, fetch chain messages
-          fetchChainMessages(id);
-        } else {
-          // If this is a regular chat ID, try to scroll to it
-          setTimeout(() => {
-            const element = document.getElementById(`chat-${id}`);
-            console.log("Looking for element:", `chat-${id}`);
-            if (element) {
-              element.scrollIntoView({ behavior: "smooth", block: "start" });
-              console.log("Scrolling to chat:", id);
-            } else {
-              console.log("Element not found, retrying in 500ms...");
-              // Retry once after a longer delay
-              setTimeout(() => {
-                const retryElement = document.getElementById(`chat-${id}`);
-                if (retryElement) {
-                  retryElement.scrollIntoView({ behavior: "smooth", block: "start" });
-                  console.log("Successfully scrolled to chat on retry:", id);
-                } else {
-                  console.log("Element still not found after retry");
-                }
-              }, 500);
-            }
-          }, 1000);
-        }
-      }
-    }
-  }, [searchParams, loading]);
 
   const { fetchProtected } = useProtectedApi();
 
@@ -120,7 +81,6 @@ export function ScheduledChatClient() {
       
       if (response.sessions && Array.isArray(response.sessions)) {
         for (const session of response.sessions) {
-          const sessionId = session.session_id;
           const chatId = session.chat_id;
           
           // Store the first chat ID we encounter
@@ -174,11 +134,12 @@ export function ScheduledChatClient() {
         const id = searchParams.get("id");
         
         // Check if this is a chain ID (starts with "chain-" or your specific format)
-        const isChainId = id && (id.startsWith("chain-") || id.startsWith("CHAIN"));
+        const isChainId = id && (id.startsWith("CHAIN"));
         
         if (isChainId && id) {
           console.log("Chain ID detected in URL, fetching chain-specific messages");
           await fetchChainMessages(id);
+          await fetchScheduledSession();
         } else {
           console.log("Regular chat ID or no ID, fetching all data");
           await Promise.all([fetchScheduledSession(), fetchChatHistory()]);
