@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Bell, Mail, MailOpen } from "lucide-react";
+import { Bell, Mail, MailOpen, Sun, Moon } from "lucide-react";
 import { HeaderUserNav } from "@/components/chat-header";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +30,7 @@ interface HeaderProps {
 
 export function Header({ notifications, onNotificationClick, onMarkAllAsRead, children }: HeaderProps) {
   const unreadCount = notifications?.filter(n => n.status === 'unread').length || 0;
+  const { setTheme, theme } = useTheme();
 
   const handleNotificationClick = (notification: Notification) => {
     if (notification.status === 'unread' && onNotificationClick) {
@@ -60,13 +62,26 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
     <div className="flex flex-row justify-between items-center my-4 px-4 md:px-6 py-2 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm bg-[#F9FAFC] dark:bg-[hsl(var(--deep-blue-darker))]">
       <Link href="/">{children}</Link>
       <div className="flex items-center space-x-5">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-black dark:text-white !bg-transparent !rounded-full"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
+          {theme === 'dark' ? (
+            <Sun className="size-5" />
+          ) : (
+            <Moon className="size-5" />
+          )}
+        </Button>
+
         {notifications && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
                 size="sm"
-                className="relative hidden md:flex bg-white dark:bg-[hsl(var(--deep-blue-dark))] hover:bg-gray-100 dark:hover:bg-[hsl(var(--deep-blue))] border-gray-200 dark:border-[hsl(var(--deep-blue))]"
+                className="relative hidden md:flex bg-white dark:bg-[hsl(var(--deep-blue-dark))] text-black dark:text-white border-gray-200 dark:border-[hsl(var(--deep-blue))]"
               >
                 <Bell className="size-4" />
                 Notifications
