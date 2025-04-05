@@ -36,7 +36,7 @@ export function PureMessageActions({
   return (
     <TooltipProvider delayDuration={0}>
       <div className="flex flex-row gap-2">
-        <Tooltip>
+        {/* <Tooltip>
           <TooltipTrigger asChild>
             <Button
               className="py-1 px-2 h-fit text-muted-foreground"
@@ -61,7 +61,7 @@ export function PureMessageActions({
             </Button>
           </TooltipTrigger>
           <TooltipContent>Copy</TooltipContent>
-        </Tooltip>
+        </Tooltip> */}
 
         <Tooltip>
           <TooltipTrigger asChild>
