@@ -143,6 +143,7 @@ const ChainItem = ({
                     onChatClick(session.chatId);
                     setOpenMobile(false);
                   }}
+                  className="cursor-pointer"
                 >
                   <MessageSquare className="size-3" />
                   <span className="truncate">Session {session.id}</span>
