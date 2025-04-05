@@ -132,9 +132,10 @@ export function ScheduledChatClient() {
           if (session.messages && Array.isArray(session.messages)) {
             const sessionMessages = session.messages.map((msg: any, index: number) => ({
               id: `${chatId}-${msg.timestamp}-${index}`,
-              role: msg.sender === "bot" ? "assistant" : msg.sender === "hr" ? "system" : "user",
+              role: msg.sender === "bot" || msg.sender === "hr" ? "assistant" : "user",
               content: msg.text,
               createdAt: new Date(msg.timestamp).toISOString(),
+              senderType: msg.sender
             }));
             
             allChainMessages.push(...sessionMessages);
@@ -197,7 +198,14 @@ export function ScheduledChatClient() {
 
       console.log("Scheduled sessions response:", result);
 
-      if (result && result.length > 0) {
+      // Set readonly to true by default, unless we explicitly find an active session
+      setIsReadonly(true);
+
+      // Clear pending session first
+      setPendingSession(null);
+
+      // Check if we have a valid array with sessions
+      if (result && Array.isArray(result) && result.length > 0) {
         // First priority: Find an active session
         let sessionToUse = result.find(
           (session: ScheduledSession) => session.status === "active"
@@ -213,6 +221,8 @@ export function ScheduledChatClient() {
             console.log(`Found chain ${chainId} for session ${sessionToUse.session_id}`);
             // If we found a chain, fetch messages using the chain endpoint
             await fetchChainMessages(chainId);
+            // Active session exists, so not readonly
+            setIsReadonly(false);
           } else {
             // Fall back to using the chat ID if we can't find a chain
             console.log("Setting active chat ID to:", sessionToUse.chat_id);
@@ -223,8 +233,9 @@ export function ScheduledChatClient() {
           return;
         }
 
-        setIsReadonly(true);
-
+        // If no active session, check for pending session
+        console.log("No active session found, looking for pending session");
+        
         // Second priority: Find a pending session
         sessionToUse = result.find(
           (session: ScheduledSession) => session.status === "pending"
@@ -237,11 +248,16 @@ export function ScheduledChatClient() {
           setPendingSession(sessionToUse);
         }
       } else {
+        // No sessions at all or invalid response
+        console.log("No scheduled sessions found or empty response", result);
         setIsReadonly(true);
-        console.log("No scheduled sessions found or empty response");
+        setPendingSession(null);
+        setActiveChatId(null);
       }
     } catch (error) {
       console.error("Failed to fetch scheduled sessions:", error);
+      setIsReadonly(true);
+      setPendingSession(null);
     }
   };
 
@@ -301,9 +317,10 @@ export function ScheduledChatClient() {
             const sessionMessages = session.messages.map(
               (message: any, index: number) => ({
                 id: `${session.chat_id}-msg-${index}`,
-                role: message.sender === "bot" ? "assistant" : "user",
+                role: message.sender === "bot" || message.sender === "hr" ? "assistant" : "user",
                 content: message.text,
                 createdAt: new Date(message.timestamp).toISOString(),
+                senderType: message.sender
               })
             );
             
