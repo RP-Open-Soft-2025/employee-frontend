@@ -25,7 +25,7 @@ export function SubmitButton({ isSuccessful, children, className = "" }: SubmitB
         w-full mt-4 py-2 px-4 rounded font-semibold
         ${pending ? "bg-gray-400 cursor-not-allowed" : 
           isSuccessful ? "bg-green-500 cursor-not-allowed" : 
-          "bg-[hsl(var(--primary))] dark:bg-[hsl(var(--secondary))]"}
+          "bg-[hsl(var(--deep-blue-accent))] hover:bg-[hsl(var(--deep-blue-accent-hover))] dark:bg-[hsl(var(--deep-blue-accent))] dark:hover:bg-[hsl(var(--deep-blue-accent-hover))]"}
         text-white transition-colors
         ${className}
       `}
