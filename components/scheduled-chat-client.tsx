@@ -133,7 +133,7 @@ export function ScheduledChatClient() {
             const sessionMessages = session.messages.map((msg: any, index: number) => ({
               id: `${chatId}-${msg.timestamp}-${index}`,
               role: msg.sender === "bot" || msg.sender === "hr" ? "assistant" : "user",
-              content: msg.text,
+              content: msg.sender === "hr" ? "HR: " + msg.text : msg.text,
               createdAt: new Date(msg.timestamp).toISOString(),
               senderType: msg.sender
             }));
@@ -318,7 +318,7 @@ export function ScheduledChatClient() {
               (message: any, index: number) => ({
                 id: `${session.chat_id}-msg-${index}`,
                 role: message.sender === "bot" || message.sender === "hr" ? "assistant" : "user",
-                content: message.text,
+                content: message.sender === "hr" ? "HR: " + message.text : message.text,
                 createdAt: new Date(message.timestamp).toISOString(),
                 senderType: message.sender
               })
