@@ -63,64 +63,74 @@ export function ScheduledChatClient() {
   const fetchChainMessages = async (chainId: string) => {
     try {
       console.log(`Fetching messages for chain: ${chainId}`);
-      const response = await fetchProtected(`/employee/chains/${chainId}/messages`);
-      
+      const response = await fetchProtected(
+        `/employee/chains/${chainId}/messages`
+      );
+
       if (!response) {
         console.error("No data returned for chain:", chainId);
         return;
       }
-      
+
       console.log("Chain data received:", response);
-      
+
       // Clear existing messages
       setAllMessages([]);
-      
+
       // Process all sessions in the chain
       const allChainMessages: UIMessage[] = [];
       let firstChatId = null;
-      
+
       if (response.sessions && Array.isArray(response.sessions)) {
         for (const session of response.sessions) {
           const chatId = session.chat_id;
-          
+
           // Store the first chat ID we encounter
           if (!firstChatId) {
             firstChatId = chatId;
           }
-          
+
           // Process messages for this session
           if (session.messages && Array.isArray(session.messages)) {
-            const sessionMessages = session.messages.map((msg: any, index: number) => ({
-              id: `${chatId}-${msg.timestamp}-${index}`,
-              role: msg.sender === "bot" || msg.sender === "hr" ? "assistant" : "user",
-              content: msg.sender === "hr" ? "HR: " + msg.text : msg.text,
-              createdAt: new Date(msg.timestamp).toISOString(),
-              senderType: msg.sender
-            }));
-            
+            const sessionMessages = session.messages.map(
+              (msg: any, index: number) => ({
+                id: `${chatId}-${msg.timestamp}-${index}`,
+                role:
+                  msg.sender === "bot" || msg.sender === "hr"
+                    ? "assistant"
+                    : "user",
+                content: msg.sender === "hr" ? "HR: " + msg.text : msg.text,
+                createdAt: new Date(msg.timestamp).toISOString(),
+                senderType: msg.sender,
+              })
+            );
+
             allChainMessages.push(...sessionMessages);
           }
         }
       }
-      
+
       // Sort messages by timestamp
       allChainMessages.sort((a, b) => {
         const dateA = new Date(a.createdAt || Date.now());
         const dateB = new Date(b.createdAt || Date.now());
         return dateA.getTime() - dateB.getTime();
       });
-      
-      console.log(`Found ${allChainMessages.length} messages across ${response.sessions?.length || 0} sessions for chain ${chainId}`);
-      
+
+      console.log(
+        `Found ${allChainMessages.length} messages across ${
+          response.sessions?.length || 0
+        } sessions for chain ${chainId}`
+      );
+
       // Set active chat ID if we found one
       if (firstChatId) {
         setActiveChatId(firstChatId);
       }
-      
+
       // Update messages and read-only status
       setAllMessages(allChainMessages);
       setIsReadonly(response.is_escalated || false);
-      
     } catch (error) {
       console.error("Error fetching chain messages:", error);
     }
@@ -132,14 +142,16 @@ export function ScheduledChatClient() {
       if (isAuthenticated) {
         // Get ID from dynamic route params instead of search params
         console.log("Route ID parameter:", id);
-         
+
         // Check if this is a chain ID
         const isChainId = id && id.startsWith("CHAIN");
         if (isChainId && id) {
-          console.log("Chain ID detected in URL, fetching chain-specific messages");
+          console.log(
+            "Chain ID detected in URL, fetching chain-specific messages"
+          );
           await fetchChainMessages(id);
           await fetchScheduledSession();
-          console.log("OP")
+          console.log("OP");
         } else if (id) {
           // Regular chat ID
           console.log("Regular chat ID, fetching specific chat");
@@ -153,7 +165,7 @@ export function ScheduledChatClient() {
         setLoading(false);
       }
     };
-     
+
     fetchData();
     // eslint-disable-next-line
   }, [isAuthenticated, id]);
@@ -182,27 +194,18 @@ export function ScheduledChatClient() {
 
         if (sessionToUse) {
           // Look for chain data that includes this session
-          const chainId = await findChainForSession(sessionToUse.session_id);
-          
-          if (chainId) {
-            console.log(`Found chain ${chainId} for session ${sessionToUse.session_id}`);
-            // If we found a chain, fetch messages using the chain endpoint
-            await fetchChainMessages(chainId);
-            // Active session exists, so not readonly
-            setIsReadonly(false);
-          } else {
-            // Fall back to using the chat ID if we can't find a chain
-            console.log("Setting active chat ID to:", sessionToUse.chat_id);
-            setActiveChatId(sessionToUse.chat_id);
-            dispatch(setChatStatus("active"));
-            setIsReadonly(false); // Active sessions are not read-only
-          }
+
+          console.log("Setting active chat ID to:", sessionToUse.chat_id);
+          setActiveChatId(sessionToUse.chat_id);
+          dispatch(setChatStatus("active"));
+          setIsReadonly(false); // Active sessions are not read-only
+
           return;
         }
 
         // If no active session, check for pending session
         console.log("No active session found, looking for pending session");
-        
+
         // Second priority: Find a pending session
         sessionToUse = result.find(
           (session: ScheduledSession) => session.status === "pending"
@@ -229,72 +232,54 @@ export function ScheduledChatClient() {
   };
 
   // Helper function to find which chain contains a specific session
-  const findChainForSession = async (sessionId: string): Promise<string | null> => {
-    try {
-      // Get all chains
-      const chainsResponse = await fetchProtected("/employee/chains");
-      let chains = [];
-      
-      if (Array.isArray(chainsResponse)) {
-        chains = chainsResponse;
-      } else if (chainsResponse?.chains && Array.isArray(chainsResponse.chains)) {
-        chains = chainsResponse.chains;
-      }
-      
-      // Find a chain that includes this session ID
-      for (const chain of chains) {
-        if (chain.session_ids && chain.session_ids.includes(sessionId)) {
-          return chain.chain_id;
-        }
-      }
-      
-      console.log(`No chain found containing session ${sessionId}`);
-      return null;
-    } catch (error) {
-      console.error("Failed to find chain for session:", error);
-      return null;
-    }
-  };
 
   // Modified fetch chat messages function to use the chains API endpoint
   const fetchChatMessages = async (id: string): Promise<UIMessage[] | null> => {
     try {
       console.log("Fetching messages for chat ID:", id);
-      
+
       // Try to get the chain ID for this chat
       let chainId = id;
-      
+
       // If the ID doesn't look like a chain ID, we need to find the associated chain
       if (!id.startsWith("chain-") && !id.startsWith("CHAIN")) {
         // For now, we'll just use the chain messages endpoint directly
         // In a real implementation, you might need to look up which chain contains this chat
         console.log("Non-chain ID detected, searching for associated chain...");
       }
-      
+
       // Use the chains endpoint instead of chats endpoint
-      const response = await fetchProtected(`/employee/chains/${chainId}/messages`);
+      const response = await fetchProtected(
+        `/employee/chains/${chainId}/messages`
+      );
       console.log("Chain messages response:", response);
 
       if (response?.sessions) {
         // Create a flat array of all messages from all sessions
         const allMessages: UIMessage[] = [];
-        
+
         for (const session of response.sessions) {
           if (session.messages && Array.isArray(session.messages)) {
             const sessionMessages = session.messages.map(
               (message: any, index: number) => ({
                 id: `${session.chat_id}-msg-${index}`,
-                role: message.sender === "bot" || message.sender === "hr" ? "assistant" : "user",
-                content: message.sender === "hr" ? "HR: " + message.text : message.text,
+                role:
+                  message.sender === "bot" || message.sender === "hr"
+                    ? "assistant"
+                    : "user",
+                content:
+                  message.sender === "hr"
+                    ? "HR: " + message.text
+                    : message.text,
                 createdAt: new Date(message.timestamp).toISOString(),
-                senderType: message.sender
+                senderType: message.sender,
               })
             );
-            
+
             allMessages.push(...sessionMessages);
           }
         }
-        
+
         // Sort messages by timestamp
         allMessages.sort((a, b) => {
           const dateA = new Date(a.createdAt || Date.now());
@@ -323,14 +308,14 @@ export function ScheduledChatClient() {
       // Get all chains instead of chats
       const result = await fetchProtected("/employee/chains");
       console.log("Chains history:", result);
-      
+
       let chains = [];
       if (result && Array.isArray(result)) {
         chains = result;
       } else if (result?.chains && Array.isArray(result.chains)) {
         chains = result.chains;
       }
-      
+
       if (chains.length > 0) {
         // Sort chains based on date with latest chain at the end
         chains.sort((a: any, b: any) => {
@@ -354,7 +339,7 @@ export function ScheduledChatClient() {
             );
           }
         }
-        
+
         console.log("All chain messages:", allChainMessages);
         setAllMessages(allChainMessages);
       }
@@ -386,7 +371,10 @@ export function ScheduledChatClient() {
           setTimeout(() => {
             const retryElement = document.getElementById(`chat-${id}`);
             if (retryElement) {
-              retryElement.scrollIntoView({ behavior: "smooth", block: "start" });
+              retryElement.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
               console.log("Successfully scrolled to chat on retry:", id);
             } else {
               console.log("Element still not found after retry");
