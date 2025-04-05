@@ -27,7 +27,7 @@
     /* New deep blue theme colors */
     --deep-blue: 215 50% 23%; /* #1e3a5f */
     --deep-blue-dark: 218 42% 18%; /* #192c47 */
-    --deep-blue-darker: 220 40% 12%; /* #101c30 */
+    --deep-blue-darker: 220 40% 12%; /* #0b1423 */
     --deep-blue-accent: 213 60% 45%; /* #2d6bbd */
     --deep-blue-accent-hover: 213 70% 40%; /* #2561b8 */
     --deep-blue-highlight: 210 100% 60%; /* #3399ff */
@@ -301,18 +301,37 @@
 
   /* Notification styles */
   .notification-dropdown-content {
-    @apply bg-white dark:bg-[hsl(var(--deep-blue-darker))] border border-gray-200 dark:border-[hsl(var(--deep-blue-dark))] shadow-lg;
+    @apply bg-white dark:bg-[#0b1423] border-gray-200 dark:border-gray-800 shadow-xl;
   }
   
   .notification-item {
-    @apply hover:bg-gray-50 dark:hover:bg-[hsl(var(--deep-blue-dark))];
+    @apply hover:bg-gray-100 dark:hover:bg-[#131f34];
   }
   
   .notification-item.unread {
-    @apply bg-blue-50 dark:bg-[hsl(var(--deep-blue-dark))];
+    @apply bg-blue-50 dark:bg-blue-900/20;
   }
   
   .notification-count {
-    @apply bg-blue-600 text-white;
+    @apply bg-red-500 text-white;
   }
+}
+
+/* Custom scrollbar for leave records */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
 }
