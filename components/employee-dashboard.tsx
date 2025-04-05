@@ -776,7 +776,7 @@ export function EmployeeDashboard() {
                     </div>
                     
                     <div className="mt-6 flex flex-col items-center w-full max-w-md">
-                      <div className="flex items-center justify-between w-full mb-2">
+                      <div className="flex items-center justify-between w-full mb-2 p-1">
                         <span className="text-xs text-red-500 font-medium">Critical</span>
                         <span className="text-xs text-emerald-500 font-medium">Excellent</span>
                       </div>
@@ -787,7 +787,7 @@ export function EmployeeDashboard() {
                         <div 
                           className="absolute bottom-full mb-1"
                           style={{ 
-                            left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score / 5) * 100}% - 8px)`,
+                            left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score -1) * 25+1}% - 8px)`,
                             transition: 'left 0.3s ease-in-out'
                           }}
                         >
@@ -796,17 +796,17 @@ export function EmployeeDashboard() {
                       </div>
                       
                       {/* Score points with colored indicators */}
-                      <div className="flex justify-between w-full px-2 relative">
+                      <div className="flex justify-between w-full px-0 relative">
                         {[1, 2, 3, 4, 5].map((value) => {
                           const score = employeeDetails.company_data.vibemeter[0].Vibe_Score;
-                          const normalizedScore = score > 5 ? score / 2 : score;
+                          const normalizedScore = score;
                           
                           const getColorForPoint = (point: number) => {
                             switch(point) {
                               case 1: return 'bg-red-500';
                               case 2: return 'bg-orange-500';
                               case 3: return 'bg-amber-500';
-                              case 4: return 'bg-blue-500';
+                              case 4: return 'bg-green-300';
                               case 5: return 'bg-emerald-500';
                               default: return 'bg-gray-400';
                             }
@@ -817,7 +817,7 @@ export function EmployeeDashboard() {
                               case 1: return 'text-red-500';
                               case 2: return 'text-orange-500';
                               case 3: return 'text-amber-500';
-                              case 4: return 'text-blue-500';
+                              case 4: return 'text-green-300';
                               case 5: return 'text-emerald-500';
                               default: return 'text-gray-400';
                             }
@@ -827,10 +827,9 @@ export function EmployeeDashboard() {
                             <div key={value} className="flex flex-col items-center">
                               <div 
                                 className={`size-4 rounded-full mb-1 ${
-                                  normalizedScore >= value - 0.5 ? getColorForPoint(value) : 'bg-gray-200 dark:bg-gray-700'
-                                }`}
+                                  getColorForPoint(value) }`}
                               />
-                              <div className={`text-xs font-medium ${normalizedScore >= value - 0.5 ? getTextColorForPoint(value) : 'text-gray-500 dark:text-gray-400'}`}>
+                              <div className={`text-xs font-medium ${ getTextColorForPoint(value) }`}>
                                 {value}
                               </div>
                             </div>
@@ -1180,12 +1179,6 @@ export function EmployeeDashboard() {
                     {employeeDetails.chat_summary.last_message ||
                       "No messages yet"}
                   </p>
-                  {employeeDetails.chat_summary.is_escalated && (
-                    <div className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
-                      <Bell className="size-4" />
-                      Escalated to HR
-                    </div>
-                  )}
                 </div>
               )}
             </CardContent>

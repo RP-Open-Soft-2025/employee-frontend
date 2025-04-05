@@ -315,24 +315,4 @@
   .notification-count {
     @apply bg-blue-600 text-white;
   }
-
-  /* Add specific styling for header buttons to remove hover effects */
-  div[class*="bg-card"] .flex.flex-row button,
-  div[class*="card"] .flex.flex-row button,
-  .flex.flex-row button[class*="ui-button"] {
-    transition: none !important;
-  }
-
-  div[class*="bg-card"] .flex.flex-row button:hover,
-  div[class*="card"] .flex.flex-row button:hover,
-  .flex.flex-row button[class*="ui-button"]:hover {
-    background: #2563eb !important; /* Keep the same blue color */
-    transform: none !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-  }
-
-  /* Keep the same styling for header buttons */
-  .header-button {
-    @apply bg-white dark:bg-[hsl(var(--deep-blue-dark))] text-black dark:text-white border-gray-200 dark:border-[hsl(var(--deep-blue))];
-  }
 }
