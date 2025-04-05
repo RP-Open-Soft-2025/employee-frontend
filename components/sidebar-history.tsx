@@ -305,10 +305,6 @@ export function SidebarHistory({ user }: { user: any }) {
       }
       
       // If we couldn't get chains from the API, use mock data
-      if (chainsData.length === 0) {
-        console.log("Using mock chain data since API returned no results");
-        chainsData = getMockChains();
-      }
       
       console.log("Processed chainsData:", chainsData);
       
@@ -356,36 +352,9 @@ export function SidebarHistory({ user }: { user: any }) {
     } catch (e) {
       console.error("Completely failed to fetch chains:", e);
       // If everything fails, still show mock data
-      const mockChains = getMockChains().map((chain) => ({
-        id: chain.chain_id,
-        employeeId: chain.employee_id || "",
-        sessionIds: chain.session_ids || [],
-        status: chain.status || "unknown",
-        context: chain.context || "",
-        createdAt: chain.created_at || new Date().toISOString(),
-        updatedAt: chain.updated_at || chain.created_at || new Date().toISOString(),
-        completedAt: chain.completed_at,
-        escalatedAt: chain.escalated_at, 
-        cancelledAt: chain.cancelled_at,
-        notes: chain.notes,
-        isOpen: false,
-        sessions: [] // Empty sessions initially
-      }));
       
-      setChains(mockChains);
       
       // Fetch mock sessions for each chain
-      Promise.all(
-        mockChains.map(async (chain) => {
-          const mockSessions = chain.sessionIds.map(sessionId => createMockSession(sessionId, chain));
-          return {
-            ...chain,
-            sessions: mockSessions
-          };
-        })
-      ).then(chainsWithSessions => {
-        setChains(chainsWithSessions);
-      });
     } finally {
       console.log("Chains fetch process completed");
       setLoading(false);
@@ -393,53 +362,6 @@ export function SidebarHistory({ user }: { user: any }) {
   };
    
   // Function to generate mock chain data for testing
-  const getMockChains = (): ChainResponse[] => {
-    const now = new Date();
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    return [
-      {
-        chain_id: "chain-123456",
-        employee_id: "emp-001",
-        session_ids: ["session-1", "session-2", "session-3"],
-        status: "active",
-        context: "Customer support inquiry",
-        created_at: now.toISOString(),
-        updated_at: now.toISOString(),
-        completed_at: null,
-        escalated_at: null,
-        cancelled_at: null,
-        notes: "Important customer"
-      },
-      {
-        chain_id: "chain-789012",
-        employee_id: "emp-001",
-        session_ids: ["session-4", "session-5"],
-        status: "completed",
-        context: "Billing dispute",
-        created_at: yesterday.toISOString(),
-        updated_at: yesterday.toISOString(),
-        completed_at: yesterday.toISOString(),
-        escalated_at: null,
-        cancelled_at: null,
-        notes: null
-      },
-      {
-        chain_id: "chain-345678",
-        employee_id: "emp-001",
-        session_ids: ["session-6"],
-        status: "escalated",
-        context: "Technical issue",
-        created_at: yesterday.toISOString(),
-        updated_at: now.toISOString(),
-        completed_at: null,
-        escalated_at: now.toISOString(),
-        cancelled_at: null,
-        notes: "Requires developer attention"
-      }
-    ];
-  };
   
   // Create a mock session for when API fails
   const createMockSession = (sessionId: string, chain: Chain): Session => {
