@@ -135,7 +135,7 @@ const ChainItem = ({
                   isActive={session.chatId === activeChatId}
                   onClick={() => {
                     console.log(`Session clicked in sidebar: ${session.id}, Chat ID: ${session.chatId}`);
-                    onChatClick(session.chatId);
+                    onChatClick(chain.id);
                     setOpenMobile(false);
                   }}
                 >
