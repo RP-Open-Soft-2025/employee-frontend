@@ -70,10 +70,15 @@ function formatDate(date: Date): string {
 
   // const day = pad(date.getDate());
   // const month = pad(date.getMonth() + 1); // Months are 0-indexed
-  const hours = pad(date.getHours());
+  let hours = date.getHours();
   const minutes = pad(date.getMinutes());
   // const year = pad(date.getUTCFullYear());
-  return `${hours}:${minutes}`;
+  
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // Convert 0 to 12 for midnight
+  
+  return `${hours}:${minutes} ${ampm}`;
 }
 // Chain item component with expandable sessions
 const ChainItem = ({
@@ -140,7 +145,7 @@ const ChainItem = ({
                   }}
                 >
                   <MessageSquare className="size-3" />
-                  <span className="truncate">Chat On {formatDate(new Date(session.lastMessageTime))}</span>
+                  <span className="truncate">Session {session.id}</span>
                   {session.unreadCount > 0 && (
                     <span className="ml-auto bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full min-w-5 text-center">
                       {session.unreadCount}
@@ -504,7 +509,7 @@ export function SidebarHistory({ user }: { user: any }) {
       <SidebarGroup>
         <SidebarGroupContent>
           <div className="px-2 text-zinc-300 dark:text-zinc-500 w-full flex flex-row justify-center items-center text-sm gap-2">
-            Your chains will appear here once you start chatting!
+            Your sessions will appear here once you start chatting!
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
