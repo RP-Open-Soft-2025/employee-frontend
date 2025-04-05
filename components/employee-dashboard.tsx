@@ -323,87 +323,84 @@ export function EmployeeDashboard() {
         </CardContent>
       </Card>
 
+      <Card className="mt-4 p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100 dark:border-gray-700">
+            <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 flex items-center gap-2">
+              <UserCircle className="size-5 text-gray-700 dark:text-gray-300" />
+              Employee Information
+            </h4>
+          </div>
+
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
+              <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                <User className="size-3.5" />
+                Employee ID
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {employeeDetails?.employee_id}
+              </p>
+            </div>
+
+            <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
+              <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                <User className="size-3.5" />
+                Name
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {employeeDetails?.name}
+              </p>
+            </div>
+
+            <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
+              <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                <Mail className="size-3.5" />
+                Email
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {employeeDetails?.email}
+              </p>
+            </div>
+
+            <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
+              <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                <Briefcase className="size-3.5" />
+                Role
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize">
+                {employeeDetails?.role}
+              </p>
+            </div>
+
+            <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
+              <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                <Shield className="size-3.5" />
+                Manager ID
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {employeeDetails?.manager_id}
+              </p>
+            </div>
+
+            {employeeDetails?.is_blocked && (
+              <div className="group p-3 rounded-lg bg-red-50 dark:bg-red-900/20 transition-colors duration-200">
+                <p className="mb-2 text-lg leading-normal text-red-500 dark:text-red-400 flex items-center gap-1.5">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  Account Status
+                </p>
+                <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                  Account is blocked
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mt-4">
         {/* Left Column */}
         <div className="grid grid-cols-1 gap-3 sm:gap-4">
-          {/* Enhanced Employee Profile Card */}
-          <Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-              <div className="w-full">
-                <div className="flex items-center justify-between mb-5 pb-3 border-b border-gray-100 dark:border-gray-700">
-                  <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 flex items-center gap-2">
-                    <UserCircle className="size-5 text-gray-700 dark:text-gray-300" />
-                    Employee Information
-                  </h4>
-                </div>
-
-                <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                  <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
-                    <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <User className="size-3.5" />
-                      Employee ID
-                    </p>
-                    <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {employeeDetails?.employee_id}
-                    </p>
-                  </div>
-
-                  <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
-                    <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <Mail className="size-3.5" />
-                      Email
-                    </p>
-                    <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {employeeDetails?.email}
-                    </p>
-                  </div>
-
-                  <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
-                    <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <User className="size-3.5" />
-                      Name
-                    </p>
-                    <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {employeeDetails?.name}
-                    </p>
-                  </div>
-
-                  <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
-                    <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <Briefcase className="size-3.5" />
-                      Role
-                    </p>
-                    <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize">
-                      {employeeDetails?.role}
-                    </p>
-                  </div>
-
-                  <div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
-                    <p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <Shield className="size-3.5" />
-                      Manager ID
-                    </p>
-                    <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {employeeDetails?.manager_id}
-                    </p>
-                  </div>
-
-                  {employeeDetails?.is_blocked && (
-                    <div className="group p-3 rounded-lg bg-red-50 dark:bg-red-900/20 transition-colors duration-200">
-                      <p className="mb-2 text-lg leading-normal text-red-500 dark:text-red-400 flex items-center gap-1.5">
-                        <AlertCircle className="h-3.5 w-3.5" />
-                        Account Status
-                      </p>
-                      <p className="text-sm font-medium text-red-600 dark:text-red-400">
-                        Account is blocked
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Card>
-
           {/* Enhanced Leave Information Card */}
           <Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
             <div className="flex flex-col gap-6">
@@ -720,325 +717,130 @@ export function EmployeeDashboard() {
 
         {/* Right Column */}
         <div className="grid grid-cols-1 gap-4">
-          {/* Enhanced Mood & Vibe Card */}
-          <Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
-            <div className="flex flex-col">
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-6 flex items-center">
-                <BarChart className="size-5 mr-2" />
-                Mood & Vibe Statistics
+          {/* Onboarding Card */}
+          <Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
+            <div>
+              <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
+                Onboarding & Integration
               </h4>
 
-              <div className="grid gap-4">
-                {employeeDetails?.company_data?.vibemeter?.[0] && (
-                  <div className="flex flex-col items-center justify-center p-6">
-                    <div className="mb-6 text-center">
-                      {/* Determine color based on score */}
-                      {(() => {
-                        const score = employeeDetails.company_data.vibemeter[0].Vibe_Score;
-                        const normalizedScore = score > 5 ? score / 2 : score;
-                        
-                        const getColorForScore = () => {
-                          if (normalizedScore >= 4.5) return 'bg-emerald-500';
-                          if (normalizedScore >= 3.5) return 'bg-blue-500';
-                          if (normalizedScore >= 2.5) return 'bg-amber-500';
-                          if (normalizedScore >= 1.5) return 'bg-orange-500';
-                          return 'bg-red-500';
-                        };
-                        
-                        const getTextColorForScore = () => {
-                          if (normalizedScore >= 4.5) return 'text-emerald-500';
-                          if (normalizedScore >= 3.5) return 'text-blue-500';
-                          if (normalizedScore >= 2.5) return 'text-amber-500';
-                          if (normalizedScore >= 1.5) return 'text-orange-500';
-                          return 'text-red-500';
-                        };
-                        
-                        const getLabelForScore = () => {
-                          if (normalizedScore >= 4.5) return 'Excellent';
-                          if (normalizedScore >= 3.5) return 'Good';
-                          if (normalizedScore >= 2.5) return 'Satisfactory';
-                          if (normalizedScore >= 1.5) return 'Needs Improvement';
-                          return 'Critical';
-                        };
-                        
-                        return (
-                          <>
-                            <div className={`rounded-full ${getColorForScore()} size-32 flex items-center justify-center shadow-lg`}>
-                              <span className="text-white text-4xl font-bold">{normalizedScore.toFixed(1)}</span>
-                            </div>
-                            
-                            <h3 className={`text-2xl font-bold mt-4 ${getTextColorForScore()}`}>
-                              {getLabelForScore()}
-                            </h3>
-                          </>
-                        );
-                      })()}
-                    </div>
-                    
-                    <div className="mt-6 flex flex-col items-center w-full max-w-md">
-                      <div className="flex items-center justify-between w-full mb-2 p-1">
-                        <span className="text-xs text-red-500 font-medium">Critical</span>
-                        <span className="text-xs text-emerald-500 font-medium">Excellent</span>
-                      </div>
-                      
-                      {/* Colorful bar with gradient background */}
-                      <div className="w-full h-4 rounded-full mb-4 relative bg-gradient-to-r from-red-500 via-orange-500 via-amber-500 via-blue-500 to-emerald-500">
-                        {/* Score marker/indicator */}
-                        <div 
-                          className="absolute bottom-full mb-1"
-                          style={{ 
-                            left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score -1) * 25+1}% - 8px)`,
-                            transition: 'left 0.3s ease-in-out'
-                          }}
-                        >
-                          <div className="size-0 border-x-[8px] border-t-[8px] border-transparent border-t-gray-800 dark:border-t-white mx-auto" />
-                        </div>
-                      </div>
-                      
-                      {/* Score points with colored indicators */}
-                      <div className="flex justify-between w-full px-0 relative">
-                        {[1, 2, 3, 4, 5].map((value) => {
-                          const score = employeeDetails.company_data.vibemeter[0].Vibe_Score;
-                          const normalizedScore = score;
-                          
-                          const getColorForPoint = (point: number) => {
-                            switch(point) {
-                              case 1: return 'bg-red-500';
-                              case 2: return 'bg-orange-500';
-                              case 3: return 'bg-amber-500';
-                              case 4: return 'bg-green-300';
-                              case 5: return 'bg-emerald-500';
-                              default: return 'bg-gray-400';
-                            }
-                          };
-                          
-                          const getTextColorForPoint = (point: number) => {
-                            switch(point) {
-                              case 1: return 'text-red-500';
-                              case 2: return 'text-orange-500';
-                              case 3: return 'text-amber-500';
-                              case 4: return 'text-green-300';
-                              case 5: return 'text-emerald-500';
-                              default: return 'text-gray-400';
-                            }
-                          };
-                          
-                          return (
-                            <div key={value} className="flex flex-col items-center">
-                              <div 
-                                className={`size-4 rounded-full mb-1 ${
-                                  getColorForPoint(value) }`}
-                              />
-                              <div className={`text-xs font-medium ${ getTextColorForPoint(value) }`}>
-                                {value}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                    
-                    <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg w-full max-w-md">
-                      <div className="flex justify-between mb-2">
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Current Score
-                        </p>
-                        <p className={`text-sm font-semibold ${(() => {
-                          const score = employeeDetails.company_data.vibemeter[0].Vibe_Score;
-                          const normalizedScore = score > 5 ? score / 2 : score;
-                          
-                          if (normalizedScore >= 4.5) return 'text-emerald-500';
-                          if (normalizedScore >= 3.5) return 'text-blue-500';
-                          if (normalizedScore >= 2.5) return 'text-amber-500';
-                          if (normalizedScore >= 1.5) return 'text-orange-500';
-                          return 'text-red-500';
-                        })()}`}>
-                          {(employeeDetails.company_data.vibemeter[0].Vibe_Score > 5 
-                            ? employeeDetails.company_data.vibemeter[0].Vibe_Score / 2 
-                            : employeeDetails.company_data.vibemeter[0].Vibe_Score).toFixed(1)}/5
-                        </p>
-                      </div>
-                      
-                      <div className="flex justify-between">
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Last Update
-                        </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {new Date(employeeDetails.company_data.vibemeter[0].Response_Date).toLocaleDateString('en-GB', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Keep the original mood stats display */}
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                  <div className="flex flex-col items-center">
-                    <p className="text-xs sm:text-sm text-muted-foreground mb-2">
-                      Average Mood Score
-                    </p>
-                    <div className="relative w-24 h-24">
-                      <svg viewBox="0 0 100 100" className="w-full h-full">
-                        {/* Background circle */}
-                        <circle 
-                          cx="50" 
-                          cy="50" 
-                          r="45" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          strokeWidth="8" 
-                          opacity="0.1" 
-                        />
-                        {/* Foreground circle - calculated based on score/5 */}
-                        <circle 
-                          cx="50" 
-                          cy="50" 
-                          r="45" 
-                          fill="none" 
-                          stroke="url(#moodGradient)" 
-                          strokeWidth="8" 
-                          strokeDasharray={`${2 * Math.PI * 45 * (employeeDetails?.mood_stats?.average_score || 0) / 5} ${2 * Math.PI * 45}`} 
-                          strokeDashoffset={2 * Math.PI * 45 * 0.25} 
-                          strokeLinecap="round" 
-                          className="transition-all duration-1000 ease-in-out" 
-                        />
-                        {/* Add gradient definition */}
-                        <defs>
-                          <linearGradient id="moodGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#3B82F6" />
-                            <stop offset="100%" stopColor="#10B981" />
-                          </linearGradient>
-                        </defs>
-                        <text 
-                          x="50" 
-                          y="50" 
-                          textAnchor="middle" 
-                          fontSize="18" 
-                          fontWeight="bold"
-                          fill="currentColor"
-                          dominantBaseline="middle"
-                        >
-                          {employeeDetails?.mood_stats?.average_score || 0}/5
-                        </text>
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-center justify-center">
-                    <p className="text-xs sm:text-sm text-muted-foreground mb-2">
-                      Total Sessions
-                    </p>
-                    <div className="bg-gradient-to-br from-primary/20 to-primary/5 dark:from-primary/30 dark:to-primary/10 rounded-full p-6 flex items-center justify-center shadow-inner">
-                      <span className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600">
-                        {employeeDetails?.mood_stats?.total_sessions || 0}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {employeeDetails?.mood_stats?.last_5_scores &&
-                  employeeDetails.mood_stats.last_5_scores.length > 0 && (
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Last 5 Mood Scores
+              {employeeDetails?.company_data?.onboarding?.map((onboarding) => (
+                <div key={`onboarding-${onboarding.Joining_Date}`}>
+                  <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Joining Date
                       </p>
-                      <div className="grid gap-2">
-                        {employeeDetails.mood_stats.last_5_scores.map(
-                          (score, scoreIndex) => (
-                            <div
-                              key={`mood-score-${scoreIndex}-${score}`}
-                              className="flex flex-col"
-                            >
-                              <div className="flex justify-between items-center mb-1">
-                                <span className="text-sm">
-                                  Score {scoreIndex + 1}
-                                </span>
-                                <div className="flex">
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <span key={`star-${star}`} className="transition-all duration-300 hover:scale-110">
-                                      {star <= score ? (
-                                        <Star className="size-4 text-yellow-500 fill-yellow-500" />
-                                      ) : star - 0.5 <= score ? (
-                                        <StarHalf className="size-4 text-yellow-500 fill-yellow-500" />
-                                      ) : (
-                                        <Star className="size-4 text-zinc-300" />
-                                      )}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                              <div className="w-full bg-muted/50 dark:bg-muted/30 rounded-full h-2 overflow-hidden">
-                                <div
-                                  className="bg-gradient-to-r from-yellow-400 to-yellow-600 h-2 rounded-full transition-all duration-500"
-                                  style={{
-                                    width: `${(score / 5) * 100}%`,
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          )
-                        )}
-                      </div>
+                      <p className="mt-1 text-base font-medium text-gray-800 dark:text-white/90">
+                        {new Date(onboarding.Joining_Date).toLocaleDateString('en-GB')}
+                      </p>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        {Math.ceil(Math.abs(new Date().getTime() - new Date(onboarding.Joining_Date).getTime()) / (1000 * 60 * 60 * 24))} days ago
+                      </p>
                     </div>
-                  )}
-              </div>
-            </div>
-          </Card>
 
-          {/* Onboarding Card */}
-          <Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center">
-                <FileText className="size-5 mr-2" />
-                Onboarding Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-3">
-                {employeeDetails?.company_data?.onboarding?.map(
-                  (onboarding) => (
-                    <div
-                      key={`onboarding-${onboarding.Joining_Date}`}
-                      className="space-y-2"
-                    >
-                      <div className="flex justify-between items-center">
-                        <p className="font-medium">Joining Date</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(
-                            onboarding.Joining_Date
-                          ).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <p className="font-medium">Feedback</p>
-                        <p className="text-sm text-muted-foreground">
+                    <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Onboarding Feedback
+                      </p>
+                      <div className="mt-2 flex items-center">
+                        <div
+                          className={`h-3 w-3 rounded-full ${
+                            onboarding.Onboarding_Feedback === "EXCELLENT"
+                              ? "bg-green-500 dark:bg-green-600"
+                              : onboarding.Onboarding_Feedback === "GOOD"
+                              ? "bg-blue-500 dark:bg-blue-600"
+                              : onboarding.Onboarding_Feedback === "AVERAGE"
+                              ? "bg-yellow-500 dark:bg-yellow-600"
+                              : "bg-red-500 dark:bg-red-600"
+                          }`}
+                        ></div>
+                        <p className="ml-2 text-base font-medium text-gray-800 dark:text-white/90">
                           {onboarding.Onboarding_Feedback}
                         </p>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <p className="font-medium">Mentor Assigned</p>
-                        <p className="text-sm text-muted-foreground">
-                          {onboarding.Mentor_Assigned ? "Yes" : "No"}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h5 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Onboarding Status
+                    </h5>
+                    <div className="space-y-2">
+                      <div className="flex items-center">
+                        <div
+                          className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+                            onboarding.Mentor_Assigned
+                              ? "border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30"
+                              : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
+                          }`}
+                        >
+                          {onboarding.Mentor_Assigned && (
+                            <svg
+                              className="h-4 w-4 text-green-500 dark:text-green-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          )}
+                        </div>
+                        <p
+                          className={`ml-3 text-sm ${
+                            onboarding.Mentor_Assigned
+                              ? "text-gray-800 dark:text-white/90"
+                              : "text-gray-500 dark:text-gray-400"
+                          }`}
+                        >
+                          Mentor Assigned
                         </p>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <p className="font-medium">Initial Training</p>
-                        <p className="text-sm text-muted-foreground">
-                          {onboarding.Initial_Training_Completed
-                            ? "Completed"
-                            : "Pending"}
+
+                      <div className="flex items-center">
+                        <div
+                          className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+                            onboarding.Initial_Training_Completed
+                              ? "border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30"
+                              : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
+                          }`}
+                        >
+                          {onboarding.Initial_Training_Completed && (
+                            <svg
+                              className="h-4 w-4 text-green-500 dark:text-green-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          )}
+                        </div>
+                        <p
+                          className={`ml-3 text-sm ${
+                            onboarding.Initial_Training_Completed
+                              ? "text-gray-800 dark:text-white/90"
+                              : "text-gray-500 dark:text-gray-400"
+                          }`}
+                        >
+                          Initial Training Completed
                         </p>
                       </div>
                     </div>
-                  )
-                )}
-              </div>
-            </CardContent>
+                  </div>
+                </div>
+              ))}
+            </div>
           </Card>
 
           {/* Enhanced Rewards Card */}

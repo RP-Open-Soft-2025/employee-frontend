@@ -59,7 +59,7 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
   };
 
   return (
-    <div className="flex flex-row justify-between items-center my-4 px-4 md:px-6 py-2 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm bg-[#F9FAFC] dark:bg-[hsl(var(--deep-blue-darker))]">
+    <div className="flex flex-row justify-between items-center my-4 px-4 md:px-6 py-2 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm bg-[#F9FAFC] dark:bg-[#0b1423]">
       <Link href="/">{children}</Link>
       <div className="flex items-center space-x-5">
         <Button
@@ -81,7 +81,7 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
               <Button
                 variant="outline"
                 size="sm"
-                className="relative hidden md:flex bg-white dark:bg-[hsl(var(--deep-blue-dark))] text-black dark:text-white border-gray-200 dark:border-[hsl(var(--deep-blue))]"
+                className="relative hidden md:flex bg-white dark:bg-[#0b1423] text-black dark:text-white border-gray-200 dark:border-gray-800"
               >
                 <Bell className="size-4" />
                 Notifications

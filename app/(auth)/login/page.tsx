@@ -149,9 +149,9 @@ export default function Page() {
 
   return (
     <div className="w-full h-screen md:min-h-screen flex flex-col md:flex-row">
-      {/* Left Section (Green) */}
-      <div className="h-[50vh] md:h-auto w-full md:w-1/2 flex items-center justify-center bg-[#66872B] dark:bg-[#334016] relative">
-        <div className="rounded-none md:rounded-l-2xl rounded-tl-0xl size-full md:size-[400px] bg-[#3B4F17] dark:bg-[#1E2B09] shadow-lg flex flex-col items-center justify-center text-center p-6 md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 py-15">
+      {/* Left Section (Theme Blue) */}
+      <div className="h-[50vh] md:h-auto w-full md:w-1/2 flex items-center justify-center bg-[hsl(var(--primary))] dark:bg-[hsl(var(--secondary))] relative">
+        <div className="rounded-none md:rounded-l-2xl rounded-tl-0xl size-full md:size-[400px] bg-[hsl(var(--secondary))] dark:bg-[hsl(var(--deep-blue-darker))] shadow-lg flex flex-col items-center justify-center text-center p-6 md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 py-15">
           <h1 className="text-3xl font-bold text-white mb-2">Deloitte.</h1>
           <Image
             src={DeloitteLogo}
@@ -170,17 +170,19 @@ export default function Page() {
             <div className="font-semibold text-2xl mb-3 text-black dark:text-white">
               Login
             </div>
-            <AuthForm action={handleSubmit} defaultEmployeeId={employeeId}>
-              <SubmitButton isSuccessful={isSuccessful}>Submit</SubmitButton>
-              <div className="flex flex-col items-center">
-                <Link
-                  href="/forgot-password"
-                  className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer text-sm"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-            </AuthForm>
+            <div className="auth-container w-full [&_input]:text-black dark:[&_input]:text-white">
+              <AuthForm action={handleSubmit} defaultEmployeeId={employeeId}>
+                <SubmitButton isSuccessful={isSuccessful}>Submit</SubmitButton>
+                <div className="flex flex-col items-center">
+                  <Link
+                    href="/forgot-password"
+                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer text-sm"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+              </AuthForm>
+            </div>
           </div>
         </div>
       </div>
