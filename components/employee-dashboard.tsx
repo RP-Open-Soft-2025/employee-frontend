@@ -699,162 +699,162 @@ export function EmployeeDashboard() {
 								</h4>
 
 								{employeeDetails?.company_data?.performance &&
-									employeeDetails.company_data.performance.length > 0 ? (
-										<div>
-											<div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-												<div className="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
-													<p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
-														Latest Rating
+								employeeDetails.company_data.performance.length > 0 ? (
+									<div>
+										<div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+											<div className="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
+												<p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
+													Latest Rating
+												</p>
+												<div className="mt-2 flex items-end">
+													<p className="text-3xl font-bold text-gray-800 dark:text-white 2xl:text-2xl xl:text-xl lg:text-base md:text-lg">
+														{employeeDetails.company_data.performance[0].Performance_Rating.toFixed(
+															1
+														)}
 													</p>
-													<div className="mt-2 flex items-end">
-														<p className="text-3xl font-bold text-gray-800 dark:text-white 2xl:text-2xl xl:text-xl lg:text-base md:text-lg">
-															{employeeDetails.company_data.performance[0].Performance_Rating.toFixed(
-																1
-															)}
-														</p>
-														<p className="ml-1 mb-1 text-sm text-gray-500 dark:text-gray-400 2xl:text-xs xl:text-xs lg:text-xs md:text-xs">
-															/5.0
-														</p>
-													</div>
-													<p className="mt-1 text-xs text-gray-500 dark:text-gray-400 2xl:text-xs xl:text-[10px] lg:text-[9px] md:text-[10px]">
-														{
+													<p className="ml-1 mb-1 text-sm text-gray-500 dark:text-gray-400 2xl:text-xs xl:text-xs lg:text-xs md:text-xs">
+														/5.0
+													</p>
+												</div>
+												<p className="mt-1 text-xs text-gray-500 dark:text-gray-400 2xl:text-xs xl:text-[10px] lg:text-[9px] md:text-[10px]">
+													{
+														employeeDetails.company_data.performance[0]
+															.Review_Period
+													}
+												</p>
+											</div>
+
+											<div className="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
+												<p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
+													Average Rating
+												</p>
+												<div className="mt-2 flex items-end">
+													<p className="text-3xl font-bold text-gray-800 dark:text-white 2xl:text-2xl xl:text-xl lg:text-base md:text-lg">
+														{(
+															employeeDetails.company_data.performance.reduce(
+																(sum, perf) => sum + perf.Performance_Rating,
+																0
+															) /
+															employeeDetails.company_data.performance.length
+														).toFixed(1)}
+													</p>
+													<p className="ml-1 mb-1 text-sm text-gray-500 dark:text-gray-400 2xl:text-xs xl:text-xs lg:text-xs md:text-xs">
+														/5.0
+													</p>
+												</div>
+												<div className="mt-1 flex">
+													{[1, 2, 3, 4, 5].map(star => (
+														<svg
+															key={star}
+															className={`size-4 2xl:size-3.5 xl:size-3 lg:size-2 md:size-2.5 ${
+																star <=
+																Math.round(
+																	employeeDetails.company_data.performance[0]
+																		.Performance_Rating
+																)
+																	? 'text-yellow-400'
+																	: 'text-gray-300 dark:text-gray-600'
+															}`}
+															fill="currentColor"
+															viewBox="0 0 20 20"
+														>
+															<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+														</svg>
+													))}
+												</div>
+											</div>
+
+											<div className="rounded-lg border border-gray-200 bg-white p-2.5 dark:border-gray-700 dark:bg-gray-800 sm:col-span-2 lg:col-span-1">
+												<p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
+													Manager Feedback
+												</p>
+												<p
+													className={`mt-2 text-base font-semibold 2xl:text-sm xl:text-xs lg:text-[10px] md:text-xs truncate ${
+														employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
+															'EXCEEDS'
+														)
+															? 'text-green-600 dark:text-green-400'
+															: employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
+																		'MEETS'
+																  )
+																? 'text-blue-600 dark:text-blue-400'
+																: 'text-amber-600 dark:text-amber-400'
+													}`}
+												>
+													{
+														employeeDetails.company_data.performance[0]
+															.Manager_Feedback
+													}
+												</p>
+												<div className="mt-2">
+													<span
+														className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-semibold 2xl:text-[10px] xl:text-[9px] lg:text-[8px] md:text-[8px] ${
 															employeeDetails.company_data.performance[0]
-																.Review_Period
-														}
-													</p>
-												</div>
-
-												<div className="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
-													<p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
-														Average Rating
-													</p>
-													<div className="mt-2 flex items-end">
-														<p className="text-3xl font-bold text-gray-800 dark:text-white 2xl:text-2xl xl:text-xl lg:text-base md:text-lg">
-															{(
-																employeeDetails.company_data.performance.reduce(
-																	(sum, perf) => sum + perf.Performance_Rating,
-																	0
-																) /
-																employeeDetails.company_data.performance.length
-															).toFixed(1)}
-														</p>
-														<p className="ml-1 mb-1 text-sm text-gray-500 dark:text-gray-400 2xl:text-xs xl:text-xs lg:text-xs md:text-xs">
-															/5.0
-														</p>
-													</div>
-													<div className="mt-1 flex">
-														{[1, 2, 3, 4, 5].map(star => (
-															<svg
-																key={star}
-																className={`size-4 2xl:size-3.5 xl:size-3 lg:size-2 md:size-2.5 ${
-																	star <=
-																	Math.round(
-																		employeeDetails.company_data.performance[0]
-																			.Performance_Rating
-																	)
-																		? 'text-yellow-400'
-																		: 'text-gray-300 dark:text-gray-600'
-																}`}
-																fill="currentColor"
-																viewBox="0 0 20 20"
-															>
-																<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-															</svg>
-														))}
-													</div>
-												</div>
-
-												<div className="rounded-lg border border-gray-200 bg-white p-2.5 dark:border-gray-700 dark:bg-gray-800 sm:col-span-2 lg:col-span-1">
-													<p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
-														Manager Feedback
-													</p>
-													<p
-														className={`mt-2 text-base font-semibold 2xl:text-sm xl:text-xs lg:text-[10px] md:text-xs truncate ${
-															employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
-																'EXCEEDS'
-															)
-																? 'text-green-600 dark:text-green-400'
-																: employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
-																			'MEETS'
-																	  )
-																	? 'text-blue-600 dark:text-blue-400'
-																	: 'text-amber-600 dark:text-amber-400'
+																.Promotion_Consideration
+																? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+																: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
 														}`}
 													>
-														{
-															employeeDetails.company_data.performance[0]
-																.Manager_Feedback
-														}
-													</p>
-													<div className="mt-2">
-														<span
-															className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-semibold 2xl:text-[10px] xl:text-[9px] lg:text-[8px] md:text-[8px] ${
-																employeeDetails.company_data.performance[0]
-																	.Promotion_Consideration
-																	? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-																	: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-															}`}
-														>
-															{employeeDetails.company_data.performance[0]
-																.Promotion_Consideration
-																? 'Promotion Considered'
-																: 'No Promotion'}
-														</span>
-													</div>
+														{employeeDetails.company_data.performance[0]
+															.Promotion_Consideration
+															? 'Promotion Considered'
+															: 'No Promotion'}
+													</span>
 												</div>
 											</div>
+										</div>
 
-											<div className="mt-6">
-												<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 2xl:text-sm xl:text-xs lg:text-xs md:text-xs pb-1">
-													Performance History
-												</h5>
-												<div className="mt-4 flex items-end space-x-2 h-32">
-													{employeeDetails.company_data.performance.map(
-														(performance, index) => (
-															<div
-																key={`perf-${performance.Review_Period}`}
-																className="relative flex flex-col items-center flex-1"
-															>
-																<div className="relative w-full">
-																	<div
-																		className={`w-full rounded-t-sm ${
-																			performance.Manager_Feedback.includes(
-																				'EXCEEDS'
-																			)
-																				? 'bg-green-500 dark:bg-green-600'
-																				: performance.Manager_Feedback.includes(
-																							'MEETS'
-																					  )
-																					? 'bg-blue-500 dark:bg-blue-600'
-																					: 'bg-amber-500 dark:bg-amber-600'
-																		}`}
-																		style={{
-																			height: `${performance.Performance_Rating * 20}px`,
-																		}}
-																	/>
-																	<div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-700 dark:text-gray-300 2xl:text-[10px] xl:text-[10px] lg:text-[8px] md:text-[8px]">
-																		{performance.Performance_Rating.toFixed(1)}
-																	</div>
+										<div className="mt-6">
+											<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
+												Performance History
+											</h5>
+											<div className="mt-4 flex items-end space-x-2 h-32">
+												{employeeDetails.company_data.performance.map(
+													(performance, index) => (
+														<div
+															key={`perf-${performance.Review_Period}`}
+															className="relative flex flex-col items-center flex-1"
+														>
+															<div className="relative w-full">
+																<div
+																	className={`w-full rounded-t-sm ${
+																		performance.Manager_Feedback.includes(
+																			'EXCEEDS'
+																		)
+																			? 'bg-green-500 dark:bg-green-600'
+																			: performance.Manager_Feedback.includes(
+																						'MEETS'
+																				  )
+																				? 'bg-blue-500 dark:bg-blue-600'
+																				: 'bg-amber-500 dark:bg-amber-600'
+																	}`}
+																	style={{
+																		height: `${performance.Performance_Rating * 20}px`,
+																	}}
+																/>
+																<div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-700 dark:text-gray-300 2xl:text-[10px] xl:text-[10px] lg:text-[8px] md:text-[8px]">
+																	{performance.Performance_Rating.toFixed(1)}
 																</div>
-																<span className="mt-2 text-xs text-gray-500 dark:text-gray-400 2xl:text-[10px] xl:text-[10px] lg:text-[8px] md:text-[8px]">
-																	{performance.Review_Period}
-																</span>
 															</div>
-														)
-													)}
-												</div>
+															<span className="mt-2 text-xs text-gray-500 dark:text-gray-400 2xl:text-[10px] xl:text-[10px] lg:text-[8px] md:text-[8px]">
+																{performance.Review_Period}
+															</span>
+														</div>
+													)
+												)}
 											</div>
 										</div>
-									) : (
-										<div className="flex flex-col items-center justify-center py-6 text-center">
-											<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
-												<BarChart className="size-10 text-muted-foreground" />
-											</div>
-											<p className="text-sm text-muted-foreground">
-												No performance data available
-											</p>
+									</div>
+								) : (
+									<div className="flex flex-col items-center justify-center py-6 text-center">
+										<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
+											<BarChart className="size-10 text-muted-foreground" />
 										</div>
-									)}
+										<p className="text-sm text-muted-foreground">
+											No performance data available
+										</p>
+									</div>
+								)}
 							</div>
 						</div>
 					</Card>
@@ -1351,7 +1351,10 @@ export function EmployeeDashboard() {
 															Chain {chain.chain_id}
 														</p>
 														<p className="text-xs text-muted-foreground">
-															{new Date(chain.created_at).toLocaleString()}
+															{chain.created_at &&
+															!isNaN(new Date(chain.created_at).getTime())
+																? new Date(chain.created_at).toLocaleString()
+																: 'Date unavailable'}
 														</p>
 														<p className="text-sm text-muted-foreground line-clamp-2">
 															{chain.notes || 'No notes available'}
@@ -1361,7 +1364,8 @@ export function EmployeeDashboard() {
 												<span
 													className={`text-xs px-2 py-1 rounded-full ${chain.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'}`}
 												>
-													{chain.status[0].toUpperCase() + chain.status.slice(1)}
+													{chain.status[0].toUpperCase() +
+														chain.status.slice(1)}
 												</span>
 											</div>
 										</div>
