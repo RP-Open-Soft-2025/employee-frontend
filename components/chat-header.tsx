@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useWindowSize } from 'usehooks-ts'
-import { ChevronDown, LayoutDashboard, UserCircle } from 'lucide-react'
+import { ChevronDown, LayoutDashboard, UserCircle, XCircle } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout, checkAuth } from '@/redux/features/auth'
 import type { RootState } from '@/redux/store'
@@ -129,22 +129,96 @@ export function HeaderUserNav() {
 function PureChatHeader({
 	chatId,
 	isReadonly,
+	onChatEnd,
+	can_end_chat = false,
 }: {
 	chatId: string
 	isReadonly: boolean
+	onChatEnd?: () => void
+	can_end_chat?: boolean
 }) {
 	const router = useRouter()
 	const { open } = useSidebar()
-
+	const [isEndingChat, setIsEndingChat] = useState(false)
+	
 	const { width: windowWidth } = useWindowSize()
 
+	const handleEndChat = async () => {
+		if (!chatId || !can_end_chat) return;
+		
+		setIsEndingChat(true);
+		const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+		
+		try {
+			const response = await fetch(`${API_URL}/employee/end-session`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				credentials: 'include',
+				body: JSON.stringify({
+					chat_id: chatId,
+					chain_id: chatId // Assuming chain_id is the same as chatId, adjust if needed
+				})
+			});
+			
+			if (response.ok) {
+				console.log('Chat ended successfully');
+				
+				// Call the callback to update parent component states
+				if (onChatEnd) {
+					onChatEnd();
+				}
+			} else {
+				console.error('Failed to end chat:', await response.json());
+			}
+		} catch (error) {
+			console.error('Error ending chat:', error);
+		} finally {
+			setIsEndingChat(false);
+		}
+	};
+
 	return (
-		<header className="flex sticky top-0 py-1.5 items-center px-2 md:px-2 gap-2">
-			<SidebarToggle />
+		<header className="flex sticky top-0 py-1.5 items-center px-2 md:px-2 gap-2 justify-between">
+			<div className="flex items-center">
+				<SidebarToggle />
+			</div>
+			
+			{!isReadonly && can_end_chat && (
+				<Button
+					variant="destructive"
+					size="sm"
+					onClick={handleEndChat}
+					disabled={isEndingChat}
+					className="gap-2"
+				>
+					{isEndingChat ? (
+						<>
+							<span className="opacity-0">End Chat</span>
+							<div className="absolute inset-0 flex items-center justify-center">
+								<svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+									<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+									<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+								</svg>
+							</div>
+						</>
+					) : (
+						<>
+							<XCircle className="size-4" />
+							End Chat
+						</>
+					)}
+				</Button>
+			)}
 		</header>
 	)
 }
 
 export const ChatHeader = memo(PureChatHeader, (prevProps, nextProps) => {
-	return true
-})
+	return (
+		prevProps.chatId === nextProps.chatId &&
+		prevProps.isReadonly === nextProps.isReadonly &&
+		prevProps.can_end_chat === nextProps.can_end_chat
+	);
+});

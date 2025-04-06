@@ -54,6 +54,8 @@ export function Chat({
 	const dispatch = useDispatch()
 	const [initiatingChat, setInitiatingChat] = useState<string | null>(null)
 	const [chainStatus, setChainStatus] = useState<string | null>(null)
+	const [can_end_chat, setCan_end_chat] = useState(false)
+	const [ended, setEnded] = useState(false)
 
 	// Fetch chain status for this chat
 	useEffect(() => {
@@ -94,6 +96,42 @@ export function Chat({
 
 		checkForEscalatedChains()
 	}, [fetchProtected])
+
+	// Fetch chat status to check if chat can be ended
+	useEffect(() => {
+		if (!isReadonly && id) {
+			const checkChatStatus = async () => {
+				try {
+					// You can implement actual API call here to get chat status
+					// For now simulating that chat becomes endable after 5 seconds
+					const result = await fetchProtected(`/employee/chat/${id}/status`, {
+						method: 'GET',
+					}).catch(() => {
+						// Fallback if endpoint doesn't exist yet
+						console.log('Using fallback for can_end_chat')
+						return { can_end_chat: true };
+					});
+					
+					if (result?.can_end_chat !== undefined) {
+						setCan_end_chat(result.can_end_chat);
+					} else {
+						// Fallback if endpoint doesn't return the expected format
+						setTimeout(() => {
+							setCan_end_chat(true);
+						}, 5000);
+					}
+				} catch (error) {
+					console.error('Failed to check chat status:', error);
+					// Fallback
+					setTimeout(() => {
+						setCan_end_chat(true);
+					}, 5000);
+				}
+			};
+			
+			checkChatStatus();
+		}
+	}, [id, isReadonly, fetchProtected]);
 
 	// Add ping effect for active chats
 	useEffect(() => {
@@ -198,8 +236,14 @@ export function Chat({
 				setChainStatus(data.chainStatus)
 			}
 
+			// Check if chat can be ended
+			if (data.can_end_chat !== undefined) {
+				setCan_end_chat(data.can_end_chat)
+			}
+
 			// Check if session has ended
 			if (data.ended) {
+				setEnded(true)
 				// If the session has ended, update readonly state
 				if (onReadonlyChange) {
 					onReadonlyChange(true)
@@ -252,8 +296,14 @@ export function Chat({
 				setChainStatus(data.chainStatus)
 			}
 
+			// Check if chat can be ended
+			if (data.can_end_chat !== undefined) {
+				setCan_end_chat(data.can_end_chat)
+			}
+
 			// Check if session has ended
 			if (data.ended) {
+				setEnded(true)
 				// If the session has ended, update readonly state
 				if (onReadonlyChange) {
 					onReadonlyChange(true)
@@ -315,8 +365,14 @@ export function Chat({
 					setChainStatus(data.chainStatus)
 				}
 
+				// Check if chat can be ended
+				if (data.can_end_chat !== undefined) {
+					setCan_end_chat(data.can_end_chat)
+				}
+
 				// Check if session has ended
 				if (data.ended) {
+					setEnded(true)
 					// If the session has ended, update readonly state
 					if (onReadonlyChange) {
 						onReadonlyChange(true)
@@ -389,10 +445,24 @@ export function Chat({
 		}
 	}
 
+	// Handle chat end from the End Chat button
+	const handleChatEnd = () => {
+		setEnded(true);
+		if (onReadonlyChange) {
+			onReadonlyChange(true);
+			toast.info('Session has ended.');
+		}
+	};
+
 	return (
 		<>
 			<div className="flex flex-col min-w-0 bg-white/70 dark:bg-black/30 h-[calc(100vh-125px)] rounded-lg">
-				<ChatHeader chatId={id} isReadonly={isReadonly} />
+				<ChatHeader 
+					chatId={id} 
+					isReadonly={isReadonly} 
+					can_end_chat={can_end_chat}
+					onChatEnd={handleChatEnd}
+				/>
 
 				<Messages
 					chatId={id}
