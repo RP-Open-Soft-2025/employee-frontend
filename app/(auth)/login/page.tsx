@@ -105,7 +105,7 @@ export default function Page() {
       } else if (response.status === 307) {
         console.log("First time login - redirecting to password reset");
         toast({
-          type: "error",
+          type: "success",
           description: "First time login - Please reset your password",
         });
         const redirectUrl = result.redirect_url;
