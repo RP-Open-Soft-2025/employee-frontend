@@ -63,9 +63,6 @@ declare global {
   }
 }
 
-// Wake word configuration
-const WAKE_WORD = 'assistant';
-
 function PureMultimodalInput({
   chatId,
   input,
@@ -176,40 +173,12 @@ function PureMultimodalInput({
       // Combine all results to get full transcript
       for (let i = event.resultIndex; i < event.results.length; i++) {
         transcript += event.results[i][0].transcript;
+        console.log(transcript);
       }
       
-      // Check for wake word
-      const lowercaseTranscript = transcript.toLowerCase();
-      if (lowercaseTranscript.includes(WAKE_WORD)) {
-        const commandIndex = lowercaseTranscript.lastIndexOf(WAKE_WORD) + WAKE_WORD.length;
-        const command = transcript.slice(commandIndex).trim();
-        
-        if (command) {
-          // Play feedback sound (optional)
-          try {
-            new Audio('/sounds/wake-word.mp3').play()
-              .catch(() => console.log('Could not play sound'));
-          } catch (error) {
-            // Ignore sound errors
-          }
-          
-          // Set and send the command
-          setInput(command);
-          toast.success(`Sending: "${command}"`);
-          
-          setTimeout(() => {
-            if (status === 'ready') {
-              handleSubmit();
-              setInput('');
-              resetHeight();
-            }
-          }, 300);
-        }
-      } else {
-        // Just update the input field with transcript
-        setInput(transcript);
-        adjustHeight();
-      }
+      // Update the input field with transcript
+      setInput(transcript);
+      adjustHeight();
     };
     
     // Handle errors
@@ -266,7 +235,7 @@ function PureMultimodalInput({
       try {
         recognitionRef.current.start();
         setIsListening(true);
-        toast.success(`Voice input enabled. Say "${WAKE_WORD}" followed by your message.`);
+        toast.success(`Voice input enabled. Speak to type your message.`);
       } catch (error) {
         console.error('Error starting recognition:', error);
         toast.error('Failed to start voice recognition');
@@ -293,7 +262,7 @@ function PureMultimodalInput({
         data-testid="multimodal-input"
         ref={textareaRef}
         placeholder={isListening 
-          ? `Listening... Say "${WAKE_WORD}" followed by your message` 
+          ? `Listening... Speak to type your message` 
           : "Send a message or press Alt+M for voice input"}
         value={input}
         onChange={handleInput}
