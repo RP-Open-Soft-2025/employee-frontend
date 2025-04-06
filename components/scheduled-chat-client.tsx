@@ -79,16 +79,10 @@ export function ScheduledChatClient() {
 
 			// Process all sessions in the chain
 			const allChainMessages: UIMessage[] = []
-			let firstChatId = null
 
 			if (response.sessions && Array.isArray(response.sessions)) {
 				for (const session of response.sessions) {
 					const chatId = session.chat_id
-
-					// Store the first chat ID we encounter
-					if (!firstChatId) {
-						firstChatId = chatId
-					}
 
 					// Process messages for this session
 					if (session.messages && Array.isArray(session.messages)) {
@@ -122,11 +116,6 @@ export function ScheduledChatClient() {
 					response.sessions?.length || 0
 				} sessions for chain ${chainId}`
 			)
-
-			// Set active chat ID if we found one
-			if (firstChatId) {
-				setActiveChatId(firstChatId)
-			}
 
 			// Update messages and read-only status
 			setAllMessages(allChainMessages)
@@ -392,7 +381,7 @@ export function ScheduledChatClient() {
 	// If we have an active chat ID, render the chat interface
 	// Use the chat ID that is available (prefer local state but fall back to Redux)
 	const chatIdToUse =
-		activeChatId || reduxActiveChatId || pendingSession?.chat_id || null
+		activeChatId || pendingSession?.chat_id || null
 	console.log('Rendering chat with ID:', chatIdToUse)
 
 	return (
