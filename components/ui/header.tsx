@@ -68,7 +68,7 @@ export function Header({
 	return (
 		<div className="flex flex-row justify-between items-center my-4 px-4 md:px-6 py-2 md:py-4 bg-card text-card-foreground rounded-lg border border-accent/20 shadow-sm bg-[#F9FAFC] dark:bg-[#0b1423]">
 			<Link href="/">{children}</Link>
-			<div className="flex items-center space-x-5">
+			<div className="flex items-center space-x-2 md:space-x-5">
 				<Button
 					variant="ghost"
 					size="icon"
@@ -90,11 +90,11 @@ export function Header({
 								<Button
 									variant="outline"
 									size="icon"
-									className="relative flex md:hidden bg-white dark:bg-[#0b1423] text-black dark:text-white rounded-full border-gray-200 dark:border-gray-800 h-8 w-8"
+									className="relative flex md:hidden bg-white dark:bg-[#0b1423] text-black dark:text-white rounded-full border-gray-200 dark:border-gray-800 h-7 w-7"
 								>
-									<Bell className="size-3.5" />
+									<Bell className="size-3" />
 									{unreadCount > 0 && (
-										<span className="absolute -top-1.5 -right-1.5 bg-[hsl(var(--deep-blue-accent))] text-white rounded-full size-4 flex items-center justify-center text-[10px]">
+										<span className="absolute -top-1 -right-1 bg-[hsl(var(--deep-blue-accent))] text-white rounded-full size-3.5 flex items-center justify-center text-[9px]">
 											{unreadCount}
 										</span>
 									)}
