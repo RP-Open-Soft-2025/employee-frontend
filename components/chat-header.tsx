@@ -74,7 +74,7 @@ export function HeaderUserNav() {
 					className="cursor-pointer notification-item"
 					onSelect={() => router.push('/')}
 				>
-					<LayoutDashboard className="mr-2 size-4 text-[hsl(var(--deep-blue-accent))]" />
+					<LayoutDashboard className="mr-2 size-4" />
 					Dashboard
 				</DropdownMenuItem>
 				{/* <DropdownMenuItem
