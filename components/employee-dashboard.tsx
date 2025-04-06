@@ -577,7 +577,7 @@ export function EmployeeDashboard() {
 					<Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 						<div className="flex flex-col gap-6">
 							<div>
-								<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-4 flex items-center">
+								<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-4 flex items-center pb-1">
 									<Calendar className="size-5 mr-2" />
 									Leave Information
 								</h4>
@@ -607,7 +607,7 @@ export function EmployeeDashboard() {
 									<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
 										Leave Records
 									</h5>
-									<div className="space-y-2 h-[140px] overflow-y-auto pr-1 custom-scrollbar">
+									<div className="space-y-2 max-h-[140px] min-h-fit overflow-y-auto pr-1 custom-scrollbar">
 										{employeeDetails?.company_data?.leave?.map(
 											(leave, index) => {
 												// Get appropriate color based on leave type
@@ -699,7 +699,7 @@ export function EmployeeDashboard() {
 								</h4>
 
 								{employeeDetails?.company_data?.performance &&
-									employeeDetails.company_data.performance.length > 0 && (
+									employeeDetails.company_data.performance.length > 0 ? (
 										<div>
 											<div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 												<div className="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
@@ -844,6 +844,15 @@ export function EmployeeDashboard() {
 													)}
 												</div>
 											</div>
+										</div>
+									) : (
+										<div className="flex flex-col items-center justify-center py-6 text-center">
+											<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
+												<BarChart className="size-10 text-muted-foreground" />
+											</div>
+											<p className="text-sm text-muted-foreground">
+												No performance data available
+											</p>
 										</div>
 									)}
 							</div>
