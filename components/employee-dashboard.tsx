@@ -1148,7 +1148,7 @@ export function EmployeeDashboard() {
 												<div
 													className="absolute bottom-full mb-1"
 													style={{
-														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 }% - 8px)`,
+														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 - (employeeDetails.company_data.vibemeter[0].Vibe_Score-3)/2}% - 8px)`,
 														transition: 'left 0.3s ease-in-out',
 													}}
 												>
