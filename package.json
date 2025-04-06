@@ -8,7 +8,8 @@
 		"start": "next start",
 		"lint": "next lint && biome lint --write --unsafe",
 		"lint:fix": "next lint --fix && biome lint --write --unsafe",
-		"format": "biome format --write"
+		"format": "prettier --check .",
+		"format:fix": "prettier --write --list-different ."
 	},
 	"dependencies": {
 		"@ai-sdk/fireworks": "0.1.16",
@@ -49,6 +50,7 @@
 		"next-themes": "^0.3.0",
 		"orderedmap": "^2.1.1",
 		"papaparse": "^5.5.2",
+		"prettier": "^3.5.3",
 		"prosemirror-example-setup": "^1.2.3",
 		"prosemirror-inputrules": "^1.4.0",
 		"prosemirror-markdown": "^1.13.1",
