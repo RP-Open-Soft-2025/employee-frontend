@@ -194,7 +194,7 @@ export const ThinkingMessage = () => {
 					}
 				)}
 			>
-				<div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">
+				<div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border dark:bg-gray-900 bg-blue-300">
 					<SparklesIcon size={14} />
 				</div>
 

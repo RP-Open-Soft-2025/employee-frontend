@@ -45,8 +45,8 @@ export function Header({
 	}
 
 	const formatNotificationTime = (dateString: string) => {
-		const date = new Date(new Date(dateString).getTime() )
-		const now = new Date(new Date().getTime() )
+		const date = new Date(new Date(dateString).getTime())
+		const now = new Date(new Date().getTime())
 		const diffInHours =
 			Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60)
 
@@ -133,7 +133,9 @@ export function Header({
 														) : (
 															<MailOpen className="size-4" />
 														)}
-														<h4 className="font-medium">{notification.title}</h4>
+														<h4 className="font-medium">
+															{notification.title}
+														</h4>
 													</div>
 													<span className="text-xs">
 														{formatNotificationTime(notification.created_at)}
@@ -199,7 +201,9 @@ export function Header({
 														) : (
 															<MailOpen className="size-4" />
 														)}
-														<h4 className="font-medium">{notification.title}</h4>
+														<h4 className="font-medium">
+															{notification.title}
+														</h4>
 													</div>
 													<span className="text-xs">
 														{formatNotificationTime(notification.created_at)}
