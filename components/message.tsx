@@ -1,153 +1,153 @@
-'use client';
+'use client'
 
-import type { UIMessage } from 'ai';
-import cx from 'classnames';
-import { AnimatePresence, motion } from 'framer-motion';
-import { memo, } from 'react';
-import type { Vote } from '@/lib/db/schema';
-import { DocumentToolCall, DocumentToolResult } from './document';
-import { SparklesIcon } from './icons';
-import { Markdown } from './markdown';
+import type { UIMessage } from 'ai'
+import cx from 'classnames'
+import { AnimatePresence, motion } from 'framer-motion'
+import { memo } from 'react'
+import type { Vote } from '@/lib/db/schema'
+import { DocumentToolCall, DocumentToolResult } from './document'
+import { SparklesIcon } from './icons'
+import { Markdown } from './markdown'
 // import { MessageActions } from './message-actions';
-import equal from 'fast-deep-equal';
-import { cn } from '@/lib/utils';
-import { DocumentPreview } from './document-preview';
-import { MessageReasoning } from './message-reasoning';
-import type { UseChatHelpers } from '@ai-sdk/react';
+import equal from 'fast-deep-equal'
+import { cn } from '@/lib/utils'
+import { DocumentPreview } from './document-preview'
+import { MessageReasoning } from './message-reasoning'
+import type { UseChatHelpers } from '@ai-sdk/react'
 
 const PurePreviewMessage = ({
-  chatId,
-  message,
-  vote,
-  isLoading,
-  setMessages,
-  reload,
-  isReadonly,
+	chatId,
+	message,
+	vote,
+	isLoading,
+	setMessages,
+	reload,
+	isReadonly,
 }: {
-  chatId: string;
-  message: UIMessage;
-  vote: Vote | undefined;
-  isLoading: boolean;
-  setMessages: UseChatHelpers['setMessages'];
-  reload: UseChatHelpers['reload'];
-  isReadonly: boolean;
+	chatId: string
+	message: UIMessage
+	vote: Vote | undefined
+	isLoading: boolean
+	setMessages: UseChatHelpers['setMessages']
+	reload: UseChatHelpers['reload']
+	isReadonly: boolean
 }) => {
-  return (
-    <AnimatePresence>
-      <motion.div
-        data-testid={`message-${message.role}`}
-        className="w-full mx-auto max-w-3xl px-4 group/message"
-        initial={{ y: 5, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        data-role={message.role}
-      >
-        <div className="flex gap-4 w-full group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:w-fit">
-          {message.role === 'assistant' && (
-            <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-primary">
-              <div className="translate-y-px">
-                <SparklesIcon size={14} />
-              </div>
-            </div>
-          )}
+	return (
+		<AnimatePresence>
+			<motion.div
+				data-testid={`message-${message.role}`}
+				className="w-full mx-auto max-w-3xl px-4 group/message"
+				initial={{ y: 5, opacity: 0 }}
+				animate={{ y: 0, opacity: 1 }}
+				data-role={message.role}
+			>
+				<div className="flex gap-4 w-full group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:w-fit">
+					{message.role === 'assistant' && (
+						<div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-primary">
+							<div className="translate-y-px">
+								<SparklesIcon size={14} />
+							</div>
+						</div>
+					)}
 
-          <div className="flex flex-col gap-4 w-full">
-            {message.parts?.map((part, index) => {
-              const { type } = part;
-              const key = `message-${message.id}-part-${index}`;
+					<div className="flex flex-col gap-4 w-full">
+						{message.parts?.map((part, index) => {
+							const { type } = part
+							const key = `message-${message.id}-part-${index}`
 
-              if (type === 'reasoning') {
-                return (
-                  <MessageReasoning
-                    key={key}
-                    isLoading={isLoading}
-                    reasoning={part.reasoning}
-                  />
-                );
-              }
+							if (type === 'reasoning') {
+								return (
+									<MessageReasoning
+										key={key}
+										isLoading={isLoading}
+										reasoning={part.reasoning}
+									/>
+								)
+							}
 
-              if (type === 'text') {
-                return (
-                  <div key={key} className="flex flex-row gap-2 items-start">
-                    <div
-                      data-testid="message-content"
-                      className={cn('flex flex-col gap-4', {
-                        'bg-primary text-primary-foreground px-3 py-2 rounded-xl':
-                          message.role === 'user',
-                        'text-gray-800 dark:text-white': 
-                          message.role === 'assistant'
-                      })}
-                    >
-                      <Markdown>{part.text}</Markdown>
-                    </div>
-                  </div>
-                );
-              }
+							if (type === 'text') {
+								return (
+									<div key={key} className="flex flex-row gap-2 items-start">
+										<div
+											data-testid="message-content"
+											className={cn('flex flex-col gap-4', {
+												'bg-primary text-primary-foreground px-3 py-2 rounded-xl':
+													message.role === 'user',
+												'text-gray-800 dark:text-white':
+													message.role === 'assistant',
+											})}
+										>
+											<Markdown>{part.text}</Markdown>
+										</div>
+									</div>
+								)
+							}
 
-              if (type === 'tool-invocation') {
-                const { toolInvocation } = part;
-                const { toolName, toolCallId, state } = toolInvocation;
+							if (type === 'tool-invocation') {
+								const { toolInvocation } = part
+								const { toolName, toolCallId, state } = toolInvocation
 
-                if (state === 'call') {
-                  const { args } = toolInvocation;
+								if (state === 'call') {
+									const { args } = toolInvocation
 
-                  return (
-                    <div
-                      key={toolCallId}
-                      className={cx({
-                        skeleton: false,
-                      })}
-                    >
-                      {toolName === 'createDocument' ? (
-                        <DocumentPreview isReadonly={isReadonly} args={args} />
-                      ) : toolName === 'updateDocument' ? (
-                        <DocumentToolCall
-                          type="update"
-                          args={args}
-                          isReadonly={isReadonly}
-                        />
-                      ) : toolName === 'requestSuggestions' ? (
-                        <DocumentToolCall
-                          type="request-suggestions"
-                          args={args}
-                          isReadonly={isReadonly}
-                        />
-                      ) : null}
-                    </div>
-                  );
-                }
+									return (
+										<div
+											key={toolCallId}
+											className={cx({
+												skeleton: false,
+											})}
+										>
+											{toolName === 'createDocument' ? (
+												<DocumentPreview isReadonly={isReadonly} args={args} />
+											) : toolName === 'updateDocument' ? (
+												<DocumentToolCall
+													type="update"
+													args={args}
+													isReadonly={isReadonly}
+												/>
+											) : toolName === 'requestSuggestions' ? (
+												<DocumentToolCall
+													type="request-suggestions"
+													args={args}
+													isReadonly={isReadonly}
+												/>
+											) : null}
+										</div>
+									)
+								}
 
-                if (state === 'result') {
-                  const { result } = toolInvocation;
+								if (state === 'result') {
+									const { result } = toolInvocation
 
-                  return (
-                    <div key={toolCallId}>
-                      {toolName === 'createDocument' ? (
-                        <DocumentPreview
-                          isReadonly={isReadonly}
-                          result={result}
-                        />
-                      ) : toolName === 'updateDocument' ? (
-                        <DocumentToolResult
-                          type="update"
-                          result={result}
-                          isReadonly={isReadonly}
-                        />
-                      ) : toolName === 'requestSuggestions' ? (
-                        <DocumentToolResult
-                          type="request-suggestions"
-                          result={result}
-                          isReadonly={isReadonly}
-                        />
-                      ) : (
-                        <pre>{JSON.stringify(result, null, 2)}</pre>
-                      )}
-                    </div>
-                  );
-                }
-              }
-            })}
+									return (
+										<div key={toolCallId}>
+											{toolName === 'createDocument' ? (
+												<DocumentPreview
+													isReadonly={isReadonly}
+													result={result}
+												/>
+											) : toolName === 'updateDocument' ? (
+												<DocumentToolResult
+													type="update"
+													result={result}
+													isReadonly={isReadonly}
+												/>
+											) : toolName === 'requestSuggestions' ? (
+												<DocumentToolResult
+													type="request-suggestions"
+													result={result}
+													isReadonly={isReadonly}
+												/>
+											) : (
+												<pre>{JSON.stringify(result, null, 2)}</pre>
+											)}
+										</div>
+									)
+								}
+							}
+						})}
 
-            {/* {!isReadonly && (
+						{/* {!isReadonly && (
               <MessageActions
                 key={`action-${message.id}`}
                 chatId={chatId}
@@ -156,59 +156,59 @@ const PurePreviewMessage = ({
                 isLoading={isLoading}
               />
             )} */}
-          </div>
-        </div>
-      </motion.div>
-    </AnimatePresence>
-  );
-};
+					</div>
+				</div>
+			</motion.div>
+		</AnimatePresence>
+	)
+}
 
 export const PreviewMessage = memo(
-  PurePreviewMessage,
-  (prevProps, nextProps) => {
-    if (prevProps.isLoading !== nextProps.isLoading) return false;
-    if (prevProps.message.id !== nextProps.message.id) return false;
-    if (!equal(prevProps.message.parts, nextProps.message.parts)) return false;
-    if (!equal(prevProps.vote, nextProps.vote)) return false;
+	PurePreviewMessage,
+	(prevProps, nextProps) => {
+		if (prevProps.isLoading !== nextProps.isLoading) return false
+		if (prevProps.message.id !== nextProps.message.id) return false
+		if (!equal(prevProps.message.parts, nextProps.message.parts)) return false
+		if (!equal(prevProps.vote, nextProps.vote)) return false
 
-    return true;
-  },
-);
+		return true
+	}
+)
 
 export const ThinkingMessage = () => {
-  const role = 'assistant';
+	const role = 'assistant'
 
-  return (
-    <motion.div
-      data-testid="message-assistant-loading"
-      className="w-full mx-auto max-w-3xl px-4 group/message"
-      initial={{ y: 5, opacity: 0 }}
-      animate={{ y: 0, opacity: 1, transition: { delay: 1 } }}
-      data-role={role}
-    >
-      <div
-        className={cx(
-          'flex gap-4 group-data-[role=user]/message:px-3 w-full group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:py-2 rounded-xl',
-          {
-            'group-data-[role=user]/message:bg-muted': true,
-          },
-        )}
-      >
-        <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">
-          <SparklesIcon size={14} />
-        </div>
+	return (
+		<motion.div
+			data-testid="message-assistant-loading"
+			className="w-full mx-auto max-w-3xl px-4 group/message"
+			initial={{ y: 5, opacity: 0 }}
+			animate={{ y: 0, opacity: 1, transition: { delay: 1 } }}
+			data-role={role}
+		>
+			<div
+				className={cx(
+					'flex gap-4 group-data-[role=user]/message:px-3 w-full group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:py-2 rounded-xl',
+					{
+						'group-data-[role=user]/message:bg-muted': true,
+					}
+				)}
+			>
+				<div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">
+					<SparklesIcon size={14} />
+				</div>
 
-        <div className="flex flex-col gap-2 w-full">
-          <div className="flex flex-col gap-4 text-muted-foreground">
-            <motion.span
-              animate={{ opacity: [1, 0.5, 1] }}
-              transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
-            >
-              Typing...
-            </motion.span>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
+				<div className="flex flex-col gap-2 w-full">
+					<div className="flex flex-col gap-4 text-muted-foreground">
+						<motion.span
+							animate={{ opacity: [1, 0.5, 1] }}
+							transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
+						>
+							Typing...
+						</motion.span>
+					</div>
+				</div>
+			</div>
+		</motion.div>
+	)
+}

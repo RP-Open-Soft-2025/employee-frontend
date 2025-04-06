@@ -15,24 +15,28 @@
 ## Features
 
 - **Modern Frontend Framework**
+
   - [Next.js](https://nextjs.org) 15 with App Router
   - React 18 with Server Components
   - TypeScript for type safety
   - Tailwind CSS for styling
 
 - **AI Integration**
+
   - Multiple AI model support (OpenAI, Fireworks)
   - Real-time chat interface
   - Code highlighting and markdown support
   - Structured data handling
 
 - **UI/UX**
+
   - Modern component library with [shadcn/ui](https://ui.shadcn.com)
   - Responsive design
   - Dark/Light mode support
   - Accessible components with Radix UI
 
 - **State Management**
+
   - Redux Toolkit for global state
   - SWR for data fetching
   - Custom hooks for reusable logic
@@ -57,23 +61,27 @@
 ## Getting Started
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/employee-frontend.git
 cd employee-frontend
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
-Create a `.env.local` file in the root directory with the following variables:
+   Create a `.env.local` file in the root directory with the following variables:
+
 ```env
 # Add your environment variables here
 ```
 
 4. Start the development server:
+
 ```bash
 npm run dev
 ```

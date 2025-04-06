@@ -1,20 +1,20 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "@/components/toast";
-import { LoadingScreen } from "@/components/loading-screen";
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { toast } from '@/components/toast'
+import { LoadingScreen } from '@/components/loading-screen'
 
 export default function ResetPasswordBasePage() {
-  const router = useRouter();
+	const router = useRouter()
 
-  useEffect(() => {
-    toast({
-      type: "error",
-      description: "Invalid empty reset password token",
-    });
-    router.push("/login");
-  }, [router]);
+	useEffect(() => {
+		toast({
+			type: 'error',
+			description: 'Invalid empty reset password token',
+		})
+		router.push('/login')
+	}, [router])
 
-  return <LoadingScreen />;
-} 
+	return <LoadingScreen />
+}

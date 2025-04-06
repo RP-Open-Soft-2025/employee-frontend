@@ -1,23 +1,24 @@
-import type { Metadata } from "next";
-import { Toaster } from "sonner";
+import type { Metadata } from 'next'
+import { Toaster } from 'sonner'
 
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from '@/components/theme-provider'
 
-import "./globals.css";
-import StoreProvider from "./StoreProvider";
+import './globals.css'
+import StoreProvider from './StoreProvider'
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://employee-frontend-ten-puce.vercel.app"),
-  title: "Employee AI Conversation Bot - Vibemeter",
-  description: "AI-powered conversation bot to enhance employee experience and measure team vibes.",
-};
+	metadataBase: new URL('https://employee-frontend-ten-puce.vercel.app'),
+	title: 'Employee AI Conversation Bot - Vibemeter',
+	description:
+		'AI-powered conversation bot to enhance employee experience and measure team vibes.',
+}
 
 export const viewport = {
-  maximumScale: 1, // Disable auto-zoom on mobile Safari
-};
+	maximumScale: 1, // Disable auto-zoom on mobile Safari
+}
 
-const LIGHT_THEME_COLOR = "hsl(0 0% 100%)";
-const DARK_THEME_COLOR = "hsl(240deg 10% 3.92%)";
+const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)'
+const DARK_THEME_COLOR = 'hsl(240deg 10% 3.92%)'
 const THEME_COLOR_SCRIPT = `\
 (function() {
   var html = document.documentElement;
@@ -34,40 +35,40 @@ const THEME_COLOR_SCRIPT = `\
   var observer = new MutationObserver(updateThemeColor);
   observer.observe(html, { attributes: true, attributeFilter: ['class'] });
   updateThemeColor();
-})();`;
+})();`
 
 export default async function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode
 }>) {
-  return (
-    <html
-      lang="en"
-      // `next-themes` injects an extra classname to the body element to avoid
-      // visual flicker before hydration. Hence the `suppressHydrationWarning`
-      // prop is necessary to avoid the React hydration mismatch warning.
-      // https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
-      suppressHydrationWarning
-    >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: THEME_COLOR_SCRIPT,
-          }}
-        />
-      </head>
-      <body className="">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Toaster position="top-center" />
-          <StoreProvider>{children}</StoreProvider>
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html
+			lang="en"
+			// `next-themes` injects an extra classname to the body element to avoid
+			// visual flicker before hydration. Hence the `suppressHydrationWarning`
+			// prop is necessary to avoid the React hydration mismatch warning.
+			// https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
+			suppressHydrationWarning
+		>
+			<head>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: THEME_COLOR_SCRIPT,
+					}}
+				/>
+			</head>
+			<body className="">
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					<Toaster position="top-center" />
+					<StoreProvider>{children}</StoreProvider>
+				</ThemeProvider>
+			</body>
+		</html>
+	)
 }

@@ -5,14 +5,14 @@ import { makeStore } from '../redux/store'
 import type { Store } from 'redux'
 
 interface StoreProviderProps {
-  children: ReactNode
+	children: ReactNode
 }
 
 export default function StoreProvider({ children }: StoreProviderProps) {
-  const storeRef = useRef<Store | null>(null)
-  if (!storeRef.current) {
-    storeRef.current = makeStore()   
-  }
+	const storeRef = useRef<Store | null>(null)
+	if (!storeRef.current) {
+		storeRef.current = makeStore()
+	}
 
-  return <Provider store={storeRef.current}>{children}</Provider>
+	return <Provider store={storeRef.current}>{children}</Provider>
 }

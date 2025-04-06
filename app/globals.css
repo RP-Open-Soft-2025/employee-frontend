@@ -3,335 +3,339 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+	--foreground-rgb: 0, 0, 0;
+	--background-start-rgb: 214, 219, 220;
+	--background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+	:root {
+		--foreground-rgb: 255, 255, 255;
+		--background-start-rgb: 0, 0, 0;
+		--background-end-rgb: 0, 0, 0;
+	}
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+	.text-balance {
+		text-wrap: balance;
+	}
 }
 
 @layer base {
-  :root {
-    /* New deep blue theme colors */
-    --deep-blue: 215 50% 23%; /* #1e3a5f */
-    --deep-blue-dark: 218 42% 18%; /* #192c47 */
-    --deep-blue-darker: 220 40% 12%; /* #0b1423 */
-    --deep-blue-accent: 213 60% 45%; /* #2d6bbd */
-    --deep-blue-accent-hover: 213 70% 40%; /* #2561b8 */
-    --deep-blue-highlight: 210 100% 60%; /* #3399ff */
-    
-    /* Button styles */
-    --button-tint: 215 60% 94%;
-    --button-tint-hover: 215 60% 90%;
-    --button-tint-border: 215 50% 80%;
-    --button-tint-text: 215 80% 25%;
-    
-    /* Core theme colors */
-    --foreground: 210 50% 98%;
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 27%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 27%;
-    --primary: 213 60% 45%; /* #2d6bbd */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 215 50% 23%; /* #1e3a5f */
-    --secondary-foreground: 0 0% 100%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 25% 46%;
-    --accent: 213 70% 55%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 213 60% 45%;
-    
-    /* Gradients */
-    --gradient-white: 0 0% 100%;
-    --gradient-blue: 213 70% 64%;
-    --background-start: 210 30% 98%;
-    --background-end: 0 0% 100%;
-    --background: 0 0% 100%;
-    
-    /* Chart colors */
-    --chart-1: 213 76% 61%;
-    --chart-2: 239 58% 59%;
-    --chart-3: 262 37% 54%;
-    --chart-4: 281 74% 56%;
-    --chart-5: 325 87% 57%;
-    
-    /* Other */
-    --radius: 0.5rem;
-    
-    /* Sidebar */
-    --sidebar-background: 213 60% 45%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 215 50% 23%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 213 70% 55%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 213 50% 35%;
-    --sidebar-ring: 213 60% 60%;
-  }
+	:root {
+		/* New deep blue theme colors */
+		--deep-blue: 215 50% 23%; /* #1e3a5f */
+		--deep-blue-dark: 218 42% 18%; /* #192c47 */
+		--deep-blue-darker: 220 40% 12%; /* #0b1423 */
+		--deep-blue-accent: 213 60% 45%; /* #2d6bbd */
+		--deep-blue-accent-hover: 213 70% 40%; /* #2561b8 */
+		--deep-blue-highlight: 210 100% 60%; /* #3399ff */
 
-  .dark {
-    /* Dark mode blue theme colors */
-    --button-tint: 218 42% 18%;
-    --button-tint-hover: 218 42% 23%;
-    --button-tint-border: 218 42% 28%;
-    --button-tint-text: 210 50% 98%;
-    
-    /* Core theme colors - dark mode */
-    --foreground: 210 50% 98%;
-    --card: 220 40% 12%;
-    --card-foreground: 210 50% 98%;
-    --popover: 218 42% 18%;
-    --popover-foreground: 210 50% 98%;
-    --primary: 213 70% 40%;
-    --primary-foreground: 210 50% 98%;
-    --secondary: 218 42% 23%;
-    --secondary-foreground: 210 50% 98%;
-    --muted: 217 33% 20%;
-    --muted-foreground: 215 25% 70%;
-    --accent: 213 70% 40%;
-    --accent-foreground: 210 50% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 50% 98%;
-    --border: 217 33% 20%;
-    --input: 217 33% 20%;
-    --ring: 213 70% 50%;
-    
-    /* Gradients - dark mode */
-    --gradient-white: 218 42% 18%;
-    --gradient-blue: 213 65% 40%;
-    --background-start: 222 47% 11%;
-    --background-end: 220 40% 5%;
-    --background: 222 47% 8%;
-    
-    /* Chart colors - dark mode */
-    --chart-1: 213 70% 60%;
-    --chart-2: 239 65% 65%;
-    --chart-3: 262 55% 65%;
-    --chart-4: 281 70% 65%;
-    --chart-5: 325 65% 65%;
-    
-    /* Sidebar - dark mode */
-    --sidebar-background: 220 40% 12%;
-    --sidebar-foreground: 210 50% 98%;
-    --sidebar-primary: 218 42% 18%;
-    --sidebar-primary-foreground: 210 50% 98%;
-    --sidebar-accent: 213 70% 40%;
-    --sidebar-accent-foreground: 210 50% 98%;
-    --sidebar-border: 218 42% 25%;
-    --sidebar-ring: 213 70% 45%;
-  }
+		/* Button styles */
+		--button-tint: 215 60% 94%;
+		--button-tint-hover: 215 60% 90%;
+		--button-tint-border: 215 50% 80%;
+		--button-tint-text: 215 80% 25%;
+
+		/* Core theme colors */
+		--foreground: 210 50% 98%;
+		--card: 0 0% 100%;
+		--card-foreground: 215 25% 27%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 215 25% 27%;
+		--primary: 213 60% 45%; /* #2d6bbd */
+		--primary-foreground: 0 0% 100%;
+		--secondary: 215 50% 23%; /* #1e3a5f */
+		--secondary-foreground: 0 0% 100%;
+		--muted: 210 40% 96%;
+		--muted-foreground: 215 25% 46%;
+		--accent: 213 70% 55%;
+		--accent-foreground: 0 0% 100%;
+		--destructive: 0 84% 60%;
+		--destructive-foreground: 0 0% 98%;
+		--border: 214 32% 91%;
+		--input: 214 32% 91%;
+		--ring: 213 60% 45%;
+
+		/* Gradients */
+		--gradient-white: 0 0% 100%;
+		--gradient-blue: 213 70% 64%;
+		--background-start: 210 30% 98%;
+		--background-end: 0 0% 100%;
+		--background: 0 0% 100%;
+
+		/* Chart colors */
+		--chart-1: 213 76% 61%;
+		--chart-2: 239 58% 59%;
+		--chart-3: 262 37% 54%;
+		--chart-4: 281 74% 56%;
+		--chart-5: 325 87% 57%;
+
+		/* Other */
+		--radius: 0.5rem;
+
+		/* Sidebar */
+		--sidebar-background: 213 60% 45%;
+		--sidebar-foreground: 0 0% 100%;
+		--sidebar-primary: 215 50% 23%;
+		--sidebar-primary-foreground: 0 0% 100%;
+		--sidebar-accent: 213 70% 55%;
+		--sidebar-accent-foreground: 0 0% 100%;
+		--sidebar-border: 213 50% 35%;
+		--sidebar-ring: 213 60% 60%;
+	}
+
+	.dark {
+		/* Dark mode blue theme colors */
+		--button-tint: 218 42% 18%;
+		--button-tint-hover: 218 42% 23%;
+		--button-tint-border: 218 42% 28%;
+		--button-tint-text: 210 50% 98%;
+
+		/* Core theme colors - dark mode */
+		--foreground: 210 50% 98%;
+		--card: 220 40% 12%;
+		--card-foreground: 210 50% 98%;
+		--popover: 218 42% 18%;
+		--popover-foreground: 210 50% 98%;
+		--primary: 213 70% 40%;
+		--primary-foreground: 210 50% 98%;
+		--secondary: 218 42% 23%;
+		--secondary-foreground: 210 50% 98%;
+		--muted: 217 33% 20%;
+		--muted-foreground: 215 25% 70%;
+		--accent: 213 70% 40%;
+		--accent-foreground: 210 50% 98%;
+		--destructive: 0 63% 31%;
+		--destructive-foreground: 210 50% 98%;
+		--border: 217 33% 20%;
+		--input: 217 33% 20%;
+		--ring: 213 70% 50%;
+
+		/* Gradients - dark mode */
+		--gradient-white: 218 42% 18%;
+		--gradient-blue: 213 65% 40%;
+		--background-start: 222 47% 11%;
+		--background-end: 220 40% 5%;
+		--background: 222 47% 8%;
+
+		/* Chart colors - dark mode */
+		--chart-1: 213 70% 60%;
+		--chart-2: 239 65% 65%;
+		--chart-3: 262 55% 65%;
+		--chart-4: 281 70% 65%;
+		--chart-5: 325 65% 65%;
+
+		/* Sidebar - dark mode */
+		--sidebar-background: 220 40% 12%;
+		--sidebar-foreground: 210 50% 98%;
+		--sidebar-primary: 218 42% 18%;
+		--sidebar-primary-foreground: 210 50% 98%;
+		--sidebar-accent: 213 70% 40%;
+		--sidebar-accent-foreground: 210 50% 98%;
+		--sidebar-border: 218 42% 25%;
+		--sidebar-ring: 213 70% 45%;
+	}
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+	* {
+		@apply border-border;
+	}
 
-  body {
-    @apply text-foreground min-h-screen bg-background;
-    background: linear-gradient(135deg,
-      hsl(var(--background-start)) 0%,
-      hsl(var(--background-end)) 100%);
-  }
+	body {
+		@apply text-foreground min-h-screen bg-background;
+		background: linear-gradient(
+			135deg,
+			hsl(var(--background-start)) 0%,
+			hsl(var(--background-end)) 100%
+		);
+	}
 
-  /* Specific styling for auth pages that overrides the base background */
-  body:has(.auth-layout) {
-    background: linear-gradient(135deg,
-        hsl(var(--background-start)) 0%,
-        hsl(var(--background-end)) 100%);
-  }
+	/* Specific styling for auth pages that overrides the base background */
+	body:has(.auth-layout) {
+		background: linear-gradient(
+			135deg,
+			hsl(var(--background-start)) 0%,
+			hsl(var(--background-end)) 100%
+		);
+	}
 
-  @font-face {
-    font-family: "geist";
-    font-style: normal;
-    font-weight: 100 900;
-    src: url(/fonts/geist.woff2) format("woff2");
-  }
+	@font-face {
+		font-family: 'geist';
+		font-style: normal;
+		font-weight: 100 900;
+		src: url(/fonts/geist.woff2) format('woff2');
+	}
 
-  @font-face {
-    font-family: "geist-mono";
-    font-style: normal;
-    font-weight: 100 900;
-    src: url(/fonts/geist-mono.woff2) format("woff2");
-  }
+	@font-face {
+		font-family: 'geist-mono';
+		font-style: normal;
+		font-weight: 100 900;
+		src: url(/fonts/geist-mono.woff2) format('woff2');
+	}
 }
 
 .skeleton {
-  * {
-    pointer-events: none !important;
-  }
+	* {
+		pointer-events: none !important;
+	}
 
-  *[class^="text-"] {
-    color: transparent;
-    @apply rounded-md bg-foreground/20 select-none animate-pulse;
-  }
+	*[class^='text-'] {
+		color: transparent;
+		@apply rounded-md bg-foreground/20 select-none animate-pulse;
+	}
 
-  .skeleton-bg {
-    @apply bg-foreground/10;
-  }
+	.skeleton-bg {
+		@apply bg-foreground/10;
+	}
 
-  .skeleton-div {
-    @apply bg-foreground/20 animate-pulse;
-  }
+	.skeleton-div {
+		@apply bg-foreground/20 animate-pulse;
+	}
 }
 
 .ProseMirror {
-  outline: none;
+	outline: none;
 }
 
 .cm-editor,
 .cm-gutters {
-  @apply bg-background dark:bg-zinc-800 outline-none selection:bg-zinc-900 !important;
+	@apply bg-background dark:bg-zinc-800 outline-none selection:bg-zinc-900 !important;
 }
 
-.ͼo.cm-focused>.cm-scroller>.cm-selectionLayer .cm-selectionBackground,
+.ͼo.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground,
 .ͼo.cm-selectionBackground,
 .ͼo.cm-content::selection {
-  @apply bg-zinc-200 dark:bg-zinc-900 !important;
+	@apply bg-zinc-200 dark:bg-zinc-900 !important;
 }
 
 .cm-activeLine,
 .cm-activeLineGutter {
-  @apply bg-transparent !important;
+	@apply bg-transparent !important;
 }
 
 .cm-activeLine {
-  @apply rounded-r-sm !important;
+	@apply rounded-r-sm !important;
 }
 
 .cm-lineNumbers {
-  @apply min-w-7;
+	@apply min-w-7;
 }
 
 .cm-foldGutter {
-  @apply min-w-3;
+	@apply min-w-3;
 }
 
 .cm-lineNumbers .cm-activeLineGutter {
-  @apply rounded-l-sm !important;
+	@apply rounded-l-sm !important;
 }
 
 .suggestion-highlight {
-  @apply bg-blue-200 hover:bg-blue-300 dark:hover:bg-blue-400/50 dark:text-blue-50 dark:bg-blue-500/40;
+	@apply bg-blue-200 hover:bg-blue-300 dark:hover:bg-blue-400/50 dark:text-blue-50 dark:bg-blue-500/40;
 }
 
 @layer components {
-  .bg-card,
-  .card,
-  div[class*="bg-card"],
-  div[class*="card"] {
-    @apply bg-white dark:bg-[hsl(var(--deep-blue-darker))] border border-gray-200 dark:border-[hsl(var(--deep-blue-dark))] rounded-2xl transition-all duration-300 hover:shadow-lg;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-  }
+	.bg-card,
+	.card,
+	div[class*='bg-card'],
+	div[class*='card'] {
+		@apply bg-white dark:bg-[hsl(var(--deep-blue-darker))] border border-gray-200 dark:border-[hsl(var(--deep-blue-dark))] rounded-2xl transition-all duration-300 hover:shadow-lg;
+		backdrop-filter: blur(5px);
+		-webkit-backdrop-filter: blur(5px);
+	}
 
-  /* Updated button styles with simple blue theme */
-  .bg-card button,
-  .card button,
-  div[class*="bg-card"] button,
-  div[class*="card"] button,
-  button[class*="ui-button"] {
-    @apply rounded-lg px-4 py-2 font-medium text-sm;
-    background: #2563eb !important; /* Simple blue */
-    color: white !important;
-    border: 1px solid #1d4ed8 !important;
-    transition: all 0.2s ease-in-out !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-  }
+	/* Updated button styles with simple blue theme */
+	.bg-card button,
+	.card button,
+	div[class*='bg-card'] button,
+	div[class*='card'] button,
+	button[class*='ui-button'] {
+		@apply rounded-lg px-4 py-2 font-medium text-sm;
+		background: #2563eb !important; /* Simple blue */
+		color: white !important;
+		border: 1px solid #1d4ed8 !important;
+		transition: all 0.2s ease-in-out !important;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+	}
 
-  .bg-card button:hover,
-  .card button:hover,
-  div[class*="bg-card"] button:hover,
-  div[class*="card"] button:hover,
-  button[class*="ui-button"]:hover {
-    background: #1d4ed8 !important; /* Darker blue on hover */
-    color: white !important;
-    border-color: #1e40af !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15) !important;
-  }
+	.bg-card button:hover,
+	.card button:hover,
+	div[class*='bg-card'] button:hover,
+	div[class*='card'] button:hover,
+	button[class*='ui-button']:hover {
+		background: #1d4ed8 !important; /* Darker blue on hover */
+		color: white !important;
+		border-color: #1e40af !important;
+		transform: translateY(-1px) !important;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15) !important;
+	}
 
-  .bg-card button:active,
-  .card button:active,
-  div[class*="bg-card"] button:active,
-  div[class*="card"] button:active,
-  button[class*="ui-button"]:active {
-    transform: translateY(0) !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-  }
+	.bg-card button:active,
+	.card button:active,
+	div[class*='bg-card'] button:active,
+	div[class*='card'] button:active,
+	button[class*='ui-button']:active {
+		transform: translateY(0) !important;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+	}
 
-  /* Primary button - simple blue */
-  .bg-card button.bg-primary,
-  .card button.bg-primary,
-  div[class*="bg-card"] button.bg-primary,
-  div[class*="card"] button.bg-primary,
-  button.bg-primary {
-    background: #2563eb !important; /* Simple blue */
-    color: white !important;
-    border-color: #1d4ed8 !important;
-  }
+	/* Primary button - simple blue */
+	.bg-card button.bg-primary,
+	.card button.bg-primary,
+	div[class*='bg-card'] button.bg-primary,
+	div[class*='card'] button.bg-primary,
+	button.bg-primary {
+		background: #2563eb !important; /* Simple blue */
+		color: white !important;
+		border-color: #1d4ed8 !important;
+	}
 
-  /* Primary button hover */
-  .bg-card button.bg-primary:hover,
-  .card button.bg-primary:hover,
-  div[class*="bg-card"] button.bg-primary:hover,
-  div[class*="card"] button.bg-primary:hover,
-  button.bg-primary:hover {
-    background: #1d4ed8 !important; /* Darker blue on hover */
-    border-color: #1e40af !important;
-    box-shadow: 0 4px 8px rgba(29, 78, 216, 0.25) !important;
-  }
+	/* Primary button hover */
+	.bg-card button.bg-primary:hover,
+	.card button.bg-primary:hover,
+	div[class*='bg-card'] button.bg-primary:hover,
+	div[class*='card'] button.bg-primary:hover,
+	button.bg-primary:hover {
+		background: #1d4ed8 !important; /* Darker blue on hover */
+		border-color: #1e40af !important;
+		box-shadow: 0 4px 8px rgba(29, 78, 216, 0.25) !important;
+	}
 
-  /* Notification styles */
-  .notification-dropdown-content {
-    @apply bg-white dark:bg-[#0b1423] border-gray-200 dark:border-gray-800 shadow-xl;
-  }
-  
-  .notification-item {
-    @apply hover:bg-gray-100 dark:hover:bg-[#131f34];
-  }
-  
-  .notification-item.unread {
-    @apply bg-blue-50 dark:bg-blue-900/20;
-  }
-  
-  .notification-count {
-    @apply bg-red-500 text-white;
-  }
+	/* Notification styles */
+	.notification-dropdown-content {
+		@apply bg-white dark:bg-[#0b1423] border-gray-200 dark:border-gray-800 shadow-xl;
+	}
+
+	.notification-item {
+		@apply hover:bg-gray-100 dark:hover:bg-[#131f34];
+	}
+
+	.notification-item.unread {
+		@apply bg-blue-50 dark:bg-blue-900/20;
+	}
+
+	.notification-count {
+		@apply bg-red-500 text-white;
+	}
 }
 
 /* Custom scrollbar for leave records */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+	width: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: hsl(var(--background));
-  border-radius: 8px;
+	background: hsl(var(--background));
+	border-radius: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.3);
-  border-radius: 8px;
+	background: hsl(var(--muted-foreground) / 0.3);
+	border-radius: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.5);
+	background: hsl(var(--muted-foreground) / 0.5);
 }
