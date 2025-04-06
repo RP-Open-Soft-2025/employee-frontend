@@ -44,24 +44,11 @@ export function HeaderUserNav() {
 	const handleLogOut = async () => {
 		setIsLoggingOut(true)
 		try {
-			const response = await fetch(`${API_URL}/auth/logout`, {
-				method: 'DELETE',
-				credentials: 'include',
-			})
-
-			if (!response.ok) {
-				console.error('Logout failed:', response.statusText)
-			}
-
-			const result = await response.json()
-			console.log(result)
-		} catch (error) {
-			console.error('Error during logout:', error)
-		} finally {
-			// Proceed with local logout even if API call fails
+			// Proceed with local logout using Redux
 			dispatch(logout())
 			router.push('/login')
-			// No need to set loading to false as we're redirecting
+		} catch (error) {
+			console.error('Error during logout:', error)
 		}
 	}
 
