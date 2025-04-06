@@ -442,18 +442,18 @@ export function EmployeeDashboard() {
 												const getLeaveTypeColor = (type: string) => {
 													const lowerType = type.toLowerCase()
 													if (lowerType.includes('sick')) {
-														return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+														return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
 													} else if (
 														lowerType.includes('annual') ||
 														lowerType.includes('vacation')
 													) {
-														return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+														return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
 													} else if (lowerType.includes('casual')) {
-														return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+														return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
 													} else if (lowerType.includes('unpaid')) {
-														return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+														return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
 													}
-													return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
+													return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
 												}
 
 												return (
@@ -580,7 +580,7 @@ export function EmployeeDashboard() {
 																		employeeDetails.company_data.performance[0]
 																			.Performance_Rating
 																	)
-																		? 'text-yellow-500'
+																		? 'text-yellow-400'
 																		: 'text-gray-300 dark:text-gray-600'
 																}`}
 																fill="currentColor"
@@ -598,15 +598,15 @@ export function EmployeeDashboard() {
 													</p>
 													<p
 														className={`mt-2 text-base font-semibold 2xl:text-sm xl:text-xs lg:text-[10px] md:text-xs truncate ${
-															employeeDetails.company_data.performance[0].Manager_Feedback.includes(
+															employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
 																'EXCEEDS'
 															)
-																? 'text-green-600 dark:text-green-500'
-																: employeeDetails.company_data.performance[0].Manager_Feedback.includes(
+																? 'text-green-600 dark:text-green-400'
+																: employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
 																			'MEETS'
 																	  )
-																	? 'text-blue-600 dark:text-blue-500'
-																	: 'text-amber-600 dark:text-amber-500'
+																	? 'text-blue-600 dark:text-blue-400'
+																	: 'text-amber-600 dark:text-amber-400'
 														}`}
 													>
 														{
@@ -849,14 +849,11 @@ export function EmployeeDashboard() {
 													<div className="mt-2 flex items-center">
 														<div
 															className={`h-3 w-3 rounded-full ${
-																latestOnboarding.Onboarding_Feedback ===
-																'EXCELLENT'
+																latestOnboarding.Onboarding_Feedback.toUpperCase().includes('EXCELLENT')
 																	? 'bg-green-500 dark:bg-green-600'
-																	: latestOnboarding.Onboarding_Feedback ===
-																		  'GOOD'
+																	: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('GOOD')
 																		? 'bg-blue-500 dark:bg-blue-600'
-																		: latestOnboarding.Onboarding_Feedback ===
-																			  'AVERAGE'
+																		: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('AVERAGE')
 																			? 'bg-yellow-500 dark:bg-yellow-600'
 																			: 'bg-red-500 dark:bg-red-600'
 															}`}
@@ -1004,7 +1001,7 @@ export function EmployeeDashboard() {
 
 														{/* Also fix the star icon */}
 														<svg
-															className="size-4 text-yellow-500"
+															className="size-4 text-yellow-400"
 															fill="currentColor"
 															viewBox="0 0 20 20"
 														>
@@ -1100,11 +1097,11 @@ export function EmployeeDashboard() {
 												}
 
 												const getTextColorForScore = () => {
-													if (normalizedScore >= 4.5) return 'text-emerald-500'
-													if (normalizedScore >= 3.5) return 'text-blue-500'
-													if (normalizedScore >= 2.5) return 'text-amber-500'
-													if (normalizedScore >= 1.5) return 'text-orange-500'
-													return 'text-red-500'
+													if (normalizedScore >= 4.5) return 'text-emerald-600 dark:text-emerald-400'
+													if (normalizedScore >= 3.5) return 'text-blue-600 dark:text-blue-400'
+													if (normalizedScore >= 2.5) return 'text-amber-600 dark:text-amber-400'
+													if (normalizedScore >= 1.5) return 'text-orange-600 dark:text-orange-400'
+													return 'text-red-600 dark:text-red-400'
 												}
 
 												const getLabelForScore = () => {
@@ -1151,7 +1148,7 @@ export function EmployeeDashboard() {
 												<div
 													className="absolute bottom-full mb-1"
 													style={{
-														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 + 1}% - 8px)`,
+														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 }% - 8px)`,
 														transition: 'left 0.3s ease-in-out',
 													}}
 												>
@@ -1169,34 +1166,34 @@ export function EmployeeDashboard() {
 													const getColorForPoint = (point: number) => {
 														switch (point) {
 															case 1:
-																return 'bg-red-500'
+																return 'bg-red-500 dark:bg-red-600'
 															case 2:
-																return 'bg-orange-500'
+																return 'bg-orange-500 dark:bg-orange-600'
 															case 3:
-																return 'bg-amber-500'
+																return 'bg-amber-500 dark:bg-amber-600'
 															case 4:
-																return 'bg-green-300'
+																return 'bg-green-500 dark:bg-green-600'
 															case 5:
-																return 'bg-emerald-500'
+																return 'bg-emerald-500 dark:bg-emerald-600'
 															default:
-																return 'bg-gray-400'
+																return 'bg-gray-400 dark:bg-gray-600'
 														}
 													}
 
 													const getTextColorForPoint = (point: number) => {
 														switch (point) {
 															case 1:
-																return 'text-red-500'
+																return 'text-red-600 dark:text-red-400'
 															case 2:
-																return 'text-orange-500'
+																return 'text-orange-600 dark:text-orange-400'
 															case 3:
-																return 'text-amber-500'
+																return 'text-amber-600 dark:text-amber-400'
 															case 4:
-																return 'text-green-300'
+																return 'text-green-600 dark:text-green-400'
 															case 5:
-																return 'text-emerald-500'
+																return 'text-emerald-600 dark:text-emerald-400'
 															default:
-																return 'text-gray-400'
+																return 'text-gray-600 dark:text-gray-400'
 														}
 													}
 
@@ -1235,11 +1232,11 @@ export function EmployeeDashboard() {
 															score > 5 ? score / 2 : score
 
 														if (normalizedScore >= 4.5)
-															return 'text-emerald-500'
-														if (normalizedScore >= 3.5) return 'text-blue-500'
-														if (normalizedScore >= 2.5) return 'text-amber-500'
-														if (normalizedScore >= 1.5) return 'text-orange-500'
-														return 'text-red-500'
+															return 'text-emerald-600 dark:text-emerald-400'
+														if (normalizedScore >= 3.5) return 'text-blue-600 dark:text-blue-400'
+														if (normalizedScore >= 2.5) return 'text-amber-600 dark:text-amber-400'
+														if (normalizedScore >= 1.5) return 'text-orange-600 dark:text-orange-400'
+														return 'text-red-600 dark:text-red-400'
 													})()}`}
 												>
 													{(employeeDetails.company_data.vibemeter[0]
