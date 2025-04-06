@@ -185,7 +185,7 @@ function PureChatHeader({
 				<SidebarToggle />
 			</div>
 			
-			{!isReadonly && can_end_chat && (
+			{can_end_chat && (
 				<Button
 					variant="destructive"
 					size="sm"
