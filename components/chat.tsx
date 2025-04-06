@@ -411,19 +411,19 @@ export function Chat({
 
 	// Handle chat end from the End Chat button
 	const handleChatEnd = () => {
-		setEnded(true);
+		setEnded(true)
 		if (onReadonlyChange) {
-			onReadonlyChange(true);
-			toast.info('Session has ended.');
+			onReadonlyChange(true)
+			toast.info('Session has ended.')
 		}
-	};
+	}
 
 	return (
 		<>
 			<div className="flex flex-col min-w-0 bg-white/70 dark:bg-black/30 h-[calc(100vh-125px)] rounded-lg">
-				<ChatHeader 
-					chatId={id} 
-					isReadonly={isReadonly} 
+				<ChatHeader
+					chatId={id}
+					isReadonly={isReadonly}
 					can_end_chat={can_end_chat}
 					onChatEnd={handleChatEnd}
 				/>

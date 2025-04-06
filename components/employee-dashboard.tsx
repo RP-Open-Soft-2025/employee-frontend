@@ -15,12 +15,16 @@ import {
 } from '@/components/ui/card'
 import {
 	MessageSquare,
+	Bell,
 	Calendar,
+	FileText,
 	User,
 	BarChart,
 	Award,
 	Activity,
 	Send,
+	Star,
+	StarHalf,
 	Clock,
 	AlertCircle,
 	UserCircle,
@@ -405,7 +409,7 @@ export function EmployeeDashboard() {
 							</h4>
 
 							{employeeDetails?.company_data?.onboarding &&
-								employeeDetails.company_data.onboarding.length > 0 ? (
+							employeeDetails.company_data.onboarding.length > 0 ? (
 								(() => {
 									// Find the onboarding entry with the latest joining date
 									const latestOnboarding = [
@@ -432,11 +436,11 @@ export function EmployeeDashboard() {
 														{Math.ceil(
 															Math.abs(
 																new Date().getTime() -
-																new Date(
-																	latestOnboarding.Joining_Date
-																).getTime()
+																	new Date(
+																		latestOnboarding.Joining_Date
+																	).getTime()
 															) /
-															(1000 * 60 * 60 * 24)
+																(1000 * 60 * 60 * 24)
 														)}{' '}
 														days ago
 													</p>
@@ -448,15 +452,22 @@ export function EmployeeDashboard() {
 													</p>
 													<div className="mt-2 flex items-center">
 														<div
-															className={`h-3 w-3 rounded-full ${latestOnboarding.Onboarding_Feedback.toUpperCase().includes('EXCELLENT')
+															className={`h-3 w-3 rounded-full ${
+																latestOnboarding.Onboarding_Feedback.toUpperCase().includes(
+																	'EXCELLENT'
+																)
 																	? 'bg-green-500 dark:bg-green-600'
-																	: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('GOOD')
+																	: latestOnboarding.Onboarding_Feedback.toUpperCase().includes(
+																				'GOOD'
+																		  )
 																		? 'bg-blue-500 dark:bg-blue-600'
-																		: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('AVERAGE')
+																		: latestOnboarding.Onboarding_Feedback.toUpperCase().includes(
+																					'AVERAGE'
+																			  )
 																			? 'bg-yellow-500 dark:bg-yellow-600'
 																			: 'bg-red-500 dark:bg-red-600'
-																}`}
-														/>
+															}`}
+														></div>
 														<p className="ml-2 text-base font-medium text-gray-800 dark:text-white/90">
 															{latestOnboarding.Onboarding_Feedback}
 														</p>
@@ -471,10 +482,11 @@ export function EmployeeDashboard() {
 												<div className="space-y-2">
 													<div className="flex items-center">
 														<div
-															className={`flex h-6 w-6 items-center justify-center rounded-full border ${latestOnboarding.Mentor_Assigned
+															className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+																latestOnboarding.Mentor_Assigned
 																	? 'border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30'
 																	: 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'
-																}`}
+															}`}
 														>
 															{latestOnboarding.Mentor_Assigned && (
 																<svg
@@ -493,10 +505,11 @@ export function EmployeeDashboard() {
 															)}
 														</div>
 														<p
-															className={`ml-3 text-sm ${latestOnboarding.Mentor_Assigned
+															className={`ml-3 text-sm ${
+																latestOnboarding.Mentor_Assigned
 																	? 'text-gray-800 dark:text-white/90'
 																	: 'text-gray-500 dark:text-gray-400'
-																}`}
+															}`}
 														>
 															Mentor Assigned
 														</p>
@@ -504,10 +517,11 @@ export function EmployeeDashboard() {
 
 													<div className="flex items-center">
 														<div
-															className={`flex h-6 w-6 items-center justify-center rounded-full border ${latestOnboarding.Initial_Training_Completed
+															className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+																latestOnboarding.Initial_Training_Completed
 																	? 'border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30'
 																	: 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'
-																}`}
+															}`}
 														>
 															{latestOnboarding.Initial_Training_Completed && (
 																<svg
@@ -526,10 +540,11 @@ export function EmployeeDashboard() {
 															)}
 														</div>
 														<p
-															className={`ml-3 text-sm ${latestOnboarding.Initial_Training_Completed
+															className={`ml-3 text-sm ${
+																latestOnboarding.Initial_Training_Completed
 																	? 'text-gray-800 dark:text-white/90'
 																	: 'text-gray-500 dark:text-gray-400'
-																}`}
+															}`}
 														>
 															Initial Training Completed
 														</p>
@@ -620,11 +635,11 @@ export function EmployeeDashboard() {
 																	<AlertCircle className="size-4" />
 																</div>
 															) : leave.Leave_Type.toLowerCase().includes(
-																'vacation'
-															) ||
-																leave.Leave_Type.toLowerCase().includes(
+																	'vacation'
+															  ) ||
+															  leave.Leave_Type.toLowerCase().includes(
 																	'annual'
-																) ? (
+															  ) ? (
 																<div className="mr-3 p-2 bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full">
 																	<Calendar className="size-4" />
 																</div>
@@ -658,10 +673,10 @@ export function EmployeeDashboard() {
 										)}
 										{(!employeeDetails?.company_data?.leave ||
 											employeeDetails.company_data.leave.length === 0) && (
-												<p className="text-sm text-muted-foreground text-center py-4">
-													No leave records found
-												</p>
-											)}
+											<p className="text-sm text-muted-foreground text-center py-4">
+												No leave records found
+											</p>
+										)}
 									</div>
 								</div>
 							</div>
@@ -725,14 +740,15 @@ export function EmployeeDashboard() {
 														{[1, 2, 3, 4, 5].map(star => (
 															<svg
 																key={star}
-																className={`size-4 2xl:size-3.5 xl:size-3 lg:size-2 md:size-2.5 ${star <=
-																		Math.round(
-																			employeeDetails.company_data.performance[0]
-																				.Performance_Rating
-																		)
+																className={`size-4 2xl:size-3.5 xl:size-3 lg:size-2 md:size-2.5 ${
+																	star <=
+																	Math.round(
+																		employeeDetails.company_data.performance[0]
+																			.Performance_Rating
+																	)
 																		? 'text-yellow-400'
 																		: 'text-gray-300 dark:text-gray-600'
-																	}`}
+																}`}
 																fill="currentColor"
 																viewBox="0 0 20 20"
 															>
@@ -747,16 +763,17 @@ export function EmployeeDashboard() {
 														Manager Feedback
 													</p>
 													<p
-														className={`mt-2 text-base font-semibold 2xl:text-sm xl:text-xs lg:text-[10px] md:text-xs truncate ${employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
-															'EXCEEDS'
-														)
+														className={`mt-2 text-base font-semibold 2xl:text-sm xl:text-xs lg:text-[10px] md:text-xs truncate ${
+															employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
+																'EXCEEDS'
+															)
 																? 'text-green-600 dark:text-green-400'
 																: employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
-																	'MEETS'
-																)
+																			'MEETS'
+																	  )
 																	? 'text-blue-600 dark:text-blue-400'
 																	: 'text-amber-600 dark:text-amber-400'
-															}`}
+														}`}
 													>
 														{
 															employeeDetails.company_data.performance[0]
@@ -765,11 +782,12 @@ export function EmployeeDashboard() {
 													</p>
 													<div className="mt-2">
 														<span
-															className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-semibold 2xl:text-[10px] xl:text-[9px] lg:text-[8px] md:text-[8px] ${employeeDetails.company_data.performance[0]
+															className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-semibold 2xl:text-[10px] xl:text-[9px] lg:text-[8px] md:text-[8px] ${
+																employeeDetails.company_data.performance[0]
 																	.Promotion_Consideration
 																	? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
 																	: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-																}`}
+															}`}
 														>
 															{employeeDetails.company_data.performance[0]
 																.Promotion_Consideration
@@ -793,16 +811,17 @@ export function EmployeeDashboard() {
 															>
 																<div className="relative w-full">
 																	<div
-																		className={`w-full rounded-t-sm ${performance.Manager_Feedback.includes(
-																			'EXCEEDS'
-																		)
+																		className={`w-full rounded-t-sm ${
+																			performance.Manager_Feedback.includes(
+																				'EXCEEDS'
+																			)
 																				? 'bg-green-500 dark:bg-green-600'
 																				: performance.Manager_Feedback.includes(
-																					'MEETS'
-																				)
+																							'MEETS'
+																					  )
 																					? 'bg-blue-500 dark:bg-blue-600'
 																					: 'bg-amber-500 dark:bg-amber-600'
-																			}`}
+																		}`}
 																		style={{
 																			height: `${performance.Performance_Rating * 20}px`,
 																		}}
@@ -835,7 +854,7 @@ export function EmployeeDashboard() {
 								</h4>
 
 								{employeeDetails?.company_data?.activity &&
-									employeeDetails.company_data.activity.length > 0 ? (
+								employeeDetails.company_data.activity.length > 0 ? (
 									<>
 										<div className="overflow-x-auto">
 											<table className="w-full min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -970,7 +989,7 @@ export function EmployeeDashboard() {
 								</div>
 
 								{employeeDetails?.company_data?.rewards &&
-									employeeDetails.company_data.rewards.length > 0 ? (
+								employeeDetails.company_data.rewards.length > 0 ? (
 									<>
 										<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 											{employeeDetails.company_data.rewards.map(
@@ -1084,10 +1103,14 @@ export function EmployeeDashboard() {
 												}
 
 												const getTextColorForScore = () => {
-													if (normalizedScore >= 4.5) return 'text-emerald-600 dark:text-emerald-400'
-													if (normalizedScore >= 3.5) return 'text-blue-600 dark:text-blue-400'
-													if (normalizedScore >= 2.5) return 'text-amber-600 dark:text-amber-400'
-													if (normalizedScore >= 1.5) return 'text-orange-600 dark:text-orange-400'
+													if (normalizedScore >= 4.5)
+														return 'text-emerald-600 dark:text-emerald-400'
+													if (normalizedScore >= 3.5)
+														return 'text-blue-600 dark:text-blue-400'
+													if (normalizedScore >= 2.5)
+														return 'text-amber-600 dark:text-amber-400'
+													if (normalizedScore >= 1.5)
+														return 'text-orange-600 dark:text-orange-400'
 													return 'text-red-600 dark:text-red-400'
 												}
 
@@ -1220,18 +1243,21 @@ export function EmployeeDashboard() {
 
 														if (normalizedScore >= 4.5)
 															return 'text-emerald-600 dark:text-emerald-400'
-														if (normalizedScore >= 3.5) return 'text-blue-600 dark:text-blue-400'
-														if (normalizedScore >= 2.5) return 'text-amber-600 dark:text-amber-400'
-														if (normalizedScore >= 1.5) return 'text-orange-600 dark:text-orange-400'
+														if (normalizedScore >= 3.5)
+															return 'text-blue-600 dark:text-blue-400'
+														if (normalizedScore >= 2.5)
+															return 'text-amber-600 dark:text-amber-400'
+														if (normalizedScore >= 1.5)
+															return 'text-orange-600 dark:text-orange-400'
 														return 'text-red-600 dark:text-red-400'
 													})()}`}
 												>
 													{(employeeDetails.company_data.vibemeter[0]
 														.Vibe_Score > 5
 														? employeeDetails.company_data.vibemeter[0]
-															.Vibe_Score / 2
+																.Vibe_Score / 2
 														: employeeDetails.company_data.vibemeter[0]
-															.Vibe_Score
+																.Vibe_Score
 													).toFixed(1)}
 													/5
 												</p>
@@ -1310,8 +1336,8 @@ export function EmployeeDashboard() {
 												<p className="text-xs text-muted-foreground">
 													{employeeDetails.chat_summary.last_message_time
 														? new Date(
-															employeeDetails.chat_summary.last_message_time
-														).toLocaleString()
+																employeeDetails.chat_summary.last_message_time
+															).toLocaleString()
 														: 'No recent messages'}
 												</p>
 											</div>
