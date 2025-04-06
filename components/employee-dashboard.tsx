@@ -1342,7 +1342,9 @@ export function EmployeeDashboard() {
 															Chain {chain.chain_id}
 														</p>
 														<p className="text-xs text-muted-foreground">
-															{new Date(chain.created_at).toLocaleString()}
+															{chain.created_at && !isNaN(new Date(chain.created_at).getTime()) 
+																? new Date(chain.created_at).toLocaleString() 
+																: 'Date unavailable'}
 														</p>
 														<p className="text-sm text-muted-foreground line-clamp-2">
 															{chain.notes || 'No notes available'}
