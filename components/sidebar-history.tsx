@@ -124,7 +124,7 @@ const ChainItem = ({
 						<span className="text-sm truncate">{formattedDate}</span>
 						<span className="text-xs text-sidebar-foreground/80 truncate">
 							{statusText} -{' '}
-							{chain.context || `Chain ${chain.id.substring(0, 8)}`}
+							{`Chain ${chain.id.substring(0, 8)}`}
 						</span>
 					</div>
 				</div>
