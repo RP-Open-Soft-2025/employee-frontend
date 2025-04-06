@@ -99,7 +99,7 @@ export function ScheduledChatClient() {
 									msg.sender === 'bot' || msg.sender === 'hr'
 										? 'assistant'
 										: 'user',
-								content: msg.sender === 'hr' ? 'HR: ' + msg.text : msg.text,
+								content: msg.sender === 'hr' ? `HR: ${msg.text}` : msg.text,
 								createdAt: new Date(msg.timestamp).toISOString(),
 								senderType: msg.sender,
 							})
@@ -144,7 +144,7 @@ export function ScheduledChatClient() {
 				console.log('Route ID parameter:', id)
 
 				// Check if this is a chain ID
-				const isChainId = id && id.startsWith('CHAIN')
+				const isChainId = id?.startsWith('CHAIN')
 				if (isChainId && id) {
 					console.log(
 						'Chain ID detected in URL, fetching chain-specific messages'
@@ -168,7 +168,7 @@ export function ScheduledChatClient() {
 
 		fetchData()
 		// eslint-disable-next-line
-	}, [isAuthenticated, id])
+	}, [])
 
 	// Fetch scheduled session and check status
 	const fetchScheduledSession = async () => {
@@ -239,7 +239,7 @@ export function ScheduledChatClient() {
 			console.log('Fetching messages for chat ID:', id)
 
 			// Try to get the chain ID for this chat
-			let chainId = id
+			const chainId = id
 
 			// If the ID doesn't look like a chain ID, we need to find the associated chain
 			if (!id.startsWith('chain-') && !id.startsWith('CHAIN')) {
@@ -269,7 +269,7 @@ export function ScheduledChatClient() {
 										: 'user',
 								content:
 									message.sender === 'hr'
-										? 'HR: ' + message.text
+										? `HR: ${message.text}`
 										: message.text,
 								createdAt: new Date(message.timestamp).toISOString(),
 								senderType: message.sender,

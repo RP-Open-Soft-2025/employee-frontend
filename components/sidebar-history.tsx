@@ -401,7 +401,7 @@ export function SidebarHistory({ user }: { user: any }) {
 			fetchChains()
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user, pathname])
+	}, [pathname])
 
 	if (!user) {
 		return (

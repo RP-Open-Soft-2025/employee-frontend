@@ -15,16 +15,12 @@ import {
 } from '@/components/ui/card'
 import {
 	MessageSquare,
-	Bell,
 	Calendar,
-	FileText,
 	User,
 	BarChart,
 	Award,
 	Activity,
 	Send,
-	Star,
-	StarHalf,
 	Clock,
 	AlertCircle,
 	UserCircle,
@@ -460,7 +456,7 @@ export function EmployeeDashboard() {
 																			? 'bg-yellow-500 dark:bg-yellow-600'
 																			: 'bg-red-500 dark:bg-red-600'
 																}`}
-														></div>
+														/>
 														<p className="ml-2 text-base font-medium text-gray-800 dark:text-white/90">
 															{latestOnboarding.Onboarding_Feedback}
 														</p>

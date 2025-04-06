@@ -82,7 +82,7 @@ export default function ChatPage() {
 		}
 
 		fetchChains()
-	}, [router, auth.user?.accessToken])
+	}, [])
 
 	if (isLoading) {
 		return (
