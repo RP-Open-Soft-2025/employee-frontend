@@ -7,26 +7,26 @@ import type { RootState } from '@/redux/store'
 import { checkAuth } from '@/redux/features/auth'
 import { Button } from '@/components/ui/button'
 import {
-	Card,
-	CardContent,
-	CardFooter,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card'
 import {
-	MessageSquare,
-	Bell,
-	Calendar,
-	FileText,
-	User,
-	BarChart,
-	Award,
-	Activity,
-	Send,
-	Star,
-	StarHalf,
-	Clock,
-	AlertCircle,
+  MessageSquare,
+  Bell,
+  Calendar,
+  FileText,
+  User,
+  BarChart,
+  Award,
+  Activity,
+  Send,
+  Star,
+  StarHalf,
+  Clock,
+  AlertCircle,
 	UserCircle,
 	Shield,
 	Mail,
@@ -46,12 +46,12 @@ interface EmployeeDetails {
 	role: string
 	manager_id: string
 	is_blocked: boolean
-	mood_stats: {
+  mood_stats: {
 		average_score: number
 		total_sessions: number
 		last_5_scores: number[]
 	}
-	chat_summary: {
+  chat_summary: {
 		chat_id: string
 		last_message: string | null
 		last_message_time: string | null
@@ -62,38 +62,38 @@ interface EmployeeDetails {
 	}
 	upcoming_meets: number
 	upcoming_sessions: number
-	company_data: {
-		activity: Array<{
+  company_data: {
+    activity: Array<{
 			Date: string
 			Teams_Messages_Sent: number
 			Emails_Sent: number
 			Meetings_Attended: number
 			Work_Hours: number
 		}>
-		leave: Array<{
+    leave: Array<{
 			Leave_Type: string
 			Leave_Days: number
 			Leave_Start_Date: string
 			Leave_End_Date: string
 		}>
-		onboarding: Array<{
+    onboarding: Array<{
 			Joining_Date: string
 			Onboarding_Feedback: string
 			Mentor_Assigned: boolean
 			Initial_Training_Completed: boolean
 		}>
-		performance: Array<{
+    performance: Array<{
 			Review_Period: string
 			Performance_Rating: number
 			Manager_Feedback: string
 			Promotion_Consideration: boolean
 		}>
-		rewards: Array<{
+    rewards: Array<{
 			Award_Type: string
 			Award_Date: string
 			Reward_Points: number
 		}>
-		vibemeter: Array<{
+    vibemeter: Array<{
 			Response_Date: string
 			Vibe_Score: number
 		}>
@@ -112,216 +112,216 @@ interface Notification {
 export function EmployeeDashboard() {
 	const router = useRouter()
 	const dispatch = useDispatch()
-	const isAuthenticated = useSelector(
-		(state: RootState) => state.auth.isAuthenticated
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
 	)
 	const [notifications, setNotifications] = useState<Notification[]>([])
-	const [employeeDetails, setEmployeeDetails] =
+  const [employeeDetails, setEmployeeDetails] =
 		useState<EmployeeDetails | null>(null)
-	// Add client-side only indicator to prevent hydration mismatch
+  // Add client-side only indicator to prevent hydration mismatch
 	const [isClientSide, setIsClientSide] = useState(false)
 	const [loading, setLoading] = useState(true)
 
 	const { fetchProtected } = useProtectedApi()
 
-	// Add ping effect for active chats
-	useEffect(() => {
-		// biome-ignore lint/style/useConst: We need let here as the variable is assigned later
+  // Add ping effect for active chats
+  useEffect(() => {
+    // biome-ignore lint/style/useConst: We need let here as the variable is assigned later
 		let pingInterval: NodeJS.Timeout | undefined
 
-		// Function to handle ping
-		const handlePing = async () => {
-			try {
+    // Function to handle ping
+    const handlePing = async () => {
+      try {
 				console.log('Making ping request')
 				const response = await fetchProtected('/employee/ping', {
 					method: 'GET',
 				})
 				console.log('Ping response:', response)
 
-				// sort the notifications by created_at date
-				const sortedNotifications = response.notifications.sort(
-					(a: Notification, b: Notification) => {
-						return (
-							new Date(b.created_at).getTime() -
-							new Date(a.created_at).getTime()
+        // sort the notifications by created_at date
+        const sortedNotifications = response.notifications.sort(
+          (a: Notification, b: Notification) => {
+            return (
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
 						)
-					}
+          }
 				)
 
 				setNotifications(sortedNotifications)
-			} catch (error) {
+      } catch (error) {
 				console.error('Failed to ping employee endpoint:', error)
-			}
+      }
 		}
 
-		// Call ping immediately
+    // Call ping immediately
 		handlePing()
 
-		// Set up interval for subsequent pings
+    // Set up interval for subsequent pings
 		pingInterval = setInterval(handlePing, 30000) // 30 seconds
 
-		// Cleanup interval on unmount
-		return () => {
-			if (pingInterval) {
-				// console.log("Cleaning up ping interval");
+    // Cleanup interval on unmount
+    return () => {
+      if (pingInterval) {
+        // console.log("Cleaning up ping interval");
 				clearInterval(pingInterval)
-			}
+      }
 		}
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const markNotificationAsRead = async (notificationId: string) => {
-		try {
-			const result = await fetchProtected(
-				`/employee/notification/${notificationId}/read`,
-				{
+  const markNotificationAsRead = async (notificationId: string) => {
+    try {
+      const result = await fetchProtected(
+        `/employee/notification/${notificationId}/read`,
+        {
 					method: 'PATCH',
-				}
+        }
 			)
 
-			// update the notifications state
-			setNotifications(
+      // update the notifications state
+      setNotifications(
 				notifications.map(notification =>
-					notification.id === notificationId
+          notification.id === notificationId
 						? { ...notification, status: 'read' }
-						: notification
-				)
+            : notification
+        )
 			)
 
 			console.log('Notification marked as read:', result)
-		} catch (e) {
+    } catch (e) {
 			console.error('Failed to mark notification as read:', e)
-		}
+    }
 	}
 
-	const markAllNotificationsAsRead = async () => {
-		try {
-			const result = await fetchProtected(
+  const markAllNotificationsAsRead = async () => {
+    try {
+      const result = await fetchProtected(
 				'/employee/notification/mark_all_as_read',
-				{
+        {
 					method: 'PATCH',
-				}
+        }
 			)
 
-			// Update all notifications to read status
-			setNotifications(
+      // Update all notifications to read status
+      setNotifications(
 				notifications.map(notification => ({
-					...notification,
+          ...notification,
 					status: 'read',
-				}))
+        }))
 			)
 
 			console.log('All notifications marked as read:', result)
-		} catch (e) {
+    } catch (e) {
 			console.error('Failed to mark all notifications as read:', e)
-		}
+    }
 	}
 
-	const fetchEmployeeDetails = async () => {
-		try {
+  const fetchEmployeeDetails = async () => {
+    try {
 			const result = await fetchProtected('/employee/profile')
 			console.log('Employee details:', result)
 			setEmployeeDetails(result)
-			// Process the result here
-		} catch (e) {
+      // Process the result here
+    } catch (e) {
 			console.error('Failed to fetch employee details:', e)
-			// Handle error here
-		}
+      // Handle error here
+    }
 	}
 
-	const fetchEmployeeScheduledMeets = async () => {
-		try {
+  const fetchEmployeeScheduledMeets = async () => {
+    try {
 			const result = await fetchProtected('/employee/scheduled-meets')
 			console.log('Employee scheduled meets:', result)
-			// Process the result here
-		} catch (e) {
+      // Process the result here
+    } catch (e) {
 			console.error('Failed to fetch employee meets:', e)
-			// Handle error here
-		}
+      // Handle error here
+    }
 	}
 
-	const fetchEmployeeScheduledSessions = async () => {
-		try {
+  const fetchEmployeeScheduledSessions = async () => {
+    try {
 			const result = await fetchProtected('/employee/scheduled-sessions')
 			console.log('Employee scheduled sessions:', result)
-			// Process the result here
-		} catch (e) {
+      // Process the result here
+    } catch (e) {
 			console.error('Failed to fetch employee scheduled sessions:', e)
-		}
+    }
 	}
 
-	const fetchEmployeeChats = async () => {
-		try {
+  const fetchEmployeeChats = async () => {
+    try {
 			const result = await fetchProtected('/employee/chats')
 			console.log('Employee chats:', result)
-			// Process the result here
-		} catch (e) {
+      // Process the result here
+    } catch (e) {
 			console.error('Failed to fetch employee chats:', e)
-		}
+    }
 	}
 
-	useEffect(() => {
-		const fetchData = async () => {
-			await Promise.all([
-				fetchEmployeeDetails(),
-				fetchEmployeeScheduledMeets(),
-				fetchEmployeeScheduledSessions(),
-				fetchEmployeeChats(),
+  useEffect(() => {
+    const fetchData = async () => {
+      await Promise.all([
+        fetchEmployeeDetails(),
+        fetchEmployeeScheduledMeets(),
+        fetchEmployeeScheduledSessions(),
+        fetchEmployeeChats(),
 			])
 			setLoading(false)
 		}
 
 		fetchData()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	useEffect(() => {
-		// This will only run on the client and after hydration
+  useEffect(() => {
+    // This will only run on the client and after hydration
 		setIsClientSide(true)
 
 		dispatch(checkAuth())
-		if (!isAuthenticated) {
+    if (!isAuthenticated) {
 			router.push('/login')
-		}
+    }
 	}, [dispatch, isAuthenticated, router])
 
-	// If not authenticated or still on server, show a placeholder with matching structure
-	if (loading || !isClientSide || !isAuthenticated) {
+  // If not authenticated or still on server, show a placeholder with matching structure
+  if (loading || !isClientSide || !isAuthenticated) {
 		return <LoadingScreen />
-	}
+  }
 
-	// Normal render for client-side with authentication
-	return (
-		<div className="container mx-auto p-2 sm:p-4 md:p-6">
-			<Header
-				notifications={notifications}
-				onNotificationClick={markNotificationAsRead}
-				onMarkAllAsRead={markAllNotificationsAsRead}
-			>
-				<Image src={logo} alt="Logo" className="h-8 w-auto dark:hidden" />
-				<Image
-					src={logoDark}
-					alt="Logo"
-					className="h-8 w-auto hidden dark:block"
-				/>
-			</Header>
+  // Normal render for client-side with authentication
+  return (
+    <div className="container mx-auto p-2 sm:p-4 md:p-6">
+      <Header
+        notifications={notifications}
+        onNotificationClick={markNotificationAsRead}
+        onMarkAllAsRead={markAllNotificationsAsRead}
+      >
+        <Image src={logo} alt="Logo" className="h-8 w-auto dark:hidden" />
+        <Image
+          src={logoDark}
+          alt="Logo"
+          className="h-8 w-auto hidden dark:block"
+        />
+      </Header>
 
 			<Card className="bg-white dark:bg-gray-900 p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg">
-				<CardContent>
-					<div className="flex flex-col items-center text-center space-y-2 pt-6">
-						<h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        <CardContent>
+          <div className="flex flex-col items-center text-center space-y-2 pt-6">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
 							Welcome back,{' '}
-							<span className="text-primary dark:text-primary-foreground text-nowrap">
-								{employeeDetails?.name}
-							</span>
-						</h1>
-						<p className="text-xl sm:text-2xl font-semibold text-muted-foreground max-w-screen-toast-mobile">
-							Your employee dashboard
-						</p>
-					</div>
-				</CardContent>
-			</Card>
+              <span className="text-primary dark:text-primary-foreground text-nowrap">
+                {employeeDetails?.name}
+              </span>
+            </h1>
+            <p className="text-xl sm:text-2xl font-semibold text-muted-foreground max-w-screen-toast-mobile">
+              Your employee dashboard
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
 			<Card className="mt-4 p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 				<div className="flex flex-col gap-4">
@@ -330,18 +330,18 @@ export function EmployeeDashboard() {
 							<UserCircle className="size-5 text-gray-700 dark:text-gray-300" />
 							Employee Information
 						</h4>
-					</div>
+                </div>
 
 					<div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
 						<div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
 							<p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
 								<User className="size-3.5" />
-								Employee ID
-							</p>
+                    Employee ID
+                  </p>
 							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-								{employeeDetails?.employee_id}
-							</p>
-						</div>
+                    {employeeDetails?.employee_id}
+                  </p>
+                </div>
 
 						<div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
 							<p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
@@ -356,47 +356,47 @@ export function EmployeeDashboard() {
 						<div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
 							<p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
 								<Mail className="size-3.5" />
-								Email
-							</p>
+                    Email
+                  </p>
 							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-								{employeeDetails?.email}
-							</p>
-						</div>
+                    {employeeDetails?.email}
+                  </p>
+                </div>
 
 						<div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
 							<p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
 								<Briefcase className="size-3.5" />
-								Role
-							</p>
+                    Role
+                  </p>
 							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize">
-								{employeeDetails?.role}
-							</p>
-						</div>
+                    {employeeDetails?.role}
+                  </p>
+                </div>
 
 						<div className="group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200">
 							<p className="mb-2 text-lg leading-normal text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
 								<Shield className="size-3.5" />
-								Manager ID
-							</p>
+                    Manager ID
+                  </p>
 							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-								{employeeDetails?.manager_id}
-							</p>
-						</div>
+                    {employeeDetails?.manager_id}
+                  </p>
+                </div>
 
-						{employeeDetails?.is_blocked && (
+                {employeeDetails?.is_blocked && (
 							<div className="group p-3 rounded-lg bg-red-50 dark:bg-red-900/20 transition-colors duration-200">
 								<p className="mb-2 text-lg leading-normal text-red-500 dark:text-red-400 flex items-center gap-1.5">
 									<AlertCircle className="h-3.5 w-3.5" />
 									Account Status
 								</p>
 								<p className="text-sm font-medium text-red-600 dark:text-red-400">
-									Account is blocked
+                    Account is blocked
 								</p>
-							</div>
-						)}
-					</div>
+                  </div>
+                )}
+              </div>
 				</div>
-			</Card>
+          </Card>
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mt-4">
 				{/* Left Column */}
@@ -406,8 +406,8 @@ export function EmployeeDashboard() {
 						<div className="flex flex-col gap-6">
 							<div>
 								<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-4 flex items-center">
-									<Calendar className="size-5 mr-2" />
-									Leave Information
+                <Calendar className="size-5 mr-2" />
+                Leave Information
 								</h4>
 
 								{/* Leave Summary */}
@@ -425,11 +425,11 @@ export function EmployeeDashboard() {
 														].Leave_Days
 													}{' '}
 													days
-												</p>
-											</div>
-										</div>
-									)}
-
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
 								{/* Leave Records */}
 								<div>
 									<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -442,47 +442,47 @@ export function EmployeeDashboard() {
 												const getLeaveTypeColor = (type: string) => {
 													const lowerType = type.toLowerCase()
 													if (lowerType.includes('sick')) {
-														return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+														return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
 													} else if (
 														lowerType.includes('annual') ||
 														lowerType.includes('vacation')
 													) {
-														return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+														return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
 													} else if (lowerType.includes('casual')) {
-														return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+														return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
 													} else if (lowerType.includes('unpaid')) {
-														return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+														return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
 													}
-													return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
+													return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
 												}
 
 												return (
 													<div
 														key={`leave-${leave.Leave_Type}-${leave.Leave_Start_Date}`}
-														className="flex justify-between items-center py-2 px-3 rounded-lg border bg-background/50 hover:bg-background/80 transition-colors"
-													>
-														<div className="flex items-center">
+                      className="flex justify-between items-center py-2 px-3 rounded-lg border bg-background/50 hover:bg-background/80 transition-colors"
+                    >
+                      <div className="flex items-center">
 															{leave.Leave_Type.toLowerCase().includes(
 																'sick'
 															) ? (
-																<div className="mr-3 p-2 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full">
-																	<AlertCircle className="size-4" />
-																</div>
+                          <div className="mr-3 p-2 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full">
+                            <AlertCircle className="size-4" />
+                          </div>
 															) : leave.Leave_Type.toLowerCase().includes(
 																	'vacation'
 															  ) ||
 															  leave.Leave_Type.toLowerCase().includes(
 																	'annual'
 															  ) ? (
-																<div className="mr-3 p-2 bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full">
-																	<Calendar className="size-4" />
-																</div>
-															) : (
-																<div className="mr-3 p-2 bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full">
-																	<Clock className="size-4" />
-																</div>
-															)}
-															<div>
+                          <div className="mr-3 p-2 bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full">
+                            <Calendar className="size-4" />
+                          </div>
+                        ) : (
+                          <div className="mr-3 p-2 bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full">
+                            <Clock className="size-4" />
+                          </div>
+                        )}
+                        <div>
 																<p className="font-medium">
 																	<span
 																		className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getLeaveTypeColor(leave.Leave_Type)}`}
@@ -498,37 +498,37 @@ export function EmployeeDashboard() {
 																	{new Date(
 																		leave.Leave_End_Date
 																	).toLocaleDateString()}
-																</p>
-															</div>
-														</div>
-													</div>
+                          </p>
+                        </div>
+                      </div>
+                      </div>
 												)
 											}
 										)}
-										{(!employeeDetails?.company_data?.leave ||
-											employeeDetails.company_data.leave.length === 0) && (
-											<p className="text-sm text-muted-foreground text-center py-4">
-												No leave records found
-											</p>
-										)}
-									</div>
-								</div>
+                  {(!employeeDetails?.company_data?.leave ||
+                    employeeDetails.company_data.leave.length === 0) && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No leave records found
+                    </p>
+                  )}
+                </div>
+              </div>
 							</div>
 						</div>
-					</Card>
+          </Card>
 
 					{/* Enhanced Performance Card */}
 					<Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
 						<div className="flex flex-col gap-6">
 							<div>
 								<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4 2xl:text-lg xl:text-base lg:text-sm md:text-sm flex items-center">
-									<BarChart className="size-5 mr-2" />
+                <BarChart className="size-5 mr-2" />
 									Performance Overview
 								</h4>
 
 								{employeeDetails?.company_data?.performance &&
 									employeeDetails.company_data.performance.length > 0 && (
-										<div>
+                  <div>
 											<div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 												<div className="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
 													<p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
@@ -543,15 +543,15 @@ export function EmployeeDashboard() {
 														<p className="ml-1 mb-1 text-sm text-gray-500 dark:text-gray-400 2xl:text-xs xl:text-xs lg:text-xs md:text-xs">
 															/5.0
 														</p>
-													</div>
+                        </div>
 													<p className="mt-1 text-xs text-gray-500 dark:text-gray-400 2xl:text-xs xl:text-[10px] lg:text-[9px] md:text-[10px]">
 														{
 															employeeDetails.company_data.performance[0]
 																.Review_Period
 														}
 													</p>
-												</div>
-
+                      </div>
+                      
 												<div className="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
 													<p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
 														Average Rating
@@ -569,7 +569,7 @@ export function EmployeeDashboard() {
 														<p className="ml-1 mb-1 text-sm text-gray-500 dark:text-gray-400 2xl:text-xs xl:text-xs lg:text-xs md:text-xs">
 															/5.0
 														</p>
-													</div>
+                            </div>
 													<div className="mt-1 flex">
 														{[1, 2, 3, 4, 5].map(star => (
 															<svg
@@ -580,7 +580,7 @@ export function EmployeeDashboard() {
 																		employeeDetails.company_data.performance[0]
 																			.Performance_Rating
 																	)
-																		? 'text-yellow-500'
+																		? 'text-yellow-400'
 																		: 'text-gray-300 dark:text-gray-600'
 																}`}
 																fill="currentColor"
@@ -589,24 +589,24 @@ export function EmployeeDashboard() {
 																<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
 															</svg>
 														))}
-													</div>
-												</div>
-
+                        </div>
+                      </div>
+                      
 												<div className="rounded-lg border border-gray-200 bg-white p-2.5 dark:border-gray-700 dark:bg-gray-800 sm:col-span-2 lg:col-span-1">
 													<p className="text-sm text-gray-500 dark:text-gray-400 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
 														Manager Feedback
 													</p>
 													<p
 														className={`mt-2 text-base font-semibold 2xl:text-sm xl:text-xs lg:text-[10px] md:text-xs truncate ${
-															employeeDetails.company_data.performance[0].Manager_Feedback.includes(
+															employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
 																'EXCEEDS'
 															)
-																? 'text-green-600 dark:text-green-500'
-																: employeeDetails.company_data.performance[0].Manager_Feedback.includes(
+																? 'text-green-600 dark:text-green-400'
+																: employeeDetails.company_data.performance[0].Manager_Feedback.toUpperCase().includes(
 																			'MEETS'
 																	  )
-																	? 'text-blue-600 dark:text-blue-500'
-																	: 'text-amber-600 dark:text-amber-500'
+																	? 'text-blue-600 dark:text-blue-400'
+																	: 'text-amber-600 dark:text-amber-400'
 														}`}
 													>
 														{
@@ -630,8 +630,8 @@ export function EmployeeDashboard() {
 														</span>
 													</div>
 												</div>
-											</div>
-
+                      </div>
+                      
 											<div className="mt-6">
 												<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
 													Performance History
@@ -662,7 +662,7 @@ export function EmployeeDashboard() {
 																	/>
 																	<div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-700 dark:text-gray-300 2xl:text-[10px] xl:text-[10px] lg:text-[8px] md:text-[8px]">
 																		{performance.Performance_Rating.toFixed(1)}
-																	</div>
+                        </div>
 																</div>
 																<span className="mt-2 text-xs text-gray-500 dark:text-gray-400 2xl:text-[10px] xl:text-[10px] lg:text-[8px] md:text-[8px]">
 																	{performance.Review_Period}
@@ -671,20 +671,20 @@ export function EmployeeDashboard() {
 														)
 													)}
 												</div>
-											</div>
-										</div>
-									)}
-							</div>
+                    </div>
+                  </div>
+                )}
+              </div>
 						</div>
-					</Card>
+          </Card>
 
 					{/* Enhanced Activity Card */}
 					<Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 						<div className="flex flex-col gap-6">
 							<div>
 								<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6 flex items-center">
-									<Activity className="size-5 mr-2" />
-									Recent Activity
+                <Activity className="size-5 mr-2" />
+                Recent Activity
 								</h4>
 
 								{employeeDetails?.company_data?.activity &&
@@ -704,7 +704,7 @@ export function EmployeeDashboard() {
 															scope="col"
 															className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
 														>
-															Teams Messages
+                                Teams Messages
 														</th>
 														<th
 															scope="col"
@@ -752,7 +752,7 @@ export function EmployeeDashboard() {
 													)}
 												</tbody>
 											</table>
-										</div>
+                            </div>
 
 										<div className="mt-6">
 											<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -774,10 +774,10 @@ export function EmployeeDashboard() {
 															<span className="mt-1 text-xs text-gray-500 dark:text-gray-400">
 																{new Date(activity.Date).getDate()}
 															</span>
-														</div>
+                            </div>
 													)
 												)}
-											</div>
+                          </div>
 										</div>
 									</>
 								) : (
@@ -788,10 +788,10 @@ export function EmployeeDashboard() {
 										<p className="text-sm text-muted-foreground">
 											No activity data available
 										</p>
-									</div>
+                            </div>
 								)}
-							</div>
-						</div>
+                            </div>
+                          </div>
 					</Card>
 				</div>
 
@@ -799,7 +799,7 @@ export function EmployeeDashboard() {
 				<div className="grid grid-cols-1 gap-4">
 					{/* Onboarding Card */}
 					<Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
-						<div>
+                          <div>
 							<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
 								Onboarding & Integration
 							</h4>
@@ -840,7 +840,7 @@ export function EmployeeDashboard() {
 														)}{' '}
 														days ago
 													</p>
-												</div>
+                            </div>
 
 												<div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
 													<p className="text-sm text-gray-500 dark:text-gray-400">
@@ -849,26 +849,23 @@ export function EmployeeDashboard() {
 													<div className="mt-2 flex items-center">
 														<div
 															className={`h-3 w-3 rounded-full ${
-																latestOnboarding.Onboarding_Feedback ===
-																'EXCELLENT'
+																latestOnboarding.Onboarding_Feedback.toUpperCase().includes('EXCELLENT')
 																	? 'bg-green-500 dark:bg-green-600'
-																	: latestOnboarding.Onboarding_Feedback ===
-																		  'GOOD'
+																	: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('GOOD')
 																		? 'bg-blue-500 dark:bg-blue-600'
-																		: latestOnboarding.Onboarding_Feedback ===
-																			  'AVERAGE'
+																		: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('AVERAGE')
 																			? 'bg-yellow-500 dark:bg-yellow-600'
 																			: 'bg-red-500 dark:bg-red-600'
 															}`}
-														></div>
+                              ></div>
 														<p className="ml-2 text-base font-medium text-gray-800 dark:text-white/90">
 															{latestOnboarding.Onboarding_Feedback}
 														</p>
-													</div>
-												</div>
+                            </div>
+                          </div>
 											</div>
 
-											<div>
+                          <div>
 												<h5 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
 													Onboarding Status
 												</h5>
@@ -906,7 +903,7 @@ export function EmployeeDashboard() {
 														>
 															Mentor Assigned
 														</p>
-													</div>
+                            </div>
 
 													<div className="flex items-center">
 														<div
@@ -931,7 +928,7 @@ export function EmployeeDashboard() {
 																	/>
 																</svg>
 															)}
-														</div>
+                            </div>
 														<p
 															className={`ml-3 text-sm ${
 																latestOnboarding.Initial_Training_Completed
@@ -941,24 +938,24 @@ export function EmployeeDashboard() {
 														>
 															Initial Training Completed
 														</p>
-													</div>
-												</div>
-											</div>
-										</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 									)
 								})()
 							) : (
 								<div className="flex flex-col items-center justify-center py-6 text-center">
 									<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
 										<User className="size-10 text-muted-foreground" />
-									</div>
-									<p className="text-sm text-muted-foreground">
+                  </div>
+                  <p className="text-sm text-muted-foreground">
 										No onboarding data available
-									</p>
+                  </p>
 								</div>
-							)}
-						</div>
-					</Card>
+                )}
+              </div>
+          </Card>
 
 					{/* Enhanced Rewards Card */}
 					<Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
@@ -980,10 +977,10 @@ export function EmployeeDashboard() {
 														(total, r) => total + r.Reward_Points,
 														0
 													)}
-												</span>
-											</div>
+                      </span>
+                    </div>
 										)}
-								</div>
+                </div>
 
 								{employeeDetails?.company_data?.rewards &&
 								employeeDetails.company_data.rewards.length > 0 ? (
@@ -1004,7 +1001,7 @@ export function EmployeeDashboard() {
 
 														{/* Also fix the star icon */}
 														<svg
-															className="size-4 text-yellow-500"
+															className="size-4 text-yellow-400"
 															fill="currentColor"
 															viewBox="0 0 20 20"
 														>
@@ -1012,11 +1009,11 @@ export function EmployeeDashboard() {
 														</svg>
 														<span className="ml-1 text-xs font-medium text-gray-800 dark:text-white/90">
 															{reward.Reward_Points} pts
-														</span>
+                                </span>
 													</div>
 												)
 											)}
-										</div>
+                                </div>
 
 										<div className="mt-6">
 											<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1025,7 +1022,7 @@ export function EmployeeDashboard() {
 											<div className="h-4 w-full rounded-full bg-gray-200 dark:bg-gray-700">
 												<div
 													className="h-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600"
-													style={{
+                                  style={{
 														width: `${(() => {
 															const currentPoints =
 																employeeDetails.company_data.rewards.reduce(
@@ -1036,9 +1033,9 @@ export function EmployeeDashboard() {
 																Math.ceil(currentPoints / 500) * 500
 															return (currentPoints / goalPoints) * 100
 														})()}%`,
-													}}
-												/>
-											</div>
+                                  }}
+                                />
+                              </div>
 											<div className="mt-2 flex justify-between">
 												<span className="text-xs text-gray-500 dark:text-gray-400">
 													Current:{' '}
@@ -1056,7 +1053,7 @@ export function EmployeeDashboard() {
 														) / 500
 													) * 500}
 												</span>
-											</div>
+                      </div>
 										</div>
 									</>
 								) : (
@@ -1067,8 +1064,8 @@ export function EmployeeDashboard() {
 										<p className="text-sm text-muted-foreground">
 											No rewards yet. Keep up the good work!
 										</p>
-									</div>
-								)}
+                    </div>
+                  )}
 							</div>
 						</div>
 					</Card>
@@ -1082,7 +1079,7 @@ export function EmployeeDashboard() {
 							</h4>
 
 							<div className="grid gap-4">
-								{employeeDetails?.company_data?.vibemeter?.[0] && (
+                {employeeDetails?.company_data?.vibemeter?.[0] && (
 									<div className="flex flex-col items-center justify-center p-6">
 										<div className="mb-6 text-center">
 											{/* Determine color based on score */}
@@ -1100,11 +1097,11 @@ export function EmployeeDashboard() {
 												}
 
 												const getTextColorForScore = () => {
-													if (normalizedScore >= 4.5) return 'text-emerald-500'
-													if (normalizedScore >= 3.5) return 'text-blue-500'
-													if (normalizedScore >= 2.5) return 'text-amber-500'
-													if (normalizedScore >= 1.5) return 'text-orange-500'
-													return 'text-red-500'
+													if (normalizedScore >= 4.5) return 'text-emerald-600 dark:text-emerald-400'
+													if (normalizedScore >= 3.5) return 'text-blue-600 dark:text-blue-400'
+													if (normalizedScore >= 2.5) return 'text-amber-600 dark:text-amber-400'
+													if (normalizedScore >= 1.5) return 'text-orange-600 dark:text-orange-400'
+													return 'text-red-600 dark:text-red-400'
 												}
 
 												const getLabelForScore = () => {
@@ -1122,8 +1119,8 @@ export function EmployeeDashboard() {
 														>
 															<span className="text-white text-4xl font-bold">
 																{normalizedScore.toFixed(1)}
-															</span>
-														</div>
+                          </span>
+                        </div>
 
 														<h3
 															className={`text-2xl font-bold mt-4 ${getTextColorForScore()}`}
@@ -1133,7 +1130,7 @@ export function EmployeeDashboard() {
 													</>
 												)
 											})()}
-										</div>
+                      </div>
 
 										<div className="mt-6 flex flex-col items-center w-full max-w-md">
 											<div className="flex items-center justify-between w-full mb-2 p-1">
@@ -1143,7 +1140,7 @@ export function EmployeeDashboard() {
 												<span className="text-xs text-emerald-500 font-medium">
 													Excellent
 												</span>
-											</div>
+                    </div>
 
 											{/* Colorful bar with gradient background */}
 											<div className="w-full h-4 rounded-full mb-4 relative bg-gradient-to-r from-red-500 via-orange-500 via-amber-500 via-blue-500 to-emerald-500">
@@ -1151,13 +1148,13 @@ export function EmployeeDashboard() {
 												<div
 													className="absolute bottom-full mb-1"
 													style={{
-														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 + 1}% - 8px)`,
+														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 - (employeeDetails.company_data.vibemeter[0].Vibe_Score-3)/2}% - 8px)`,
 														transition: 'left 0.3s ease-in-out',
 													}}
 												>
 													<div className="size-0 border-x-[8px] border-t-[8px] border-transparent border-t-gray-800 dark:border-t-white mx-auto" />
-												</div>
-											</div>
+                      </div>
+                      </div>
 
 											{/* Score points with colored indicators */}
 											<div className="flex justify-between w-full px-0 relative">
@@ -1169,34 +1166,34 @@ export function EmployeeDashboard() {
 													const getColorForPoint = (point: number) => {
 														switch (point) {
 															case 1:
-																return 'bg-red-500'
+																return 'bg-red-500 dark:bg-red-600'
 															case 2:
-																return 'bg-orange-500'
+																return 'bg-orange-500 dark:bg-orange-600'
 															case 3:
-																return 'bg-amber-500'
+																return 'bg-amber-500 dark:bg-amber-600'
 															case 4:
-																return 'bg-green-300'
+																return 'bg-green-500 dark:bg-green-600'
 															case 5:
-																return 'bg-emerald-500'
+																return 'bg-emerald-500 dark:bg-emerald-600'
 															default:
-																return 'bg-gray-400'
+																return 'bg-gray-400 dark:bg-gray-600'
 														}
 													}
 
 													const getTextColorForPoint = (point: number) => {
 														switch (point) {
 															case 1:
-																return 'text-red-500'
+																return 'text-red-600 dark:text-red-400'
 															case 2:
-																return 'text-orange-500'
+																return 'text-orange-600 dark:text-orange-400'
 															case 3:
-																return 'text-amber-500'
+																return 'text-amber-600 dark:text-amber-400'
 															case 4:
-																return 'text-green-300'
+																return 'text-green-600 dark:text-green-400'
 															case 5:
-																return 'text-emerald-500'
+																return 'text-emerald-600 dark:text-emerald-400'
 															default:
-																return 'text-gray-400'
+																return 'text-gray-600 dark:text-gray-400'
 														}
 													}
 
@@ -1214,13 +1211,13 @@ export function EmployeeDashboard() {
 																className={`text-xs font-medium ${getTextColorForPoint(value)}`}
 															>
 																{value}
-															</div>
+                      </div>
 														</div>
 													)
 												})}
-											</div>
-										</div>
-
+                    </div>
+                  </div>
+                  
 										<div className="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg w-full max-w-md">
 											<div className="flex justify-between mb-2">
 												<p className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1235,11 +1232,11 @@ export function EmployeeDashboard() {
 															score > 5 ? score / 2 : score
 
 														if (normalizedScore >= 4.5)
-															return 'text-emerald-500'
-														if (normalizedScore >= 3.5) return 'text-blue-500'
-														if (normalizedScore >= 2.5) return 'text-amber-500'
-														if (normalizedScore >= 1.5) return 'text-orange-500'
-														return 'text-red-500'
+															return 'text-emerald-600 dark:text-emerald-400'
+														if (normalizedScore >= 3.5) return 'text-blue-600 dark:text-blue-400'
+														if (normalizedScore >= 2.5) return 'text-amber-600 dark:text-amber-400'
+														if (normalizedScore >= 1.5) return 'text-orange-600 dark:text-orange-400'
+														return 'text-red-600 dark:text-red-400'
 													})()}`}
 												>
 													{(employeeDetails.company_data.vibemeter[0]
@@ -1251,7 +1248,7 @@ export function EmployeeDashboard() {
 													).toFixed(1)}
 													/5
 												</p>
-											</div>
+                      </div>
 
 											<div className="flex justify-between">
 												<p className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1267,43 +1264,43 @@ export function EmployeeDashboard() {
 														hour: '2-digit',
 														minute: '2-digit',
 													})}
-												</p>
-											</div>
-										</div>
-									</div>
+                        </p>
+                      </div>
+                      </div>
+                    </div>
 								)}
 
 								{!employeeDetails?.company_data?.vibemeter?.[0] && (
-									<div className="flex flex-col items-center justify-center py-6 text-center">
-										<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
 											<BarChart className="size-10 text-muted-foreground" />
-										</div>
-										<p className="text-sm text-muted-foreground">
+                  </div>
+                  <p className="text-sm text-muted-foreground">
 											No vibe data available yet
-										</p>
-									</div>
-								)}
+                  </p>
+                </div>
+              )}
 							</div>
 						</div>
-					</Card>
+          </Card>
 
-					{/* Chat Summary Card */}
+          {/* Chat Summary Card */}
 					<Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
-						<CardHeader className="pb-4">
-							<CardTitle className="flex items-center">
-								<MessageSquare className="size-5 mr-2" />
-								Recent Session
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center">
+                <MessageSquare className="size-5 mr-2" />
+                Recent Session
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
 							{employeeDetails?.chat_summary ? (
-								<div
-									className="grid gap-3 cursor-pointer p-3 rounded-lg bg-white/5 hover:bg-white/10 dark:bg-black/5 dark:hover:bg-black/10 transition-colors border border-black/5 dark:border-white/5 shadow-sm hover:shadow-md dark:shadow-zinc-900 backdrop-blur-sm"
-									onClick={() =>
-										router.push(
-											`/session?id=${employeeDetails.chat_summary.chat_id}`
-										)
-									}
+                <div
+                  className="grid gap-3 cursor-pointer p-3 rounded-lg bg-white/5 hover:bg-white/10 dark:bg-black/5 dark:hover:bg-black/10 transition-colors border border-black/5 dark:border-white/5 shadow-sm hover:shadow-md dark:shadow-zinc-900 backdrop-blur-sm"
+                  onClick={() =>
+                    router.push(
+                      `/session?id=${employeeDetails.chat_summary.chat_id}`
+                    )
+                  }
 									role="button"
 									tabIndex={0}
 									onKeyDown={e => {
@@ -1313,36 +1310,36 @@ export function EmployeeDashboard() {
 											)
 										}
 									}}
-								>
-									<div className="flex items-center justify-between">
-										<div className="flex items-center">
-											<div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-												<Send className="size-5 text-primary" />
-											</div>
-											<div>
-												<p className="font-medium">
-													{employeeDetails.chat_summary.chat_id}
-												</p>
-												<p className="text-xs text-muted-foreground">
-													{employeeDetails.chat_summary.last_message_time
-														? new Date(
-																employeeDetails.chat_summary.last_message_time
-															).toLocaleString()
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <Send className="size-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium">
+                          {employeeDetails.chat_summary.chat_id}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {employeeDetails.chat_summary.last_message_time
+                            ? new Date(
+                                employeeDetails.chat_summary.last_message_time
+                              ).toLocaleString()
 														: 'No recent messages'}
-												</p>
-											</div>
-										</div>
-										{employeeDetails.chat_summary.unread_count > 0 && (
-											<span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-												{employeeDetails.chat_summary.unread_count}
-											</span>
-										)}
-									</div>
-									<p className="text-sm text-muted-foreground line-clamp-2">
-										{employeeDetails.chat_summary.last_message ||
+                        </p>
+                      </div>
+                    </div>
+                    {employeeDetails.chat_summary.unread_count > 0 && (
+                      <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
+                        {employeeDetails.chat_summary.unread_count}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {employeeDetails.chat_summary.last_message ||
 											'No messages yet'}
-									</p>
-								</div>
+                  </p>
+                    </div>
 							) : (
 								<div className="flex flex-col items-center justify-center py-6 text-center">
 									<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
@@ -1351,22 +1348,22 @@ export function EmployeeDashboard() {
 									<p className="text-sm text-muted-foreground">
 										No chat sessions available
 									</p>
-								</div>
-							)}
-						</CardContent>
-						<CardFooter>
-							<Button
+                </div>
+              )}
+            </CardContent>
+            <CardFooter>
+              <Button
 								variant="primary"
-								size="sm"
-								className="w-full"
+                size="sm"
+                className="w-full"
 								onClick={() => router.push('/session')}
-							>
-								View Sessions
-							</Button>
-						</CardFooter>
-					</Card>
-				</div>
-			</div>
-		</div>
+              >
+                View Sessions
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    </div>
 	)
 }
