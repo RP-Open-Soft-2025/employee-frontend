@@ -98,6 +98,12 @@ interface EmployeeDetails {
 			Vibe_Score: number
 		}>
 	}
+	recent_chains: Array<{
+		chain_id: string
+		status: 'completed' | 'active'
+		notes: string
+		created_at: string
+	}>
 }
 
 interface Notification {
@@ -1302,56 +1308,55 @@ export function EmployeeDashboard() {
 						<CardHeader className="pb-4">
 							<CardTitle className="flex items-center">
 								<MessageSquare className="size-5 mr-2" />
-								Recent Session
+								Recent Conversations
 							</CardTitle>
 						</CardHeader>
 						<CardContent>
-							{employeeDetails?.chat_summary ? (
-								<div
-									className="grid gap-3 cursor-pointer p-3 rounded-lg bg-white/5 hover:bg-white/10 dark:bg-black/5 dark:hover:bg-black/10 transition-colors border border-black/5 dark:border-white/5 shadow-sm hover:shadow-md dark:shadow-zinc-900 backdrop-blur-sm"
-									onClick={() =>
-										router.push(
-											`/session?id=${employeeDetails.chat_summary.chat_id}`
-										)
-									}
-									role="button"
-									tabIndex={0}
-									onKeyDown={e => {
-										if (e.key === 'Enter' || e.key === ' ') {
-											router.push(
-												`/session?id=${employeeDetails.chat_summary.chat_id}`
-											)
-										}
-									}}
-								>
-									<div className="flex items-center justify-between">
-										<div className="flex items-center">
-											<div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-												<Send className="size-5 text-primary" />
-											</div>
-											<div>
-												<p className="font-medium">
-													{employeeDetails.chat_summary.chat_id}
-												</p>
-												<p className="text-xs text-muted-foreground">
-													{employeeDetails.chat_summary.last_message_time
-														? new Date(
-																employeeDetails.chat_summary.last_message_time
-															).toLocaleString()
-														: 'No recent messages'}
-												</p>
+							{employeeDetails?.recent_chains &&
+							employeeDetails.recent_chains.length > 0 ? (
+								<div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+									{employeeDetails.recent_chains.map(chain => (
+										<div
+											key={chain.chain_id}
+											className="grid gap-2 cursor-pointer p-3 rounded-lg bg-white/5 hover:bg-white/10 dark:bg-black/5 dark:hover:bg-black/10 transition-colors border border-black/5 dark:border-white/5 shadow-sm hover:shadow-md dark:shadow-zinc-900 backdrop-blur-sm"
+											onClick={() => router.push(`/session/${chain.chain_id}`)}
+											role="button"
+											tabIndex={0}
+											onKeyDown={e => {
+												if (e.key === 'Enter' || e.key === ' ') {
+													router.push(`/session/${chain.chain_id}`)
+												}
+											}}
+										>
+											<div className="flex items-center justify-between">
+												<div className="flex items-center">
+													<div
+														className={`size-10 rounded-full ${chain.status === 'active' ? 'bg-green-100 dark:bg-green-900/20' : 'bg-blue-100 dark:bg-blue-900/20'} flex items-center justify-center mr-3`}
+													>
+														<MessageSquare
+															className={`size-5 ${chain.status === 'active' ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`}
+														/>
+													</div>
+													<div>
+														<p className="font-medium">
+															Chain {chain.chain_id}
+														</p>
+														<p className="text-xs text-muted-foreground">
+															{new Date(chain.created_at).toLocaleString()}
+														</p>
+														<p className="text-sm text-muted-foreground line-clamp-2">
+															{chain.notes || 'No notes available'}
+														</p>
+													</div>
+												</div>
+												<span
+													className={`text-xs px-2 py-1 rounded-full ${chain.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'}`}
+												>
+													{chain.status[0].toUpperCase() + chain.status.slice(1)}
+												</span>
 											</div>
 										</div>
-										{employeeDetails.chat_summary.unread_count > 0 && (
-											<span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-												{employeeDetails.chat_summary.unread_count}
-											</span>
-										)}
-									</div>
-									<p className="text-sm text-muted-foreground line-clamp-2">
-										{employeeDetails.chat_summary.last_message ||
-											'No messages yet'}
-									</p>
+									))}
 								</div>
 							) : (
 								<div className="flex flex-col items-center justify-center py-6 text-center">
@@ -1359,7 +1364,7 @@ export function EmployeeDashboard() {
 										<MessageSquare className="size-10 text-muted-foreground" />
 									</div>
 									<p className="text-sm text-muted-foreground">
-										No chat sessions available
+										No recent chains available
 									</p>
 								</div>
 							)}
@@ -1371,7 +1376,7 @@ export function EmployeeDashboard() {
 								className="w-full"
 								onClick={() => router.push('/session')}
 							>
-								View Sessions
+								View Latest Session
 							</Button>
 						</CardFooter>
 					</Card>
