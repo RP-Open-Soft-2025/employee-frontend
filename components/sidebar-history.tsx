@@ -123,8 +123,7 @@ const ChainItem = ({
 					<div className="flex flex-col">
 						<span className="text-sm truncate">{formattedDate}</span>
 						<span className="text-xs text-sidebar-foreground/80 truncate">
-							{statusText} -{' '}
-							{`Chain ${chain.id.substring(0, 8)}`}
+							{statusText} - {`Chain ${chain.id.substring(0, 8)}`}
 						</span>
 					</div>
 				</div>

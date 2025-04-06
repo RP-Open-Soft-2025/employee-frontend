@@ -43,12 +43,14 @@ export function Chat({
 	isReadonly,
 	useRawMessages = false,
 	onReadonlyChange,
+	currChain,
 }: {
 	id: string
 	initialMessages: Array<any>
 	isReadonly: boolean
 	useRawMessages?: boolean
 	onReadonlyChange?: (readonly: boolean) => void
+	currChain: string
 }) {
 	const { fetchProtected } = useProtectedApi()
 	const dispatch = useDispatch()
@@ -56,6 +58,7 @@ export function Chat({
 	const [chainStatus, setChainStatus] = useState<string | null>(null)
 	const [can_end_chat, setCan_end_chat] = useState(false)
 	const [ended, setEnded] = useState(false)
+	const [activeChain, setActiveChain] = useState<string>('')
 
 	// Fetch chain status for this chat
 	useEffect(() => {
@@ -418,6 +421,15 @@ export function Chat({
 		}
 	}
 
+	useEffect(() => {
+		const res = async () => {
+			const data = await fetchProtected(`/employee/chat-to-chain/${id}`)
+			setActiveChain(data.chain_id)
+		}
+
+		res()
+	})
+
 	return (
 		<>
 			<div className="flex flex-col min-w-0 bg-white/70 dark:bg-black/30 h-[calc(100vh-125px)] rounded-lg">
@@ -444,70 +456,75 @@ export function Chat({
 					isArtifactVisible={isArtifactVisible}
 				/>
 
-				<form
-					className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl"
-					onSubmit={handleSubmit}
-				>
-					{!isReadonly && (
-						<MultimodalInput
-							chatId={id}
-							input={input}
-							setInput={setInput}
-							handleSubmit={handleSubmit as any}
-							status={status}
-							messages={
-								messages.map(msg => ({
-									...msg,
-									parts: [{ type: 'text', text: msg.content }],
-								})) as any
-							}
-							setMessages={setMessages as any}
-							append={append as any}
-						/>
-					)}
-				</form>
+				{currChain === activeChain && (
+					<>
+						<form
+							className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl"
+							onSubmit={handleSubmit}
+						>
+							{!isReadonly && (
+								<MultimodalInput
+									chatId={id}
+									input={input}
+									setInput={setInput}
+									handleSubmit={handleSubmit as any}
+									status={status}
+									messages={
+										messages.map(msg => ({
+											...msg,
+											parts: [{ type: 'text', text: msg.content }],
+										})) as any
+									}
+									setMessages={setMessages as any}
+									append={append as any}
+								/>
+							)}
+						</form>
 
-				{isReadonly && !(id === '' || id === null) && (
-					<div className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl">
-						<div className="flex flex-col w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg border shadow-sm p-4">
-							<div className="flex flex-col space-y-3">
-								<div className="flex items-center justify-between">
-									<h3 className="text-base font-medium">
-										Scheduled Chat Available
-									</h3>
+						{isReadonly && !(id === '' || id === null) && (
+							<div className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl">
+								<div className="flex flex-col w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg border shadow-sm p-4">
+									<div className="flex flex-col space-y-3">
+										<div className="flex items-center justify-between">
+											<h3 className="text-base font-medium">
+												Scheduled Chat Available
+											</h3>
+										</div>
+										<button
+											type="button"
+											onClick={() => {
+												const button =
+													document.activeElement as HTMLButtonElement
+												button.disabled = true
+												button.innerHTML =
+													'<span class="mr-2">Processing...</span><svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>'
+
+												initiateChat(id).finally(() => {
+													button.disabled = false
+													button.innerHTML = 'Start Session'
+												})
+											}}
+											className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+										>
+											Start Session
+										</button>
+									</div>
 								</div>
-								<button
-									type="button"
-									onClick={() => {
-										const button = document.activeElement as HTMLButtonElement
-										button.disabled = true
-										button.innerHTML =
-											'<span class="mr-2">Processing...</span><svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>'
-
-										initiateChat(id).finally(() => {
-											button.disabled = false
-											button.innerHTML = 'Start Session'
-										})
-									}}
-									className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-								>
-									Start Session
-								</button>
 							</div>
-						</div>
-					</div>
-				)}
+						)}
 
-				{isReadonly && (id === '' || id === null) && (
-					<div className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl">
-						<div className="flex flex-col w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg border shadow-sm p-4">
-							<p className="text-sm text-muted-foreground text-center">
-								{chainStatus === 'escalated'
-									? 'Escalated to HR'
-									: 'No Active/Scheduled sessions available'}
-							</p>
-						</div>
-					</div>
+						{isReadonly && (id === '' || id === null) && (
+							<div className="flex mx-auto px-4 pb-4 md:pb-5 gap-2 w-full md:max-w-3xl">
+								<div className="flex flex-col w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg border shadow-sm p-4">
+									<p className="text-sm text-muted-foreground text-center">
+										{chainStatus === 'escalated'
+											? 'Escalated to HR'
+											: 'No Active/Scheduled sessions available'}
+									</p>
+								</div>
+							</div>
+						)}
+					</>
 				)}
 			</div>
 
