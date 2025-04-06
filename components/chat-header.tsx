@@ -58,11 +58,11 @@ export function HeaderUserNav() {
 				<Button
 					variant="outline"
 					size="sm"
-					className="bg-white dark:bg-[#0b1423] text-black dark:text-white flex py-1.5 px-4 order-4 md:ml-auto gap-2 border-gray-200 dark:border-gray-800"
+					className="bg-white dark:bg-[#0b1423] text-black dark:text-white flex py-1.5 md:py-1.5 px-3 md:px-4 order-4 md:ml-auto gap-2 border-gray-200 dark:border-gray-800 h-9 md:h-auto rounded-full md:rounded-md"
 				>
-					<UserCircle className="size-5" />
+					<UserCircle className="size-5 md:size-5" />
 					<span className="truncate hidden md:block">{user?.employee_id}</span>
-					<ChevronDown className="size-5" />
+					<ChevronDown className="size-4 md:size-3.5" />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
