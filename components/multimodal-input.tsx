@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import { useLocalStorage, useWindowSize } from 'usehooks-ts';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 import { ArrowUpIcon } from './icons';
 import { Button } from './ui/button';
@@ -21,47 +22,8 @@ import { Textarea } from './ui/textarea';
 import type { UseChatHelpers, } from '@ai-sdk/react';
 import { Mic, MicOff } from 'lucide-react';
 
-// TypeScript definitions for the Web Speech API
-interface SpeechRecognitionEvent extends Event {
-  resultIndex: number;
-  results: {
-    [index: number]: {
-      [index: number]: {
-        transcript: string;
-        confidence: number;
-      };
-    };
-    length: number;
-  };
-}
-
-interface SpeechRecognitionErrorEvent extends Event {
-  error: string;
-}
-
-interface SpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start(): void;
-  stop(): void;
-  abort(): void;
-  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
-  onend: ((event: Event) => void) | null;
-  onresult: ((event: SpeechRecognitionEvent) => void) | null;
-}
-
-interface SpeechRecognitionConstructor {
-  new (): SpeechRecognition;
-}
-
-// Add to global window object
-declare global {
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
-  }
-}
+// Silence detection timeout in milliseconds
+const SILENCE_TIMEOUT = 5000;
 
 function PureMultimodalInput({
   chatId,
@@ -87,7 +49,62 @@ function PureMultimodalInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
   const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const resetSilenceTimer = useCallback(() => {
+    // Clear any existing timer
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current);
+      silenceTimerRef.current = null;
+    }
+    
+    // Set new timer if currently listening
+    if (isListening) {
+      silenceTimerRef.current = setTimeout(() => {
+        console.log(`No speech detected for ${SILENCE_TIMEOUT}ms, stopping listening`);
+        SpeechRecognition.stopListening();
+        setIsListening(false);
+        toast.info('Voice input disabled due to inactivity');
+      }, SILENCE_TIMEOUT);
+    }
+  }, [isListening]);
+
+  // Configure react-speech-recognition hook
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+    isMicrophoneAvailable
+  } = useSpeechRecognition({
+    commands: [],
+    transcribing: true,
+    clearTranscriptOnListen: true
+  });
+
+  // Update isListening state based on the library's listening state
+  useEffect(() => {
+    setIsListening(listening);
+  }, [listening]);
+
+  // Update input field with transcript
+  useEffect(() => {
+    if (transcript) {
+      setInput(transcript);
+      adjustHeight();
+      // Reset silence timer when new transcript is received
+      resetSilenceTimer();
+    }
+  }, [transcript, setInput, resetSilenceTimer]);
+
+  // Clean up silence timer on unmount
+  useEffect(() => {
+    return () => {
+      if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+        silenceTimerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -138,6 +155,7 @@ function PureMultimodalInput({
   const submitForm = useCallback(() => {
     handleSubmit();
     setLocalStorageInput('');
+    resetTranscript();
     resetHeight();
 
     if (width && width > 768) {
@@ -146,102 +164,45 @@ function PureMultimodalInput({
   }, [
     handleSubmit,
     setLocalStorageInput,
+    resetTranscript,
     width,
   ]);
 
-  // Set up speech recognition
-  useEffect(() => {
-    // Check if speech recognition is available in the browser
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      return;
-    }
-
-    // Create recognition instance
-    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognitionAPI) return;
-    
-    const recognition = new SpeechRecognitionAPI();
-    
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-    
-    // Process speech results
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let transcript = '';
-      
-      // Combine all results to get full transcript
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        transcript += event.results[i][0].transcript;
-        console.log(transcript);
-      }
-      
-      // Update the input field with transcript
-      setInput(transcript);
-      adjustHeight();
-    };
-    
-    // Handle errors
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      console.error('Speech recognition error:', event.error);
-      setIsListening(false);
-    };
-    
-    // Auto-restart when recognition ends
-    recognition.onend = () => {
-      if (isListening) {
-        try {
-          recognition.start();
-        } catch (error) {
-          console.error('Failed to restart recognition:', error);
-          setIsListening(false);
-        }
-      }
-    };
-    
-    // Store the recognition instance
-    recognitionRef.current = recognition;
-    
-    // Clean up on unmount
-    return () => {
-      if (isListening && recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch (error) {
-          console.log('Error stopping recognition:', error);
-        }
-      }
-    };
-  }, [handleSubmit, isListening, setInput, status]);
-
   // Toggle listening state
   const toggleListening = useCallback(() => {
-    if (!recognitionRef.current) {
+    if (!browserSupportsSpeechRecognition) {
       toast.error('Speech recognition is not supported in your browser');
       return;
     }
+
+    if (!isMicrophoneAvailable) {
+      toast.error('Microphone access is required for speech recognition');
+      return;
+    }
     
-    if (isListening) {
+    if (listening) {
       // Stop listening
-      try {
-        recognitionRef.current.stop();
-        setIsListening(false);
-        toast.info('Voice input disabled');
-      } catch (error) {
-        console.error('Error stopping recognition:', error);
+      SpeechRecognition.stopListening();
+      setIsListening(false);
+      toast.info('Voice input disabled');
+      
+      // Clear silence timer
+      if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+        silenceTimerRef.current = null;
       }
     } else {
       // Start listening
-      try {
-        recognitionRef.current.start();
-        setIsListening(true);
-        toast.success(`Voice input enabled. Speak to type your message.`);
-      } catch (error) {
-        console.error('Error starting recognition:', error);
-        toast.error('Failed to start voice recognition');
-      }
+      SpeechRecognition.startListening({ 
+        language: 'en-US'
+      });
+      setIsListening(true);
+      toast.success('Voice input enabled. Speak to type your message.');
+      
+      // Initialize silence timer
+      resetSilenceTimer();
     }
-  }, [isListening]);
+  }, [listening, browserSupportsSpeechRecognition, isMicrophoneAvailable, resetSilenceTimer]);
 
   // Keyboard shortcut (Alt+M) to toggle voice input
   useEffect(() => {
@@ -262,7 +223,7 @@ function PureMultimodalInput({
         data-testid="multimodal-input"
         ref={textareaRef}
         placeholder={isListening 
-          ? `Listening... Speak to type your message` 
+          ? `Listening... Speak to type your message (auto-stops after 5s silence)` 
           : "Send a message or press Alt+M for voice input"}
         value={input}
         onChange={handleInput}
