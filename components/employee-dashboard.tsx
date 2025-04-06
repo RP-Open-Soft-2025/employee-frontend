@@ -401,6 +401,166 @@ export function EmployeeDashboard() {
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mt-4">
 				{/* Left Column */}
 				<div className="grid grid-cols-1 gap-3 sm:gap-4">
+					{/* Onboarding Card */}
+					<Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
+                          <div>
+							<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
+								Onboarding & Integration
+							</h4>
+
+							{employeeDetails?.company_data?.onboarding &&
+							employeeDetails.company_data.onboarding.length > 0 ? (
+								(() => {
+									// Find the onboarding entry with the latest joining date
+									const latestOnboarding = [
+										...employeeDetails.company_data.onboarding,
+									].sort(
+										(a, b) =>
+											new Date(b.Joining_Date).getTime() -
+											new Date(a.Joining_Date).getTime()
+									)[0]
+
+									return (
+										<div key={`onboarding-${latestOnboarding.Joining_Date}`}>
+											<div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+												<div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+													<p className="text-sm text-gray-500 dark:text-gray-400">
+														Joining Date
+													</p>
+													<p className="mt-1 text-base font-medium text-gray-800 dark:text-white/90">
+														{new Date(
+															latestOnboarding.Joining_Date
+														).toLocaleDateString('en-GB')}
+													</p>
+													<p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+														{Math.ceil(
+															Math.abs(
+																new Date().getTime() -
+																	new Date(
+																		latestOnboarding.Joining_Date
+																	).getTime()
+															) /
+																(1000 * 60 * 60 * 24)
+														)}{' '}
+														days ago
+													</p>
+                            </div>
+
+												<div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+													<p className="text-sm text-gray-500 dark:text-gray-400">
+														Onboarding Feedback
+													</p>
+													<div className="mt-2 flex items-center">
+														<div
+															className={`h-3 w-3 rounded-full ${
+																latestOnboarding.Onboarding_Feedback.toUpperCase().includes('EXCELLENT')
+																	? 'bg-green-500 dark:bg-green-600'
+																	: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('GOOD')
+																		? 'bg-blue-500 dark:bg-blue-600'
+																		: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('AVERAGE')
+																			? 'bg-yellow-500 dark:bg-yellow-600'
+																			: 'bg-red-500 dark:bg-red-600'
+															}`}
+                              ></div>
+														<p className="ml-2 text-base font-medium text-gray-800 dark:text-white/90">
+															{latestOnboarding.Onboarding_Feedback}
+														</p>
+                            </div>
+                          </div>
+											</div>
+
+                          <div>
+												<h5 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+													Onboarding Status
+												</h5>
+												<div className="space-y-2">
+													<div className="flex items-center">
+														<div
+															className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+																latestOnboarding.Mentor_Assigned
+																	? 'border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30'
+																	: 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'
+															}`}
+														>
+															{latestOnboarding.Mentor_Assigned && (
+																<svg
+																	className="h-4 w-4 text-green-500 dark:text-green-400"
+																	fill="none"
+																	viewBox="0 0 24 24"
+																	stroke="currentColor"
+																>
+																	<path
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth={2}
+																		d="M5 13l4 4L19 7"
+																	/>
+																</svg>
+															)}
+														</div>
+														<p
+															className={`ml-3 text-sm ${
+																latestOnboarding.Mentor_Assigned
+																	? 'text-gray-800 dark:text-white/90'
+																	: 'text-gray-500 dark:text-gray-400'
+															}`}
+														>
+															Mentor Assigned
+														</p>
+                            </div>
+
+													<div className="flex items-center">
+														<div
+															className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+																latestOnboarding.Initial_Training_Completed
+																	? 'border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30'
+																	: 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'
+															}`}
+														>
+															{latestOnboarding.Initial_Training_Completed && (
+																<svg
+																	className="h-4 w-4 text-green-500 dark:text-green-400"
+																	fill="none"
+																	viewBox="0 0 24 24"
+																	stroke="currentColor"
+																>
+																	<path
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth={2}
+																		d="M5 13l4 4L19 7"
+																	/>
+																</svg>
+															)}
+                            </div>
+														<p
+															className={`ml-3 text-sm ${
+																latestOnboarding.Initial_Training_Completed
+																	? 'text-gray-800 dark:text-white/90'
+																	: 'text-gray-500 dark:text-gray-400'
+															}`}
+														>
+															Initial Training Completed
+														</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+									)
+								})()
+							) : (
+								<div className="flex flex-col items-center justify-center py-6 text-center">
+									<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
+										<User className="size-10 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+										No onboarding data available
+                  </p>
+								</div>
+                )}
+              </div>
+          </Card>
+
 					{/* Enhanced Leave Information Card */}
 					<Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 						<div className="flex flex-col gap-6">
@@ -797,166 +957,6 @@ export function EmployeeDashboard() {
 
 				{/* Right Column */}
 				<div className="grid grid-cols-1 gap-4">
-					{/* Onboarding Card */}
-					<Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
-                          <div>
-							<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
-								Onboarding & Integration
-							</h4>
-
-							{employeeDetails?.company_data?.onboarding &&
-							employeeDetails.company_data.onboarding.length > 0 ? (
-								(() => {
-									// Find the onboarding entry with the latest joining date
-									const latestOnboarding = [
-										...employeeDetails.company_data.onboarding,
-									].sort(
-										(a, b) =>
-											new Date(b.Joining_Date).getTime() -
-											new Date(a.Joining_Date).getTime()
-									)[0]
-
-									return (
-										<div key={`onboarding-${latestOnboarding.Joining_Date}`}>
-											<div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-												<div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-													<p className="text-sm text-gray-500 dark:text-gray-400">
-														Joining Date
-													</p>
-													<p className="mt-1 text-base font-medium text-gray-800 dark:text-white/90">
-														{new Date(
-															latestOnboarding.Joining_Date
-														).toLocaleDateString('en-GB')}
-													</p>
-													<p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-														{Math.ceil(
-															Math.abs(
-																new Date().getTime() -
-																	new Date(
-																		latestOnboarding.Joining_Date
-																	).getTime()
-															) /
-																(1000 * 60 * 60 * 24)
-														)}{' '}
-														days ago
-													</p>
-                            </div>
-
-												<div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-													<p className="text-sm text-gray-500 dark:text-gray-400">
-														Onboarding Feedback
-													</p>
-													<div className="mt-2 flex items-center">
-														<div
-															className={`h-3 w-3 rounded-full ${
-																latestOnboarding.Onboarding_Feedback.toUpperCase().includes('EXCELLENT')
-																	? 'bg-green-500 dark:bg-green-600'
-																	: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('GOOD')
-																		? 'bg-blue-500 dark:bg-blue-600'
-																		: latestOnboarding.Onboarding_Feedback.toUpperCase().includes('AVERAGE')
-																			? 'bg-yellow-500 dark:bg-yellow-600'
-																			: 'bg-red-500 dark:bg-red-600'
-															}`}
-                              ></div>
-														<p className="ml-2 text-base font-medium text-gray-800 dark:text-white/90">
-															{latestOnboarding.Onboarding_Feedback}
-														</p>
-                            </div>
-                          </div>
-											</div>
-
-                          <div>
-												<h5 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-													Onboarding Status
-												</h5>
-												<div className="space-y-2">
-													<div className="flex items-center">
-														<div
-															className={`flex h-6 w-6 items-center justify-center rounded-full border ${
-																latestOnboarding.Mentor_Assigned
-																	? 'border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30'
-																	: 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'
-															}`}
-														>
-															{latestOnboarding.Mentor_Assigned && (
-																<svg
-																	className="h-4 w-4 text-green-500 dark:text-green-400"
-																	fill="none"
-																	viewBox="0 0 24 24"
-																	stroke="currentColor"
-																>
-																	<path
-																		strokeLinecap="round"
-																		strokeLinejoin="round"
-																		strokeWidth={2}
-																		d="M5 13l4 4L19 7"
-																	/>
-																</svg>
-															)}
-														</div>
-														<p
-															className={`ml-3 text-sm ${
-																latestOnboarding.Mentor_Assigned
-																	? 'text-gray-800 dark:text-white/90'
-																	: 'text-gray-500 dark:text-gray-400'
-															}`}
-														>
-															Mentor Assigned
-														</p>
-                            </div>
-
-													<div className="flex items-center">
-														<div
-															className={`flex h-6 w-6 items-center justify-center rounded-full border ${
-																latestOnboarding.Initial_Training_Completed
-																	? 'border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30'
-																	: 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'
-															}`}
-														>
-															{latestOnboarding.Initial_Training_Completed && (
-																<svg
-																	className="h-4 w-4 text-green-500 dark:text-green-400"
-																	fill="none"
-																	viewBox="0 0 24 24"
-																	stroke="currentColor"
-																>
-																	<path
-																		strokeLinecap="round"
-																		strokeLinejoin="round"
-																		strokeWidth={2}
-																		d="M5 13l4 4L19 7"
-																	/>
-																</svg>
-															)}
-                            </div>
-														<p
-															className={`ml-3 text-sm ${
-																latestOnboarding.Initial_Training_Completed
-																	? 'text-gray-800 dark:text-white/90'
-																	: 'text-gray-500 dark:text-gray-400'
-															}`}
-														>
-															Initial Training Completed
-														</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-									)
-								})()
-							) : (
-								<div className="flex flex-col items-center justify-center py-6 text-center">
-									<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
-										<User className="size-10 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-										No onboarding data available
-                  </p>
-								</div>
-                )}
-              </div>
-          </Card>
-
 					{/* Enhanced Rewards Card */}
 					<Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 						<div className="flex flex-col gap-6">
