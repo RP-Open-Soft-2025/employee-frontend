@@ -6,7 +6,7 @@ import { ChevronDown, LayoutDashboard, UserCircle } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout, checkAuth } from '@/redux/features/auth'
 import type { RootState } from '@/redux/store'
-import { memo, useEffect } from 'react'
+import { memo, useEffect, useState } from 'react'
 
 import { SidebarToggle } from '@/components/sidebar-toggle'
 import { Button } from '@/components/ui/button'
@@ -26,6 +26,7 @@ export function HeaderUserNav() {
 	const isAuthenticated = useSelector(
 		(state: RootState) => state.auth.isAuthenticated
 	)
+	const [isLoggingOut, setIsLoggingOut] = useState(false)
 
 	useEffect(() => {
 		dispatch(checkAuth())
@@ -41,6 +42,7 @@ export function HeaderUserNav() {
 	const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
 	const handleLogOut = async () => {
+		setIsLoggingOut(true)
 		try {
 			const response = await fetch(`${API_URL}/auth/logout`, {
 				method: 'DELETE',
@@ -59,6 +61,7 @@ export function HeaderUserNav() {
 			// Proceed with local logout even if API call fails
 			dispatch(logout())
 			router.push('/login')
+			// No need to set loading to false as we're redirecting
 		}
 	}
 
@@ -99,10 +102,23 @@ export function HeaderUserNav() {
 				<DropdownMenuItem asChild>
 					<button
 						type="button"
-						className="w-full cursor-pointer notification-item"
+						className="w-full cursor-pointer notification-item relative"
 						onClick={handleLogOut}
+						disabled={isLoggingOut}
 					>
-						Sign out
+						{isLoggingOut ? (
+							<>
+								<span className="opacity-0">Sign out</span>
+								<div className="absolute inset-0 flex items-center justify-center">
+									<svg className="animate-spin h-4 w-4 text-[hsl(var(--deep-blue-accent))]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+										<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+										<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+									</svg>
+								</div>
+							</>
+						) : (
+							"Sign out"
+						)}
 					</button>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
