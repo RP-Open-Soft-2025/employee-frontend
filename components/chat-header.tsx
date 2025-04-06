@@ -150,7 +150,7 @@ function PureChatHeader({
 		const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 		
 		try {
-			const response = await fetch(`${API_URL}/employee/end-session`, {
+			const response = await fetch(`${API_URL}/llm/chat/end-session`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
