@@ -48,6 +48,7 @@ export function ScheduledChatClient() {
 	const [isReadonly, setIsReadonly] = useState(false)
 	const [initialMessages, setInitialMessages] = useState<UIMessage[]>([])
 	const [allMessages, setAllMessages] = useState<UIMessage[]>([])
+	const [scheduledAt, setScheduledAt] = useState<string>("");
 
 	// Get authentication status and active chat ID from Redux
 	const isAuthenticated = useSelector(
@@ -205,6 +206,7 @@ export function ScheduledChatClient() {
 				if (sessionToUse) {
 					// If status is pending, store it for the start button
 					setPendingSession(sessionToUse)
+					setScheduledAt(sessionToUse.scheduled_at)
 				}
 			} else {
 				// No sessions at all or invalid response
@@ -386,6 +388,7 @@ export function ScheduledChatClient() {
 	return (
 		<>
 			<Chat
+				scheduledAt={scheduledAt}
 				currChain={id!}
 				key={chatIdToUse}
 				id={chatIdToUse || ''}

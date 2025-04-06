@@ -44,6 +44,7 @@ export function Chat({
 	useRawMessages = false,
 	onReadonlyChange,
 	currChain,
+	scheduledAt
 }: {
 	id: string
 	initialMessages: Array<any>
@@ -51,6 +52,7 @@ export function Chat({
 	useRawMessages?: boolean
 	onReadonlyChange?: (readonly: boolean) => void
 	currChain: string
+	scheduledAt: string
 }) {
 	const { fetchProtected } = useProtectedApi()
 	const dispatch = useDispatch()
@@ -490,6 +492,50 @@ export function Chat({
 												Scheduled Chat Available
 											</h3>
 										</div>
+										<div className="mt-2 space-y-2 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+											<div className="flex items-center text-sm">
+												<svg className="h-4 w-4 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+												</svg>
+												<span className="font-medium text-gray-700 dark:text-gray-300">Start:</span>
+												<span className="ml-2 text-gray-600 dark:text-gray-400">
+													{scheduledAt 
+														? new Date(scheduledAt).toLocaleString('en-US', { 
+															timeZone: 'Asia/Kolkata',
+															hour: 'numeric',
+															minute: 'numeric',
+															hour12: true,
+															day: 'numeric',
+															month: 'short',
+															year: 'numeric'
+														})
+														: 'Time not specified'}
+												</span>
+											</div>
+											<div className="flex items-center text-sm">
+												<svg className="h-4 w-4 text-red-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+												</svg>
+												<span className="font-medium text-gray-700 dark:text-gray-300">End:</span>
+												<span className="ml-2 text-gray-600 dark:text-gray-400">
+													{scheduledAt
+														? (() => {
+															const endDate = new Date(scheduledAt);
+															endDate.setHours(endDate.getHours() + 48);
+															return endDate.toLocaleString('en-US', { 
+																timeZone: 'Asia/Kolkata',
+																hour: 'numeric',
+																minute: 'numeric',
+																hour12: true,
+																day: 'numeric',
+																month: 'short',
+																year: 'numeric'
+															});
+														})()
+														: 'Time not specified'}
+												</span>
+											</div>
+										</div>
 										<button
 											type="button"
 											onClick={() => {
@@ -504,9 +550,48 @@ export function Chat({
 													button.innerHTML = 'Start Session'
 												})
 											}}
+											disabled={(() => {
+												const now = new Date()
+												const startTime = scheduledAt ? new Date(scheduledAt) : null
+												if (!startTime) return true
+												
+												const endTime = new Date(startTime)
+												endTime.setHours(endTime.getHours() + 48)
+												
+												return now < startTime || now > endTime
+											})()}
+											title={(() => {
+												const now = new Date()
+												const startTime = scheduledAt ? new Date(scheduledAt) : null
+												if (!startTime) return "Schedule information unavailable"
+												
+												const endTime = new Date(startTime)
+												endTime.setHours(endTime.getHours() + 48)
+												
+												if (now < startTime) {
+													return "Cannot start this session yet"
+												} else if (now > endTime) {
+													return "This session has expired"
+												}
+												return "Start your scheduled session"
+											})()}
 											className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
 										>
-											Start Session
+											{(() => {
+												const now = new Date()
+												const startTime = scheduledAt ? new Date(scheduledAt) : null
+												if (!startTime) return "Session Unavailable"
+												
+												const endTime = new Date(startTime)
+												endTime.setHours(endTime.getHours() + 48)
+												
+												if (now < startTime) {
+													return "Cannot start this session yet"
+												} else if (now > endTime) {
+													return "Session Expired"
+												}
+												return "Start Session"
+											})()}
 										</button>
 									</div>
 								</div>
@@ -528,24 +613,26 @@ export function Chat({
 				)}
 			</div>
 
-			<Artifact
-				chatId={id}
-				input={input}
-				setInput={setInput}
-				handleSubmit={handleSubmit as any}
-				status={status}
-				append={append as any}
-				messages={
-					messages.map(msg => ({
-						...msg,
-						parts: [{ type: 'text', text: msg.content }],
-					})) as any
-				}
-				setMessages={setMessages as any}
-				reload={reload as any}
-				votes={votes}
-				isReadonly={isReadonly}
-			/>
+			{currChain === activeChain && (
+				<Artifact
+					chatId={id}
+					input={input}
+					setInput={setInput}
+					handleSubmit={handleSubmit as any}
+					status={status}
+					append={append as any}
+					messages={
+						messages.map(msg => ({
+							...msg,
+							parts: [{ type: 'text', text: msg.content }],
+						})) as any
+					}
+					setMessages={setMessages as any}
+					reload={reload as any}
+					votes={votes}
+					isReadonly={isReadonly}
+				/>
+			)}
 		</>
 	)
 }
