@@ -50,6 +50,8 @@ function PureMultimodalInput({
   const { width } = useWindowSize();
   const [isListening, setIsListening] = useState(false);
   const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [lastTranscript, setLastTranscript] = useState('');
+
   const resetSilenceTimer = useCallback(() => {
     // Clear any existing timer
     if (silenceTimerRef.current) {
@@ -68,7 +70,7 @@ function PureMultimodalInput({
     }
   }, [isListening]);
 
-  // Configure react-speech-recognition hook
+  // Configure react-speech-recognition hook with debug for error tracking
   const {
     transcript,
     listening,
@@ -78,8 +80,18 @@ function PureMultimodalInput({
   } = useSpeechRecognition({
     commands: [],
     transcribing: true,
-    clearTranscriptOnListen: true
+    clearTranscriptOnListen: false
   });
+
+  // Log speech recognition state for debugging
+  useEffect(() => {
+    console.log("Speech recognition state:", { 
+      browserSupports: browserSupportsSpeechRecognition, 
+      microphoneAvailable: isMicrophoneAvailable,
+      listening,
+      transcript
+    });
+  }, [browserSupportsSpeechRecognition, isMicrophoneAvailable, listening, transcript]);
 
   // Update isListening state based on the library's listening state
   useEffect(() => {
@@ -88,13 +100,15 @@ function PureMultimodalInput({
 
   // Update input field with transcript
   useEffect(() => {
-    if (transcript) {
+    if (transcript && transcript !== lastTranscript) {
+      console.log("New transcript detected:", transcript);
       setInput(transcript);
+      setLastTranscript(transcript);
       adjustHeight();
       // Reset silence timer when new transcript is received
       resetSilenceTimer();
     }
-  }, [transcript, setInput, resetSilenceTimer]);
+  }, [transcript, setInput, resetSilenceTimer, lastTranscript]);
 
   // Clean up silence timer on unmount
   useEffect(() => {
@@ -156,6 +170,7 @@ function PureMultimodalInput({
     handleSubmit();
     setLocalStorageInput('');
     resetTranscript();
+    setLastTranscript('');
     resetHeight();
 
     if (width && width > 768) {
@@ -171,12 +186,14 @@ function PureMultimodalInput({
   // Toggle listening state
   const toggleListening = useCallback(() => {
     if (!browserSupportsSpeechRecognition) {
-      toast.error('Speech recognition is not supported in your browser');
+      toast.error('Speech recognition is not supported in your browser. Try Chrome or Edge browser.');
+      console.error('Speech recognition not supported in this browser');
       return;
     }
 
     if (!isMicrophoneAvailable) {
       toast.error('Microphone access is required for speech recognition');
+      console.error('Microphone not available');
       return;
     }
     
@@ -193,16 +210,30 @@ function PureMultimodalInput({
       }
     } else {
       // Start listening
-      SpeechRecognition.startListening({ 
-        language: 'en-US'
-      });
-      setIsListening(true);
-      toast.success('Voice input enabled. Speak to type your message.');
-      
-      // Initialize silence timer
-      resetSilenceTimer();
+      try {
+        resetTranscript(); // Clear previous transcripts
+        setLastTranscript(''); // Reset last transcript
+        
+        // Try to start continuous listening
+        SpeechRecognition.startListening({
+          continuous: true,
+          language: 'en-US',
+        }).catch(error => {
+          console.error('Error starting speech recognition:', error);
+          toast.error('Failed to start speech recognition. Please check microphone permissions.');
+        });
+        
+        setIsListening(true);
+        toast.success('Voice input enabled. Speak to type your message.');
+        
+        // Initialize silence timer
+        resetSilenceTimer();
+      } catch (error) {
+        console.error('Exception starting speech recognition:', error);
+        toast.error('Failed to start speech recognition');
+      }
     }
-  }, [listening, browserSupportsSpeechRecognition, isMicrophoneAvailable, resetSilenceTimer]);
+  }, [listening, browserSupportsSpeechRecognition, isMicrophoneAvailable, resetSilenceTimer, resetTranscript]);
 
   // Keyboard shortcut (Alt+M) to toggle voice input
   useEffect(() => {
