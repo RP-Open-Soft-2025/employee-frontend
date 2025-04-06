@@ -39,8 +39,8 @@ export function Header({ notifications, onNotificationClick, onMarkAllAsRead, ch
   };
 
   const formatNotificationTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
+    const date = new Date(new Date(dateString).getTime() + 19800000);
+    const now = new Date(new Date().getTime() + 19800000);
     const diffInHours = Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60);
     
     if (diffInHours < 24) {

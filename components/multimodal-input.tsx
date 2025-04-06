@@ -65,7 +65,10 @@ function PureMultimodalInput({
         console.log(`No speech detected for ${SILENCE_TIMEOUT}ms, stopping listening`);
         SpeechRecognition.stopListening();
         setIsListening(false);
-        toast.info('Voice input disabled due to inactivity');
+        toast.info('Voice input disabled due to inactivity. Your text is preserved.');
+        
+        // Do not reset the transcript - keep it in the input field
+        // This way the user can review what was transcribed before sending
       }, SILENCE_TIMEOUT);
     }
   }, [isListening]);
@@ -201,18 +204,25 @@ function PureMultimodalInput({
       // Stop listening
       SpeechRecognition.stopListening();
       setIsListening(false);
-      toast.info('Voice input disabled');
+      toast.info('Voice input disabled. Your text remains in the input field.');
       
       // Clear silence timer
       if (silenceTimerRef.current) {
         clearTimeout(silenceTimerRef.current);
         silenceTimerRef.current = null;
       }
+      
+      // Keep the transcript in the input field, don't reset it
+      // The user can review and edit before sending
     } else {
       // Start listening
       try {
-        resetTranscript(); // Clear previous transcripts
-        setLastTranscript(''); // Reset last transcript
+        // Only reset transcript if the input field is empty
+        // This preserves any existing text if the user is toggling speech
+        if (!input || input.trim() === '') {
+          resetTranscript();
+          setLastTranscript('');
+        }
         
         // Try to start continuous listening
         SpeechRecognition.startListening({
@@ -233,7 +243,7 @@ function PureMultimodalInput({
         toast.error('Failed to start speech recognition');
       }
     }
-  }, [listening, browserSupportsSpeechRecognition, isMicrophoneAvailable, resetSilenceTimer, resetTranscript]);
+  }, [listening, browserSupportsSpeechRecognition, isMicrophoneAvailable, resetSilenceTimer, resetTranscript, input]);
 
   // Keyboard shortcut (Alt+M) to toggle voice input
   useEffect(() => {
@@ -254,7 +264,7 @@ function PureMultimodalInput({
         data-testid="multimodal-input"
         ref={textareaRef}
         placeholder={isListening 
-          ? `Listening... Speak to type your message (auto-stops after 5s silence)` 
+          ? `Listening... Speak to type your message (press Enter to send when ready)` 
           : "Send a message or press Alt+M for voice input"}
         value={input}
         onChange={handleInput}

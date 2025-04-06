@@ -12,6 +12,23 @@ import { useProtectedApi } from "@/lib/hooks/useProtectedApi";
 import { useDispatch } from "react-redux";
 import { setChatStatus } from "@/redux/features/chat";
 
+// API Response Types
+interface ChatMessageResponse {
+  message: string;
+  chatId: string;
+  sessionStatus: string;
+  chainStatus: string;
+  can_end_chat: boolean;
+  ended: boolean;
+}
+
+interface InitiateChatResponse {
+  message: string;
+  chatId: string;
+  sessionStatus: string;
+  chainStatus: string;
+}
+
 // Create a simple message type that doesn't depend on the UIMessage type
 interface SimpleMessage {
   id: string;
@@ -141,49 +158,6 @@ export function Chat({
 
   const votes: Array<Vote> = [];
 
-  // Initiate a pending chat session
-  const initiateChat = async (chatId: string) => {
-    try {
-      setStatus("submitted");
-
-      console.log("Initiating chat with ID:", chatId);
-      setInitiatingChat(chatId);
-
-      // Call API to initiate the chat
-      const response = await fetchProtected("/llm/chat/initiate-chat", {
-        method: "PATCH",
-        body: {
-          chatId,
-          status: "bot",
-        },
-      });
-
-      console.log("Chat initiation response:", response);
-      dispatch(setChatStatus("active"));
-
-      // Add bot's initial message to UI
-      const botMessage: SimpleMessage = {
-        id: `${chatId}-${Date.now()}-bot`,
-        role: "assistant",
-        content: response.message,
-        createdAt: new Date(),
-      };
-
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-
-      // Update isReadonly state
-      if (onReadonlyChange) {
-        onReadonlyChange(false);
-      }
-    } catch (error) {
-      setStatus("error");
-      console.error("Failed to initiate chat:", error);
-    } finally {
-      setStatus("ready");
-      setInitiatingChat(null);
-    }
-  };
-
   // Handle message submission
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -205,16 +179,28 @@ export function Chat({
       setMessages((prevMessages) => [...prevMessages, userMessage]);
       setInput("");
 
-      // await new Promise((resolve) => setTimeout(resolve, 500));
-
       // Send to backend using fetchProtected
-      const data = await fetchProtected("/llm/chat/message", {
+      const data = await fetchProtected<ChatMessageResponse>("/llm/chat/message", {
         method: "POST",
         body: {
           chatId: id,
           message: input,
         },
       });
+
+      // Update chain status if provided
+      if (data.chainStatus) {
+        setChainStatus(data.chainStatus);
+      }
+
+      // Check if session has ended
+      if (data.ended) {
+        // If the session has ended, update readonly state
+        if (onReadonlyChange) {
+          onReadonlyChange(true);
+          toast.info("Session has ended.");
+        }
+      }
 
       // Add bot response to UI
       const botMessage: SimpleMessage = {
@@ -247,13 +233,27 @@ export function Chat({
       setStatus("streaming");
 
       // Send to backend using fetchProtected
-      const data = await fetchProtected("/llm/chat/message", {
+      const data = await fetchProtected<ChatMessageResponse>("/llm/chat/message", {
         method: "POST",
         body: {
           chatId: id,
           message: lastUserMessage.content,
         },
       });
+
+      // Update chain status if provided
+      if (data.chainStatus) {
+        setChainStatus(data.chainStatus);
+      }
+
+      // Check if session has ended
+      if (data.ended) {
+        // If the session has ended, update readonly state
+        if (onReadonlyChange) {
+          onReadonlyChange(true);
+          toast.info("Session has ended.");
+        }
+      }
 
       // Remove last bot message and add new one
       const filteredMessages = messages.filter(
@@ -296,13 +296,27 @@ export function Chat({
 
     if (fullMessage.role === "user") {
       try {
-        const data = await fetchProtected("/llm/chat/message", {
+        const data = await fetchProtected<ChatMessageResponse>("/llm/chat/message", {
           method: "POST",
           body: {
             chatId: id,
             message: fullMessage.content,
           },
         });
+
+        // Update chain status if provided
+        if (data.chainStatus) {
+          setChainStatus(data.chainStatus);
+        }
+
+        // Check if session has ended
+        if (data.ended) {
+          // If the session has ended, update readonly state
+          if (onReadonlyChange) {
+            onReadonlyChange(true);
+            toast.info("Session has ended.");
+          }
+        }
 
         const botMessage: SimpleMessage = {
           id: `${id}-${Date.now()}-bot`,
@@ -315,6 +329,54 @@ export function Chat({
       } catch (error) {
         console.error("Failed to append message:", error);
       }
+    }
+  };
+
+  // Initiate a pending chat session
+  const initiateChat = async (chatId: string) => {
+    try {
+      setStatus("submitted");
+
+      console.log("Initiating chat with ID:", chatId);
+      setInitiatingChat(chatId);
+
+      // Call API to initiate the chat
+      const response = await fetchProtected<InitiateChatResponse>("/llm/chat/initiate-chat", {
+        method: "PATCH",
+        body: {
+          chatId,
+          status: "bot",
+        },
+      });
+
+      console.log("Chat initiation response:", response);
+      dispatch(setChatStatus("active"));
+      
+      // Update chain status from response
+      if (response.chainStatus) {
+        setChainStatus(response.chainStatus);
+      }
+
+      // Add bot's initial message to UI
+      const botMessage: SimpleMessage = {
+        id: `${chatId}-${Date.now()}-bot`,
+        role: "assistant",
+        content: response.message,
+        createdAt: new Date(),
+      };
+
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
+
+      // Update isReadonly state based on session status
+      if (onReadonlyChange && response.sessionStatus === "active") {
+        onReadonlyChange(false);
+      }
+    } catch (error) {
+      setStatus("error");
+      console.error("Failed to initiate chat:", error);
+    } finally {
+      setStatus("ready");
+      setInitiatingChat(null);
     }
   };
 
