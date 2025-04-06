@@ -332,7 +332,7 @@ export function EmployeeDashboard() {
 			<Card className="mt-4 p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 				<div className="flex flex-col gap-4">
 					<div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100 dark:border-gray-700">
-						<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 flex items-center gap-2">
+						<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 flex items-center gap-2 pb-4">
 							<UserCircle className="size-5 text-gray-700 dark:text-gray-300" />
 							Employee Information
 						</h4>
@@ -410,7 +410,7 @@ export function EmployeeDashboard() {
 					{/* Onboarding Card */}
 					<Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 						<div>
-							<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
+							<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4 pb-1">
 								Onboarding & Integration
 							</h4>
 
@@ -482,7 +482,7 @@ export function EmployeeDashboard() {
 											</div>
 
 											<div>
-												<h5 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+												<h5 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300 pb-1">
 													Onboarding Status
 												</h5>
 												<div className="space-y-2">
@@ -604,7 +604,7 @@ export function EmployeeDashboard() {
 
 								{/* Leave Records */}
 								<div>
-									<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+									<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 pb-1">
 										Leave Records
 									</h5>
 									<div className="space-y-2 max-h-[140px] min-h-fit overflow-y-auto pr-1 custom-scrollbar">
@@ -693,7 +693,7 @@ export function EmployeeDashboard() {
 					<Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
 						<div className="flex flex-col gap-6">
 							<div>
-								<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4 2xl:text-lg xl:text-base lg:text-sm md:text-sm flex items-center">
+								<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4 2xl:text-lg xl:text-base lg:text-sm md:text-sm flex items-center pb-1">
 									<BarChart className="size-5 mr-2" />
 									Performance Overview
 								</h4>
@@ -805,7 +805,7 @@ export function EmployeeDashboard() {
 											</div>
 
 											<div className="mt-6">
-												<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 2xl:text-sm xl:text-xs lg:text-xs md:text-xs">
+												<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 2xl:text-sm xl:text-xs lg:text-xs md:text-xs pb-1">
 													Performance History
 												</h5>
 												<div className="mt-4 flex items-end space-x-2 h-32">
@@ -863,7 +863,7 @@ export function EmployeeDashboard() {
 					<Card className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 						<div className="flex flex-col gap-6">
 							<div>
-								<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6 flex items-center">
+								<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6 flex items-center pb-1">
 									<Activity className="size-5 mr-2" />
 									Recent Activity
 								</h4>
@@ -936,7 +936,7 @@ export function EmployeeDashboard() {
 										</div>
 
 										<div className="mt-6">
-											<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+											<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 pb-1">
 												Activity Overview
 											</h5>
 											<div className="flex h-10 items-end space-x-2">
@@ -983,7 +983,7 @@ export function EmployeeDashboard() {
 						<div className="flex flex-col gap-6">
 							<div>
 								<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between lg:mb-6">
-									<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 flex items-center">
+									<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 flex items-center pb-1">
 										<Award className="size-5 mr-2" />
 										Rewards & Recognition
 									</h4>
@@ -1037,7 +1037,7 @@ export function EmployeeDashboard() {
 										</div>
 
 										<div className="mt-6">
-											<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+											<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 pb-1">
 												Rewards Progress
 											</h5>
 											<div className="h-4 w-full rounded-full bg-gray-200 dark:bg-gray-700">
@@ -1094,7 +1094,7 @@ export function EmployeeDashboard() {
 					{/* Enhanced Mood & Vibe Card */}
 					<Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 						<div className="flex flex-col">
-							<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-6 flex items-center">
+							<h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-6 flex items-center pb-1">
 								<BarChart className="size-5 mr-2" />
 								Mood & Vibe Statistics
 							</h4>
@@ -1315,7 +1315,7 @@ export function EmployeeDashboard() {
 					{/* Chat Summary Card */}
 					<Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
 						<CardHeader className="pb-4">
-							<CardTitle className="flex items-center">
+							<CardTitle className="flex items-center pb-1">
 								<MessageSquare className="size-5 mr-2" />
 								Recent Conversations
 							</CardTitle>

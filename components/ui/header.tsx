@@ -90,7 +90,7 @@ export function Header({
 								<Button
 									variant="outline"
 									size="icon"
-									className="relative flex md:hidden bg-white dark:bg-[#0b1423] text-black dark:text-white rounded-full border-gray-200 dark:border-gray-800 h-7 w-7"
+									className="relative flex md:hidden bg-white dark:bg-[#0b1423] text-black dark:text-white rounded-full border-gray-200 dark:border-gray-800 h-8 w-7"
 								>
 									<Bell className="size-3" />
 									{unreadCount > 0 && (
