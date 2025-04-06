@@ -18,6 +18,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import store from '@/redux/store'
 
 export function HeaderUserNav() {
 	const router = useRouter()
@@ -140,9 +141,9 @@ function PureChatHeader({
 	onChatEnd?: () => void
 	can_end_chat?: boolean
 }) {
-	const router = useRouter()
 	const { open } = useSidebar()
 	const [isEndingChat, setIsEndingChat] = useState(false)
+	const { auth } = store.getState()
 
 	const { width: windowWidth } = useWindowSize()
 
@@ -153,15 +154,14 @@ function PureChatHeader({
 		const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
 		try {
-			const response = await fetch(`${API_URL}/llm/chat/end-session`, {
+			const response = await fetch(`${API_URL}/employee/end-session`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
+					Authorization: `Bearer ${auth.user?.accessToken}`,
 				},
-				credentials: 'include',
 				body: JSON.stringify({
 					chat_id: chatId,
-					chain_id: chatId, // Assuming chain_id is the same as chatId, adjust if needed
 				}),
 			})
 
