@@ -76,7 +76,6 @@ function PureMessages({
 		'Sit back and relax...',
 		'We are almost done...',
 		'Just a few more moments...',
-		'Preparing your response...',
 		'Analyzing your request...',
 		'Gathering information...',
 		'Processing your query...',
@@ -85,10 +84,7 @@ function PureMessages({
 		'Getting things ready...',
 		'Just a little longer...',
 		'Making magic happen...',
-		'Brewing your response...',
 		'Connecting the dots...',
-		'Putting it all together...',
-		'Finalizing your results...'
 	]
 
 	useEffect(() => {
