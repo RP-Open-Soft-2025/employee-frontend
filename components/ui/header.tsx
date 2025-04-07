@@ -12,6 +12,8 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useProtectedApi } from '@/lib/hooks/useProtectedApi'
 
 interface Notification {
 	id: string
@@ -23,26 +25,92 @@ interface Notification {
 }
 
 interface HeaderProps {
-	notifications?: Notification[]
-	onNotificationClick?: (notificationId: string) => void
-	onMarkAllAsRead?: () => void
 	children: React.ReactNode
 }
 
-export function Header({
-	notifications,
-	onNotificationClick,
-	onMarkAllAsRead,
-	children,
-}: HeaderProps) {
-	const unreadCount =
-		notifications?.filter(n => n.status === 'unread').length || 0
+export function Header({ children }: HeaderProps) {
+	const [notifications, setNotifications] = useState<Notification[]>([])
+	const { fetchProtected } = useProtectedApi()
+	const unreadCount = notifications.filter(n => n.status === 'unread').length
 	const { setTheme, theme } = useTheme()
 	const router = useRouter()
 
+	useEffect(() => {
+		// Function to handle ping
+		const handlePing = async () => {
+			try {
+				const response = await fetchProtected('/employee/ping', {
+					method: 'GET',
+				})
+
+				// sort the notifications by created_at date
+				const sortedNotifications = response.notifications.sort(
+					(a: Notification, b: Notification) => {
+						return (
+							new Date(b.created_at).getTime() -
+							new Date(a.created_at).getTime()
+						)
+					}
+				)
+
+				setNotifications(sortedNotifications)
+			} catch (error) {
+				console.error('Failed to fetch notifications:', error)
+			}
+		}
+
+		// Call ping immediately
+		handlePing()
+
+		// Set up interval for subsequent pings
+		const pingInterval = setInterval(handlePing, 30000) // 30 seconds
+
+		// Cleanup interval on unmount
+		return () => {
+			clearInterval(pingInterval)
+		}
+	}, [fetchProtected])
+
+	const markNotificationAsRead = async (notificationId: string) => {
+		try {
+			await fetchProtected(`/employee/notification/${notificationId}/read`, {
+				method: 'PATCH',
+			})
+
+			// update the notifications state
+			setNotifications(
+				notifications.map(notification =>
+					notification.id === notificationId
+						? { ...notification, status: 'read' }
+						: notification
+				)
+			)
+		} catch (e) {
+			console.error('Failed to mark notification as read:', e)
+		}
+	}
+
+	const markAllNotificationsAsRead = async () => {
+		try {
+			await fetchProtected('/employee/notification/mark_all_as_read', {
+				method: 'PATCH',
+			})
+
+			// Update all notifications to read status
+			setNotifications(
+				notifications.map(notification => ({
+					...notification,
+					status: 'read',
+				}))
+			)
+		} catch (e) {
+			console.error('Failed to mark all notifications as read:', e)
+		}
+	}
+
 	const handleNotificationClick = (notification: Notification) => {
-		if (notification.status === 'unread' && onNotificationClick) {
-			onNotificationClick(notification.id)
+		if (notification.status === 'unread') {
+			markNotificationAsRead(notification.id)
 		}
 		// Redirect to /session when any notification is clicked
 		router.push('/session')
@@ -86,144 +154,140 @@ export function Header({
 					)}
 				</Button>
 
-				{notifications && (
-					<>
-						{/* Mobile notification button (visible only on small screens) */}
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									variant="outline"
-									size="icon"
-									className="relative flex md:hidden bg-white dark:bg-[#0b1423] text-black dark:text-white rounded-full border-gray-200 dark:border-gray-800 h-8 w-7"
-								>
-									<Bell className="size-3" />
-									{unreadCount > 0 && (
-										<span className="absolute -top-1 -right-1 bg-[hsl(var(--deep-blue-accent))] text-white rounded-full size-3.5 flex items-center justify-center text-[9px]">
-											{unreadCount}
-										</span>
-									)}
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent
-								align="end"
-								className="w-80 max-h-[400px] overflow-y-auto notification-dropdown-content"
-							>
-								{notifications.length === 0 ? (
-									<div className="p-4 text-center text-sm text-muted-foreground">
-										No notifications
-									</div>
-								) : (
-									<div className="flex flex-col gap-1">
-										{unreadCount > 0 && (
-											<DropdownMenuItem
-												className="flex items-center justify-center p-2 cursor-pointer border-b notification-item"
-												onClick={() => onMarkAllAsRead?.()}
-											>
-												<span className="text-sm">Mark all as read</span>
-											</DropdownMenuItem>
-										)}
-										{notifications.map(notification => (
-											<DropdownMenuItem
-												key={notification.id}
-												className={`flex flex-col items-start p-4 cursor-pointer notification-item ${
-													notification.status === 'unread' ? 'unread' : ''
-												}`}
-												onClick={() => handleNotificationClick(notification)}
-											>
-												<div className="flex justify-between w-full items-start">
-													<div className="flex items-center gap-2">
-														{notification.status === 'unread' ? (
-															<Mail className="size-4 text-[hsl(var(--deep-blue-accent))]" />
-														) : (
-															<MailOpen className="size-4" />
-														)}
-														<h4 className="font-medium">
-															{notification.title}
-														</h4>
-													</div>
-													<span className="text-xs">
-														{formatNotificationTime(notification.created_at)}
-													</span>
-												</div>
-												<p className="text-sm mt-1 line-clamp-2">
-													{notification.description}
-												</p>
-											</DropdownMenuItem>
-										))}
-									</div>
+				{/* Mobile notification button (visible only on small screens) */}
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button
+							variant="outline"
+							size="icon"
+							className="relative flex md:hidden bg-white dark:bg-[#0b1423] text-black dark:text-white rounded-full border-gray-200 dark:border-gray-800 h-8 w-7"
+						>
+							<Bell className="size-3" />
+							{unreadCount > 0 && (
+								<span className="absolute -top-1 -right-1 bg-[hsl(var(--deep-blue-accent))] text-white rounded-full size-3.5 flex items-center justify-center text-[9px]">
+									{unreadCount}
+								</span>
+							)}
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent
+						align="end"
+						className="w-80 max-h-[400px] overflow-y-auto notification-dropdown-content"
+					>
+						{notifications.length === 0 ? (
+							<div className="p-4 text-center text-sm text-muted-foreground">
+								No notifications
+							</div>
+						) : (
+							<div className="flex flex-col gap-1">
+								{unreadCount > 0 && (
+									<DropdownMenuItem
+										className="flex items-center justify-center p-2 cursor-pointer border-b notification-item"
+										onClick={markAllNotificationsAsRead}
+									>
+										<span className="text-sm">Mark all as read</span>
+									</DropdownMenuItem>
 								)}
-							</DropdownMenuContent>
-						</DropdownMenu>
+								{notifications.map(notification => (
+									<DropdownMenuItem
+										key={notification.id}
+										className={`flex flex-col items-start p-4 cursor-pointer notification-item ${
+											notification.status === 'unread' ? 'unread' : ''
+										}`}
+										onClick={() => handleNotificationClick(notification)}
+									>
+										<div className="flex justify-between w-full items-start">
+											<div className="flex items-center gap-2">
+												{notification.status === 'unread' ? (
+													<Mail className="size-4 text-[hsl(var(--deep-blue-accent))]" />
+												) : (
+													<MailOpen className="size-4" />
+												)}
+												<h4 className="font-medium">
+													{notification.title}
+												</h4>
+											</div>
+											<span className="text-xs">
+												{formatNotificationTime(notification.created_at)}
+											</span>
+										</div>
+										<p className="text-sm mt-1 line-clamp-2">
+											{notification.description}
+										</p>
+									</DropdownMenuItem>
+								))}
+							</div>
+						)}
+					</DropdownMenuContent>
+				</DropdownMenu>
 
-						{/* Desktop notification button (visible on md screens and up) */}
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									variant="outline"
-									size="sm"
-									className="relative hidden md:flex bg-white dark:bg-[#0b1423] text-black dark:text-white border-gray-200 dark:border-gray-800"
-								>
-									<Bell className="size-4" />
-									Notifications
-									{unreadCount > 0 && (
-										<span className="absolute -top-2 -right-2 bg-[hsl(var(--deep-blue-accent))] text-white rounded-full size-5 flex items-center justify-center text-xs">
-											{unreadCount}
-										</span>
-									)}
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent
-								align="end"
-								className="w-80 max-h-[400px] overflow-y-auto notification-dropdown-content"
-							>
-								{notifications.length === 0 ? (
-									<div className="p-4 text-center text-sm text-muted-foreground">
-										No notifications
-									</div>
-								) : (
-									<div className="flex flex-col gap-1">
-										{unreadCount > 0 && (
-											<DropdownMenuItem
-												className="flex items-center justify-center p-2 cursor-pointer border-b notification-item"
-												onClick={() => onMarkAllAsRead?.()}
-											>
-												<span className="text-sm">Mark all as read</span>
-											</DropdownMenuItem>
-										)}
-										{notifications.map(notification => (
-											<DropdownMenuItem
-												key={notification.id}
-												className={`flex flex-col items-start p-4 cursor-pointer notification-item ${
-													notification.status === 'unread' ? 'unread' : ''
-												}`}
-												onClick={() => handleNotificationClick(notification)}
-											>
-												<div className="flex justify-between w-full items-start">
-													<div className="flex items-center gap-2">
-														{notification.status === 'unread' ? (
-															<Mail className="size-4 text-[hsl(var(--deep-blue-accent))]" />
-														) : (
-															<MailOpen className="size-4" />
-														)}
-														<h4 className="font-medium">
-															{notification.title}
-														</h4>
-													</div>
-													<span className="text-xs">
-														{formatNotificationTime(notification.created_at)}
-													</span>
-												</div>
-												<p className="text-sm mt-1 line-clamp-2">
-													{notification.description}
-												</p>
-											</DropdownMenuItem>
-										))}
-									</div>
+				{/* Desktop notification button (visible on md screens and up) */}
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button
+							variant="outline"
+							size="sm"
+							className="relative hidden md:flex bg-white dark:bg-[#0b1423] text-black dark:text-white border-gray-200 dark:border-gray-800"
+						>
+							<Bell className="size-4" />
+							Notifications
+							{unreadCount > 0 && (
+								<span className="absolute -top-2 -right-2 bg-[hsl(var(--deep-blue-accent))] text-white rounded-full size-5 flex items-center justify-center text-xs">
+									{unreadCount}
+								</span>
+							)}
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent
+						align="end"
+						className="w-80 max-h-[400px] overflow-y-auto notification-dropdown-content"
+					>
+						{notifications.length === 0 ? (
+							<div className="p-4 text-center text-sm text-muted-foreground">
+								No notifications
+							</div>
+						) : (
+							<div className="flex flex-col gap-1">
+								{unreadCount > 0 && (
+									<DropdownMenuItem
+										className="flex items-center justify-center p-2 cursor-pointer border-b notification-item"
+										onClick={markAllNotificationsAsRead}
+									>
+										<span className="text-sm">Mark all as read</span>
+									</DropdownMenuItem>
 								)}
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</>
-				)}
+								{notifications.map(notification => (
+									<DropdownMenuItem
+										key={notification.id}
+										className={`flex flex-col items-start p-4 cursor-pointer notification-item ${
+											notification.status === 'unread' ? 'unread' : ''
+										}`}
+										onClick={() => handleNotificationClick(notification)}
+									>
+										<div className="flex justify-between w-full items-start">
+											<div className="flex items-center gap-2">
+												{notification.status === 'unread' ? (
+													<Mail className="size-4 text-[hsl(var(--deep-blue-accent))]" />
+												) : (
+													<MailOpen className="size-4" />
+												)}
+												<h4 className="font-medium">
+													{notification.title}
+												</h4>
+											</div>
+											<span className="text-xs">
+												{formatNotificationTime(notification.created_at)}
+											</span>
+										</div>
+										<p className="text-sm mt-1 line-clamp-2">
+											{notification.description}
+										</p>
+									</DropdownMenuItem>
+								))}
+							</div>
+						)}
+					</DropdownMenuContent>
+				</DropdownMenu>
 				<HeaderUserNav />
 			</div>
 		</div>

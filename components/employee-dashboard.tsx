@@ -101,22 +101,12 @@ interface EmployeeDetails {
 	}>
 }
 
-interface Notification {
-	id: string
-	employee_id: string
-	title: string
-	description: string
-	created_at: string
-	status: string
-}
-
 export function EmployeeDashboard() {
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const isAuthenticated = useSelector(
 		(state: RootState) => state.auth.isAuthenticated
 	)
-	const [notifications, setNotifications] = useState<Notification[]>([])
 	const [employeeDetails, setEmployeeDetails] =
 		useState<EmployeeDetails | null>(null)
 	// Add client-side only indicator to prevent hydration mismatch
@@ -124,100 +114,6 @@ export function EmployeeDashboard() {
 	const [loading, setLoading] = useState(true)
 
 	const { fetchProtected } = useProtectedApi()
-
-	// Add ping effect for active chats
-	useEffect(() => {
-		// biome-ignore lint/style/useConst: We need let here as the variable is assigned later
-		let pingInterval: NodeJS.Timeout | undefined
-
-		// Function to handle ping
-		const handlePing = async () => {
-			try {
-				console.log('Making ping request')
-				const response = await fetchProtected('/employee/ping', {
-					method: 'GET',
-				})
-				console.log('Ping response:', response)
-
-				// sort the notifications by created_at date
-				const sortedNotifications = response.notifications.sort(
-					(a: Notification, b: Notification) => {
-						return (
-							new Date(b.created_at).getTime() -
-							new Date(a.created_at).getTime()
-						)
-					}
-				)
-
-				setNotifications(sortedNotifications)
-			} catch (error) {
-				console.error('Failed to ping employee endpoint:', error)
-			}
-		}
-
-		// Call ping immediately
-		handlePing()
-
-		// Set up interval for subsequent pings
-		pingInterval = setInterval(handlePing, 30000) // 30 seconds
-
-		// Cleanup interval on unmount
-		return () => {
-			if (pingInterval) {
-				// console.log("Cleaning up ping interval");
-				clearInterval(pingInterval)
-			}
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	const markNotificationAsRead = async (notificationId: string) => {
-		try {
-			const result = await fetchProtected(
-				`/employee/notification/${notificationId}/read`,
-				{
-					method: 'PATCH',
-				}
-			)
-
-			// update the notifications state
-			setNotifications(
-				notifications.map(notification =>
-					notification.id === notificationId
-						? { ...notification, status: 'read' }
-						: notification
-				)
-			)
-
-			console.log('Notification marked as read:', result)
-		} catch (e) {
-			console.error('Failed to mark notification as read:', e)
-		}
-	}
-
-	const markAllNotificationsAsRead = async () => {
-		try {
-			const result = await fetchProtected(
-				'/employee/notification/mark_all_as_read',
-				{
-					method: 'PATCH',
-				}
-			)
-
-			// Update all notifications to read status
-			setNotifications(
-				notifications.map(notification => ({
-					...notification,
-					status: 'read',
-				}))
-			)
-
-			console.log('All notifications marked as read:', result)
-		} catch (e) {
-			console.error('Failed to mark all notifications as read:', e)
-		}
-	}
 
 	const fetchEmployeeDetails = async () => {
 		try {
@@ -295,11 +191,7 @@ export function EmployeeDashboard() {
 	// Normal render for client-side with authentication
 	return (
 		<div className="container mx-auto p-2 sm:p-4 md:p-6">
-			<Header
-				notifications={notifications}
-				onNotificationClick={markNotificationAsRead}
-				onMarkAllAsRead={markAllNotificationsAsRead}
-			>
+			<Header>
 				<Image src={logo} alt="Logo" className="h-8 w-auto dark:hidden" />
 				<Image
 					src={logoDark}
@@ -339,7 +231,10 @@ export function EmployeeDashboard() {
 								<User className="size-3.5" />
 								Employee ID
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate" title={employeeDetails?.employee_id}>
+							<p
+								className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate"
+								title={employeeDetails?.employee_id}
+							>
 								{employeeDetails?.employee_id}
 							</p>
 						</div>
@@ -349,7 +244,10 @@ export function EmployeeDashboard() {
 								<User className="size-3.5" />
 								Name
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate" title={employeeDetails?.name}>
+							<p
+								className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate"
+								title={employeeDetails?.name}
+							>
 								{employeeDetails?.name}
 							</p>
 						</div>
@@ -359,7 +257,10 @@ export function EmployeeDashboard() {
 								<Mail className="size-3.5" />
 								Email
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate" title={employeeDetails?.email}>
+							<p
+								className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate"
+								title={employeeDetails?.email}
+							>
 								{employeeDetails?.email}
 							</p>
 						</div>
@@ -369,7 +270,10 @@ export function EmployeeDashboard() {
 								<Briefcase className="size-3.5" />
 								Role
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize truncate" title={employeeDetails?.role}>
+							<p
+								className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize truncate"
+								title={employeeDetails?.role}
+							>
 								{employeeDetails?.role}
 							</p>
 						</div>
@@ -379,7 +283,10 @@ export function EmployeeDashboard() {
 								<Shield className="size-3.5" />
 								Manager ID
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate" title={employeeDetails?.manager_id}>
+							<p
+								className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate"
+								title={employeeDetails?.manager_id}
+							>
 								{employeeDetails?.manager_id}
 							</p>
 						</div>
@@ -599,8 +506,10 @@ export function EmployeeDashboard() {
 
 								{/* Leave Records */}
 								<div>
-									{!(!employeeDetails?.company_data?.leave ||
-											employeeDetails.company_data.leave.length === 0) && (
+									{!(
+										!employeeDetails?.company_data?.leave ||
+										employeeDetails.company_data.leave.length === 0
+									) && (
 										<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 pb-1">
 											Leave Records
 										</h5>
@@ -1171,7 +1080,7 @@ export function EmployeeDashboard() {
 												<div
 													className="absolute bottom-full mb-1"
 													style={{
-														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 - (employeeDetails.company_data.vibemeter[0].Vibe_Score - 3)*1.5/ 2}% - 8px)`,
+														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 - ((employeeDetails.company_data.vibemeter[0].Vibe_Score - 3) * 1.5) / 2}% - 8px)`,
 														transition: 'left 0.3s ease-in-out',
 													}}
 												>
@@ -1353,7 +1262,10 @@ export function EmployeeDashboard() {
 															!Number.isNaN(
 																new Date(chain.created_at).getTime()
 															)
-																? new Date(new Date(chain.created_at).getTime() + 19800000).toLocaleString()
+																? new Date(
+																		new Date(chain.created_at).getTime() +
+																			19800000
+																	).toLocaleString()
 																: 'Date unavailable'}
 														</p>
 														<p className="text-sm text-muted-foreground line-clamp-2">
