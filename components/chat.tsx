@@ -56,11 +56,11 @@ export function Chat({
 }) {
 	const { fetchProtected } = useProtectedApi()
 	const dispatch = useDispatch()
-	const [initiatingChat, setInitiatingChat] = useState<string | null>(null)
 	const [chainStatus, setChainStatus] = useState<string | null>(null)
 	const [can_end_chat, setCan_end_chat] = useState(false)
 	const [ended, setEnded] = useState(false)
 	const [activeChain, setActiveChain] = useState<string>('')
+	const [isInitiating, setIsInitiating] = useState(false)
 
 	// Fetch chain status for this chat
 	useEffect(() => {
@@ -368,10 +368,10 @@ export function Chat({
 	// Initiate a pending chat session
 	const initiateChat = async (chatId: string) => {
 		try {
+			setIsInitiating(true)
 			setStatus('submitted')
 
 			console.log('Initiating chat with ID:', chatId)
-			setInitiatingChat(chatId)
 
 			// Call API to initiate the chat
 			const response = await fetchProtected<InitiateChatResponse>(
@@ -412,7 +412,8 @@ export function Chat({
 			console.error('Failed to initiate chat:', error)
 		} finally {
 			setStatus('ready')
-			setInitiatingChat(null)
+			await new Promise(resolve => setTimeout(resolve, 5000));
+			setIsInitiating(false)
 		}
 	}
 
@@ -446,7 +447,7 @@ export function Chat({
 
 				<Messages
 					chatId={id}
-					status={status}
+					status={isInitiating ? 'initiating' : status}
 					votes={votes}
 					messages={
 						messages.map(msg => ({
