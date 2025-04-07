@@ -4,6 +4,8 @@
   An AI-powered Employee Support Platform for Professional Development and Guidance.
 </p>
 
+🌐 **Live Demo**: [https://employee-frontend-ten-puce.vercel.app/](https://employee-frontend-ten-puce.vercel.app/)
+
 <p align="center">
   <a href="#features"><strong>Features</strong></a> ·
   <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
@@ -16,6 +18,7 @@
 ## Features
 
 - **Modern Frontend Framework**
+
   - [Next.js](https://nextjs.org) 15 with App Router
   - React 18 with Server Components
   - TypeScript for type safety
@@ -23,6 +26,7 @@
   - Framer Motion for animations
 
 - **AI Integration**
+
   - Multiple AI model support (OpenAI, Fireworks)
   - Real-time chat interface with speech recognition
   - Code highlighting and markdown support
@@ -30,6 +34,7 @@
   - CodeMirror integration for code editing
 
 - **UI/UX**
+
   - Modern component library with [shadcn/ui](https://ui.shadcn.com)
   - Responsive design
   - Dark/Light mode support with next-themes
@@ -38,6 +43,7 @@
   - Toast notifications with sonner
 
 - **State Management**
+
   - Redux Toolkit for global state
   - SWR for data fetching
   - Custom hooks for reusable logic
