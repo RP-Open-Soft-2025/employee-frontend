@@ -64,9 +64,9 @@ function PureMultimodalInput({
 		// Set new timer if currently listening
 		if (isListening) {
 			silenceTimerRef.current = setTimeout(() => {
-				console.log(
-					`No speech detected for ${SILENCE_TIMEOUT}ms, stopping listening`
-				)
+				// console.log(
+				// 	`No speech detected for ${SILENCE_TIMEOUT}ms, stopping listening`
+				// )
 				SpeechRecognition.stopListening()
 				setIsListening(false)
 				toast.info(
@@ -93,19 +93,19 @@ function PureMultimodalInput({
 	})
 
 	// Log speech recognition state for debugging
-	useEffect(() => {
-		console.log('Speech recognition state:', {
-			browserSupports: browserSupportsSpeechRecognition,
-			microphoneAvailable: isMicrophoneAvailable,
-			listening,
-			transcript,
-		})
-	}, [
-		browserSupportsSpeechRecognition,
-		isMicrophoneAvailable,
-		listening,
-		transcript,
-	])
+	// useEffect(() => {
+	// 	console.log('Speech recognition state:', {
+	// 		browserSupports: browserSupportsSpeechRecognition,
+	// 		microphoneAvailable: isMicrophoneAvailable,
+	// 		listening,
+	// 		transcript,
+	// 	})
+	// }, [
+	// 	browserSupportsSpeechRecognition,
+	// 	isMicrophoneAvailable,
+	// 	listening,
+	// 	transcript,
+	// ])
 
 	// Update isListening state based on the library's listening state
 	useEffect(() => {
@@ -115,7 +115,7 @@ function PureMultimodalInput({
 	// Update input field with transcript
 	useEffect(() => {
 		if (transcript && transcript !== lastTranscript) {
-			console.log('New transcript detected:', transcript)
+			// console.log('New transcript detected:', transcript)
 			setInput(transcript)
 			setLastTranscript(transcript)
 			adjustHeight()

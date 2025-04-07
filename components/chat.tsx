@@ -85,8 +85,8 @@ export function Chat({
 				)
 
 				if (hasEscalatedChain) {
-					console.log('Found escalated chain')
-					console.log('escalated')
+					// console.log('Found escalated chain')
+					// console.log('escalated')
 					setChainStatus('escalated')
 				} else {
 					// Set the status of the first chain as fallback
@@ -110,11 +110,11 @@ export function Chat({
 		// Function to handle ping
 		const handlePing = async () => {
 			try {
-				console.log('Making ping request')
+				// console.log('Making ping request')
 				const response = await fetchProtected('/employee/ping', {
 					method: 'GET',
 				})
-				console.log('Ping response:', response)
+				// console.log('Ping response:', response)
 			} catch (error) {
 				console.error('Failed to ping employee endpoint:', error)
 			}
@@ -375,7 +375,7 @@ export function Chat({
 			setIsInitiating(true)
 			setStatus('submitted')
 
-			console.log('Initiating chat with ID:', chatId)
+			// console.log('Initiating chat with ID:', chatId)
 
 			// Call API to initiate the chat
 			const response = await fetchProtected<InitiateChatResponse>(
@@ -389,7 +389,7 @@ export function Chat({
 				}
 			)
 
-			console.log('Chat initiation response:', response)
+			// console.log('Chat initiation response:', response)
 			dispatch(setChatStatus('active'))
 
 			// Update chain status from response

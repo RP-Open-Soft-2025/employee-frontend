@@ -66,9 +66,9 @@ export default function ChatPageClient() {
 
 					// Use the most recent chain
 					const latestChain = sortedChains[0]
-					console.log(
-						`Redirecting to latest chain: ${latestChain.chain_id}, created at: ${latestChain.created_at}`
-					)
+					// console.log(
+					// 	`Redirecting to latest chain: ${latestChain.chain_id}, created at: ${latestChain.created_at}`
+					// )
 					router.push(`/session/${latestChain.chain_id}`)
 				} else {
 					// No chains found

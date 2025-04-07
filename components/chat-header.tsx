@@ -166,7 +166,7 @@ function PureChatHeader({
 			})
 
 			if (response.ok) {
-				console.log('Chat ended successfully')
+				// console.log('Chat ended successfully')
 
 				// Call the callback to update parent component states
 				if (onChatEnd) {

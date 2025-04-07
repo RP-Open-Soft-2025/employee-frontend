@@ -142,7 +142,7 @@ function PureMessages({
 		{} as Record<string, { messages: UIMessage[]; createdAt: string }>
 	)
 
-	console.log('Grouped messages:', groupedMessages)
+	// console.log('Grouped messages:', groupedMessages)
 
 	if (status === 'initiating') {
 		return (

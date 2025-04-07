@@ -17,7 +17,7 @@ const chatSlice = createSlice({
 	initialState,
 	reducers: {
 		setActiveChatId: (state, action: PayloadAction<string | null>) => {
-			console.log('Setting activeChatId in Redux:', action.payload)
+			// console.log('Setting activeChatId in Redux:', action.payload)
 			state.activeChatId = action.payload
 		},
 		setChatStatus: (state, action: PayloadAction<string | null>) => {
@@ -30,7 +30,7 @@ const chatSlice = createSlice({
 			state.messages = action.payload
 		},
 		clearChat: state => {
-			console.log('Clearing chat state in Redux')
+			// console.log('Clearing chat state in Redux')
 			state.activeChatId = null
 			state.chatStatus = null
 			state.messages = []

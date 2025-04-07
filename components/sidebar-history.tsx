@@ -146,9 +146,9 @@ const ChainItem = ({
 								<SidebarMenuSubButton
 									isActive={session.chatId === activeChatId}
 									onClick={() => {
-										console.log(
-											`Session clicked in sidebar: ${session.id}, Chat ID: ${session.chatId}`
-										)
+										// console.log(
+										// 	`Session clicked in sidebar: ${session.id}, Chat ID: ${session.chatId}`
+										// )
 										onChatClick(chain.id)
 										setOpenMobile(false)
 									}}
@@ -186,14 +186,14 @@ export function SidebarHistory({ user }: { user: any }) {
 	const { fetchProtected } = useProtectedApi()
 
 	const handleChatClick = (chatId: string) => {
-		console.log('========== CHAT CLICK DEBUGGING ==========')
-		console.log(`Chat clicked with ID: "${chatId}"`)
+		// console.log('========== CHAT CLICK DEBUGGING ==========')
+		// console.log(`Chat clicked with ID: "${chatId}"`)
 
 		// Update to use dynamic routing instead of query params
-		console.log(`Navigating to session page: /session/${chatId}`)
+		// console.log(`Navigating to session page: /session/${chatId}`)
 		router.push(`/session/${chatId}`)
 
-		console.log('===========================================')
+		// console.log('===========================================')
 	}
 
 	const toggleChain = (chainId: string) => {
@@ -206,7 +206,7 @@ export function SidebarHistory({ user }: { user: any }) {
 
 	// Completely rewrite the session fetching function to properly handle errors
 	const fetchSessionsForChain = async (chain: Chain): Promise<Session[]> => {
-		console.log(`Fetching sessions for chain ${chain.id}`)
+		// console.log(`Fetching sessions for chain ${chain.id}`)
 
 		if (!chain.sessionIds || chain.sessionIds.length === 0) {
 			return []
@@ -249,12 +249,12 @@ export function SidebarHistory({ user }: { user: any }) {
 					})
 				} else {
 					// API request failed or returned error response
-					console.log(`Using mock data for session ${sessionId} (API error)`)
+					// console.log(`Using mock data for session ${sessionId} (API error)`)
 					sessionsData.push(createMockSession(sessionId, chain))
 				}
 			} catch (e) {
 				// This should never happen with safeApiFetch, but just in case
-				console.error(`Unexpected error for session ${sessionId}:`, e)
+				// console.error(`Unexpected error for session ${sessionId}:`, e)
 				sessionsData.push(createMockSession(sessionId, chain))
 			}
 		}
@@ -264,17 +264,18 @@ export function SidebarHistory({ user }: { user: any }) {
 
 	// A wrapper around fetchProtected that never throws errors
 	const safeApiFetch = async (endpoint: string) => {
+		// console.log(`API request to ${endpoint} failed silently`)
 		try {
 			const data = await fetchProtected(endpoint)
 			return { success: true, data }
 		} catch (error) {
-			console.log(`API request to ${endpoint} failed silently`)
+			// console.log(`API request to ${endpoint} failed silently`)
 			return { success: false, error }
 		}
 	}
 
 	const fetchChains = async () => {
-		console.log('Starting to fetch chains...')
+		// console.log('Starting to fetch chains...')
 		try {
 			setLoading(true)
 
@@ -284,32 +285,32 @@ export function SidebarHistory({ user }: { user: any }) {
 
 			if (result?.success) {
 				const data = result.data
-				console.log('Chains API response successful:', data)
+				// console.log('Chains API response successful:', data)
 
 				// Check different possible response structures
 				if (Array.isArray(data)) {
 					chainsData = data
-					console.log('API returned chains as direct array')
+					// console.log('API returned chains as direct array')
 				} else if (data?.chains && Array.isArray(data.chains)) {
 					chainsData = data.chains
-					console.log("API returned chains in 'chains' property")
+					// console.log("API returned chains in 'chains' property")
 				} else if (data && typeof data === 'object') {
 					// Try to extract chains if it's not in the expected format
-					console.log(
-						'Unexpected API response format, attempting to find chains'
-					)
+					// console.log(
+					// 	'Unexpected API response format, attempting to find chains'
+					// )
 
 					// Check if the result itself matches our expected chain shape
 					if (data.chain_id) {
 						chainsData = [data]
-						console.log('API returned a single chain object')
+						// console.log('API returned a single chain object')
 					} else {
 						// Look for array properties that might contain chains
 						for (const key in data) {
 							if (Array.isArray(data[key]) && data[key].length > 0) {
 								if (data[key][0].chain_id) {
 									chainsData = data[key]
-									console.log(`Found chains in property: ${key}`)
+									// console.log(`Found chains in property: ${key}`)
 									break
 								}
 							}
@@ -317,12 +318,12 @@ export function SidebarHistory({ user }: { user: any }) {
 					}
 				}
 			} else {
-				console.log('API request for chains failed, using mock data')
+				// console.log('API request for chains failed, using mock data')
 			}
 
 			// If we couldn't get chains from the API, use mock data
 
-			console.log('Processed chainsData:', chainsData)
+			// console.log('Processed chainsData:', chainsData)
 
 			// Sort chains by creation date, newest first
 			chainsData.sort((a: ChainResponse, b: ChainResponse) => {
@@ -366,14 +367,14 @@ export function SidebarHistory({ user }: { user: any }) {
 
 			// Update chains with session data
 			setChains(chainsWithSessions)
-			console.log('All chains and sessions loaded:', chainsWithSessions)
+			// console.log('All chains and sessions loaded:', chainsWithSessions)
 		} catch (e) {
-			console.error('Completely failed to fetch chains:', e)
+			// console.error('Completely failed to fetch chains:', e)
 			// If everything fails, still show mock data
 
 			// Fetch mock sessions for each chain
 		} finally {
-			console.log('Chains fetch process completed')
+			// console.log('Chains fetch process completed')
 			setLoading(false)
 		}
 	}

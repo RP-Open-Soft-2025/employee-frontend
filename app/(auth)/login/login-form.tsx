@@ -46,10 +46,10 @@ export default function LoginForm() {
 			password: formData.get('password') as string,
 		}
 
-		console.log(data)
+		// console.log(data)
 
 		try {
-			console.log(API_URL)
+			// console.log(API_URL)
 
 			const response = await fetch(`${API_URL}/auth/login`, {
 				method: 'POST',
@@ -61,7 +61,7 @@ export default function LoginForm() {
 
 			const result = await response.json()
 
-			console.log(result)
+			// console.log(result)
 
 			if (response.ok) {
 				if (result.access_token) {
@@ -76,11 +76,11 @@ export default function LoginForm() {
 							refreshToken,
 						})
 					)
-					console.log('Logged in successfully')
+					// console.log('Logged in successfully')
 					setIsSuccessful(true)
 					// The isAuthenticated effect will handle redirecting
 				} else {
-					console.error('Login failed: No access token received')
+					// console.error('Login failed: No access token received')
 					toast({
 						type: 'error',
 						description: result.detail,
@@ -88,14 +88,14 @@ export default function LoginForm() {
 					dispatch(loginFailure({ error: 'Invalid login' }))
 				}
 			} else if (response.status === 403) {
-				console.error('Login failed: ', result.detail)
+				// console.error('Login failed: ', result.detail)
 				dispatch(loginFailure({ error: 'Invalid login' }))
 				toast({
 					type: 'error',
 					description: result.detail,
 				})
 			} else if (response.status === 307) {
-				console.log('First time login - redirecting to password reset')
+				// console.log('First time login - redirecting to password reset')
 				toast({
 					type: 'success',
 					description: 'First time login - Please reset your password',
@@ -104,7 +104,7 @@ export default function LoginForm() {
 				router.push(redirectUrl)
 				return
 			} else {
-				console.error('Login failed: Server error')
+				// console.error('Login failed: Server error')
 				toast({
 					type: 'error',
 					description: 'Failed validating your submission!',
@@ -112,7 +112,7 @@ export default function LoginForm() {
 				dispatch(loginFailure({ error: 'Server error' }))
 			}
 		} catch (error) {
-			console.error('Login error:', error)
+			// console.error('Login error:', error)
 
 			const errorMessage =
 				error instanceof Error ? error.message : 'Network error'

@@ -118,7 +118,7 @@ export function EmployeeDashboard() {
 	const fetchEmployeeDetails = async () => {
 		try {
 			const result = await fetchProtected('/employee/profile')
-			console.log('Employee details:', result)
+			// console.log('Employee details:', result)
 			setEmployeeDetails(result)
 			// Process the result here
 		} catch (e) {
@@ -130,7 +130,7 @@ export function EmployeeDashboard() {
 	const fetchEmployeeScheduledMeets = async () => {
 		try {
 			const result = await fetchProtected('/employee/scheduled-meets')
-			console.log('Employee scheduled meets:', result)
+			// console.log('Employee scheduled meets:', result)
 			// Process the result here
 		} catch (e) {
 			console.error('Failed to fetch employee meets:', e)
@@ -141,7 +141,7 @@ export function EmployeeDashboard() {
 	const fetchEmployeeScheduledSessions = async () => {
 		try {
 			const result = await fetchProtected('/employee/scheduled-sessions')
-			console.log('Employee scheduled sessions:', result)
+			// console.log('Employee scheduled sessions:', result)
 			// Process the result here
 		} catch (e) {
 			console.error('Failed to fetch employee scheduled sessions:', e)
@@ -151,7 +151,7 @@ export function EmployeeDashboard() {
 	const fetchEmployeeChats = async () => {
 		try {
 			const result = await fetchProtected('/employee/chats')
-			console.log('Employee chats:', result)
+			// console.log('Employee chats:', result)
 			// Process the result here
 		} catch (e) {
 			console.error('Failed to fetch employee chats:', e)
