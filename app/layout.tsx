@@ -8,9 +8,25 @@ import StoreProvider from './StoreProvider'
 
 export const metadata: Metadata = {
 	metadataBase: new URL('https://employee-frontend-ten-puce.vercel.app'),
-	title: 'Employee AI Conversation Bot - Vibemeter',
-	description:
-		'AI-powered conversation bot to enhance employee experience and measure team vibes.',
+	title: {
+		default: 'DeloConnect - Employee Support Platform',
+		template: '%s | DeloConnect'
+	},
+	description: 'AI-powered employee support platform for professional development and guidance.',
+	keywords: ['employee support', 'career development', 'professional guidance', 'AI assistant', 'workplace support'],
+	openGraph: {
+		title: 'DeloConnect - Employee Support Platform',
+		description: 'AI-powered employee support platform for professional development and guidance.',
+		url: 'https://employee-frontend-ten-puce.vercel.app',
+		siteName: 'DeloConnect',
+		locale: 'en_US',
+		type: 'website',
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: 'DeloConnect - Employee Support Platform',
+		description: 'AI-powered employee support platform for professional development and guidance.',
+	},
 }
 
 export const viewport = {

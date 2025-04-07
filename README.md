@@ -1,7 +1,7 @@
-# Employee Experience AI Conversation Bot
+# DeloConnect
 
 <p align="center">
-  An AI-powered Conversation Bot Built to Augment Employee Experience.
+  An AI-powered Employee Support Platform for Professional Development and Guidance.
 </p>
 
 <p align="center">
@@ -63,8 +63,8 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/employee-frontend.git
-cd employee-frontend
+git clone https://github.com/yourusername/deloconnect.git
+cd deloconnect
 ```
 
 2. Install dependencies:
@@ -102,7 +102,7 @@ The application will be available at [http://localhost:3000](http://localhost:30
 ### Project Structure
 
 ```
-employee-frontend/
+deloconnect/
 ├── app/                 # Next.js app directory
 ├── components/          # Reusable UI components
 ├── lib/                 # Utility functions and configurations

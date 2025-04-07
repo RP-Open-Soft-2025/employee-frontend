@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import { Metadata } from 'next'
 
 import { AppSidebar } from '@/components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
@@ -10,6 +11,11 @@ import logo from '@/public/images/deloitte-logo.svg'
 import logoDark from '@/public/images/deloitte-logo-dark.svg'
 
 export const experimental_ppr = true
+
+export const metadata: Metadata = {
+	title: '%s | DeloConnect',
+	description: 'Access and manage your DeloConnect chat sessions for employee support and guidance.',
+}
 
 export default async function Layout({
 	children,

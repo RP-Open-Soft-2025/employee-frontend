@@ -1,5 +1,11 @@
 import { EmployeeDashboard } from '@/components/employee-dashboard'
 import { Suspense } from 'react'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+	title: 'Dashboard | DeloConnect',
+	description: 'Access your personalized employee dashboard with AI-powered support and guidance.',
+}
 
 export default function Page() {
 	return (
