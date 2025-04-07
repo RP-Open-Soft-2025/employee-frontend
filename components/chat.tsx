@@ -412,7 +412,6 @@ export function Chat({
 			console.error('Failed to initiate chat:', error)
 		} finally {
 			setStatus('ready')
-			await new Promise(resolve => setTimeout(resolve, 5000));
 			setIsInitiating(false)
 		}
 	}
