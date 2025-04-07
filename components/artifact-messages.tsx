@@ -2,7 +2,7 @@ import { PreviewMessage } from './message'
 import { useScrollToBottom } from './use-scroll-to-bottom'
 import type { Vote } from '@/lib/db/schema'
 import type { UIMessage } from 'ai'
-import { memo } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import equal from 'fast-deep-equal'
 import type { UIArtifact } from './artifact'
 import type { UseChatHelpers } from '@ai-sdk/react'
@@ -27,13 +27,22 @@ function PureArtifactMessages({
 	reload,
 	isReadonly,
 }: ArtifactMessagesProps) {
-	const [messagesContainerRef, messagesEndRef] =
+	const [messagesContainerRef, messagesEndRef, scrollToBottom] =
 		useScrollToBottom<HTMLDivElement>()
+	const prevMessagesLengthRef = useRef(messages.length)
+
+	// Scroll to bottom when new messages arrive
+	useEffect(() => {
+		if (messages.length > prevMessagesLengthRef.current) {
+			scrollToBottom()
+		}
+		prevMessagesLengthRef.current = messages.length
+	}, [messages.length, scrollToBottom])
 
 	return (
 		<div
 			ref={messagesContainerRef}
-			className="flex flex-col gap-4 h-full items-center overflow-y-scroll px-4 pt-20"
+			className="flex flex-col gap-4 h-full items-center overflow-y-scroll px-4 pt-20 scroll-smooth"
 		>
 			{messages.map((message, index) => (
 				<PreviewMessage

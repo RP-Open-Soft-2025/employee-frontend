@@ -2,7 +2,7 @@ import type { UIMessage } from 'ai'
 import { PreviewMessage, ThinkingMessage } from './message'
 import { useScrollToBottom } from './use-scroll-to-bottom'
 import { Overview } from './overview'
-import { memo, useState, useEffect } from 'react'
+import { memo, useState, useEffect, useRef } from 'react'
 import type { Vote } from '@/lib/db/schema'
 import equal from 'fast-deep-equal'
 import type { UseChatHelpers } from '@ai-sdk/react'
@@ -63,10 +63,19 @@ function PureMessages({
 	reload,
 	isReadonly,
 }: MessagesProps) {
-	const [messagesContainerRef, messagesEndRef] =
+	const [messagesContainerRef, messagesEndRef, scrollToBottom] =
 		useScrollToBottom<HTMLDivElement>()
 	const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
 	const [isVisible, setIsVisible] = useState(true)
+	const prevMessagesLengthRef = useRef(messages.length)
+
+	// Scroll to bottom when new messages arrive
+	useEffect(() => {
+		if (messages.length > prevMessagesLengthRef.current) {
+			scrollToBottom()
+		}
+		prevMessagesLengthRef.current = messages.length
+	}, [messages.length, scrollToBottom])
 
 	const loadingMessages = [
 		'Please wait a moment...',
@@ -165,7 +174,7 @@ function PureMessages({
 	return (
 		<div
 			ref={messagesContainerRef}
-			className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-auto [scrollbar-width:_none] pt-4"
+			className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-auto [scrollbar-width:_none] pt-4 scroll-smooth"
 		>
 			{messages.length === 0 && <Overview />}
 

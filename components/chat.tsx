@@ -436,7 +436,7 @@ export function Chat({
 		}
 
 		res()
-	})
+	}, [])
 
 	return (
 		<>
