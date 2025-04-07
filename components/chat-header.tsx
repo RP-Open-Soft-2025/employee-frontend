@@ -99,7 +99,7 @@ export function HeaderUserNav() {
 								<span className="opacity-0">Sign out</span>
 								<div className="absolute inset-0 flex items-center justify-center">
 									<svg
-										className="animate-spin h-4 w-4 text-[hsl(var(--deep-blue-accent))]"
+										className="animate-spin size-4 text-[hsl(var(--deep-blue-accent))]"
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"
 										viewBox="0 0 24 24"
@@ -201,7 +201,7 @@ function PureChatHeader({
 							<span className="opacity-0">End Chat</span>
 							<div className="absolute inset-0 flex items-center justify-center">
 								<svg
-									className="animate-spin h-4 w-4 text-white"
+									className="animate-spin size-4 text-white"
 									xmlns="http://www.w3.org/2000/svg"
 									fill="none"
 									viewBox="0 0 24 24"

@@ -15,16 +15,11 @@ import {
 } from '@/components/ui/card'
 import {
 	MessageSquare,
-	Bell,
 	Calendar,
-	FileText,
 	User,
 	BarChart,
 	Award,
 	Activity,
-	Send,
-	Star,
-	StarHalf,
 	Clock,
 	AlertCircle,
 	UserCircle,
@@ -392,7 +387,7 @@ export function EmployeeDashboard() {
 						{employeeDetails?.is_blocked && (
 							<div className="group p-3 rounded-lg bg-red-50 dark:bg-red-900/20 transition-colors duration-200">
 								<p className="mb-2 text-lg leading-normal text-red-500 dark:text-red-400 flex items-center gap-1.5">
-									<AlertCircle className="h-3.5 w-3.5" />
+									<AlertCircle className="size-3.5" />
 									Account Status
 								</p>
 								<p className="text-sm font-medium text-red-600 dark:text-red-400">
@@ -458,7 +453,7 @@ export function EmployeeDashboard() {
 													</p>
 													<div className="mt-2 flex items-center">
 														<div
-															className={`h-3 w-3 rounded-full ${
+															className={`size-3 rounded-full ${
 																latestOnboarding.Onboarding_Feedback.toUpperCase().includes(
 																	'EXCELLENT'
 																)
@@ -473,7 +468,7 @@ export function EmployeeDashboard() {
 																			? 'bg-yellow-500 dark:bg-yellow-600'
 																			: 'bg-red-500 dark:bg-red-600'
 															}`}
-														></div>
+														/>
 														<p className="ml-2 text-base font-medium text-gray-800 dark:text-white/90">
 															{latestOnboarding.Onboarding_Feedback}
 														</p>
@@ -488,7 +483,7 @@ export function EmployeeDashboard() {
 												<div className="space-y-2">
 													<div className="flex items-center">
 														<div
-															className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+															className={`flex size-6 items-center justify-center rounded-full border ${
 																latestOnboarding.Mentor_Assigned
 																	? 'border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30'
 																	: 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'
@@ -496,7 +491,7 @@ export function EmployeeDashboard() {
 														>
 															{latestOnboarding.Mentor_Assigned && (
 																<svg
-																	className="h-4 w-4 text-green-500 dark:text-green-400"
+																	className="size-4 text-green-500 dark:text-green-400"
 																	fill="none"
 																	viewBox="0 0 24 24"
 																	stroke="currentColor"
@@ -523,7 +518,7 @@ export function EmployeeDashboard() {
 
 													<div className="flex items-center">
 														<div
-															className={`flex h-6 w-6 items-center justify-center rounded-full border ${
+															className={`flex size-6 items-center justify-center rounded-full border ${
 																latestOnboarding.Initial_Training_Completed
 																	? 'border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-900/30'
 																	: 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'
@@ -531,7 +526,7 @@ export function EmployeeDashboard() {
 														>
 															{latestOnboarding.Initial_Training_Completed && (
 																<svg
-																	className="h-4 w-4 text-green-500 dark:text-green-400"
+																	className="size-4 text-green-500 dark:text-green-400"
 																	fill="none"
 																	viewBox="0 0 24 24"
 																	stroke="currentColor"
@@ -604,9 +599,12 @@ export function EmployeeDashboard() {
 
 								{/* Leave Records */}
 								<div>
-									<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 pb-1">
-										Leave Records
-									</h5>
+									{!(!employeeDetails?.company_data?.leave ||
+											employeeDetails.company_data.leave.length === 0) && (
+										<h5 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300 pb-1">
+											Leave Records
+										</h5>
+									)}
 									<div className="space-y-2 max-h-[140px] min-h-fit overflow-y-auto pr-1 custom-scrollbar">
 										{employeeDetails?.company_data?.leave?.map(
 											(leave, index) => {
@@ -1177,7 +1175,7 @@ export function EmployeeDashboard() {
 														transition: 'left 0.3s ease-in-out',
 													}}
 												>
-													<div className="size-0 border-x-[8px] border-t-[8px] border-transparent border-t-gray-800 dark:border-t-white mx-auto" />
+													<div className="size-0 border-x-8 border-t-8 border-transparent border-t-gray-800 dark:border-t-white mx-auto" />
 												</div>
 											</div>
 
@@ -1352,7 +1350,9 @@ export function EmployeeDashboard() {
 														</p>
 														<p className="text-xs text-muted-foreground">
 															{chain.created_at &&
-															!isNaN(new Date(chain.created_at).getTime())
+															!Number.isNaN(
+																new Date(chain.created_at).getTime()
+															)
 																? new Date(chain.created_at).toLocaleString()
 																: 'Date unavailable'}
 														</p>

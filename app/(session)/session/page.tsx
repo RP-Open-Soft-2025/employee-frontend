@@ -82,6 +82,7 @@ export default function ChatPage() {
 		}
 
 		fetchChains()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	if (isLoading) {

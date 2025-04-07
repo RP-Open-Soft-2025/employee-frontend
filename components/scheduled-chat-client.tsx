@@ -389,7 +389,7 @@ export function ScheduledChatClient() {
 		<>
 			<Chat
 				scheduledAt={scheduledAt}
-				currChain={id!}
+				currChain={id || ''}
 				key={chatIdToUse}
 				id={chatIdToUse || ''}
 				initialMessages={allMessages}

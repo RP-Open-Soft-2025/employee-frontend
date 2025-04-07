@@ -35,7 +35,7 @@ const ChatSeparator = ({
 					'dark:bg-secondary/50 dark:text-muted-foreground/80'
 				)}
 			>
-				{formattedDate && !isNaN(new Date(createdAt).getTime())
+				{formattedDate && !Number.isNaN(new Date(createdAt).getTime())
 					? formattedDate
 					: chatId}
 			</div>
