@@ -436,6 +436,7 @@ export function Chat({
 		}
 
 		res()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return (
