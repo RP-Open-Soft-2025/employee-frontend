@@ -95,7 +95,7 @@ interface EmployeeDetails {
 	}
 	recent_chains: Array<{
 		chain_id: string
-		status: 'completed' | 'active'
+		status: 'completed' | 'active' | 'escalated'
 		notes: string
 		created_at: string
 	}>
@@ -1247,10 +1247,26 @@ export function EmployeeDashboard() {
 											<div className="flex items-center justify-between">
 												<div className="flex items-center">
 													<div
-														className={`size-10 rounded-full ${chain.status === 'active' ? 'bg-green-100 dark:bg-green-900/20' : 'bg-blue-100 dark:bg-blue-900/20'} flex items-center justify-center mr-3`}
+														className={`size-10 rounded-full ${
+															chain.status === 'active'
+																? 'bg-green-100 dark:bg-green-900/20'
+																: chain.status === 'completed'
+																? 'bg-blue-100 dark:bg-blue-900/20'
+																: chain.status === 'escalated'
+																? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+																: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+														} flex items-center justify-center mr-3`}
 													>
 														<MessageSquare
-															className={`size-5 ${chain.status === 'active' ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`}
+															className={`size-5 ${
+																chain.status === 'active'
+																	? 'text-green-600 dark:text-green-400'
+																	: chain.status === 'completed'
+																	? 'text-blue-600 dark:text-blue-400'
+																	: chain.status === 'escalated'
+																	? 'text-yellow-600 dark:text-yellow-400'
+																	: 'text-gray-600 dark:text-gray-400'
+															}`}
 														/>
 													</div>
 													<div>
@@ -1274,7 +1290,15 @@ export function EmployeeDashboard() {
 													</div>
 												</div>
 												<span
-													className={`text-xs px-2 py-1 rounded-full ${chain.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'}`}
+													className={`text-xs px-2 py-1 rounded-full ${
+														chain.status === 'active'
+															? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+															: chain.status === 'completed'
+															? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+															: chain.status === 'escalated'
+															? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+															: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+													}`}
 												>
 													{chain.status[0].toUpperCase() +
 														chain.status.slice(1)}
