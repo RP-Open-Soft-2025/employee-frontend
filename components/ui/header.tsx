@@ -11,6 +11,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useRouter } from 'next/navigation'
 
 interface Notification {
 	id: string
@@ -37,16 +38,19 @@ export function Header({
 	const unreadCount =
 		notifications?.filter(n => n.status === 'unread').length || 0
 	const { setTheme, theme } = useTheme()
+	const router = useRouter()
 
 	const handleNotificationClick = (notification: Notification) => {
 		if (notification.status === 'unread' && onNotificationClick) {
 			onNotificationClick(notification.id)
 		}
+		// Redirect to /session when any notification is clicked
+		router.push('/session')
 	}
 
 	const formatNotificationTime = (dateString: string) => {
-		const date = new Date(new Date(dateString).getTime())
-		const now = new Date(new Date().getTime())
+		const date = new Date(new Date(dateString).getTime() + 19800000)
+ 		const now = new Date(new Date().getTime() + 19800000)
 		const diffInHours =
 			Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60)
 
