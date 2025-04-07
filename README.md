@@ -6,13 +6,16 @@
 
 🌐 **Live Demo**: [https://employee-frontend-ten-puce.vercel.app/](https://employee-frontend-ten-puce.vercel.app/)
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
-  <a href="#getting-started"><strong>Getting Started</strong></a> ·
-  <a href="#development"><strong>Development</strong></a> ·
-  <a href="#project-structure"><strong>Project Structure</strong></a>
-</p>
+## 📑 Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
+- [Development](#-development)
+- [Project Structure](#️-project-structure)
+- [Contributing](#-contributing)
+- [License](#-license)
+
 <br/>
 
 ## Features
