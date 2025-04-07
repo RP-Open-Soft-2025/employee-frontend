@@ -69,7 +69,7 @@ export function Header({ children }: HeaderProps) {
 		return () => {
 			clearInterval(pingInterval)
 		}
-	}, [fetchProtected])
+	}, [])
 
 	const markNotificationAsRead = async (notificationId: string) => {
 		try {
@@ -118,7 +118,7 @@ export function Header({ children }: HeaderProps) {
 
 	const formatNotificationTime = (dateString: string) => {
 		const date = new Date(new Date(dateString).getTime() + 19800000)
- 		const now = new Date(new Date().getTime() + 19800000)
+		const now = new Date(new Date().getTime() + 19800000)
 		const diffInHours =
 			Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60)
 
@@ -203,9 +203,7 @@ export function Header({ children }: HeaderProps) {
 												) : (
 													<MailOpen className="size-4" />
 												)}
-												<h4 className="font-medium">
-													{notification.title}
-												</h4>
+												<h4 className="font-medium">{notification.title}</h4>
 											</div>
 											<span className="text-xs">
 												{formatNotificationTime(notification.created_at)}
@@ -271,9 +269,7 @@ export function Header({ children }: HeaderProps) {
 												) : (
 													<MailOpen className="size-4" />
 												)}
-												<h4 className="font-medium">
-													{notification.title}
-												</h4>
+												<h4 className="font-medium">{notification.title}</h4>
 											</div>
 											<span className="text-xs">
 												{formatNotificationTime(notification.created_at)}
