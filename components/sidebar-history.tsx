@@ -127,9 +127,9 @@ const ChainItem = ({
 						</span>
 					</div>
 				</div>
-				<div className="flex items-center gap-2">
+				{/* <div className="flex items-center gap-2">
 					{isEscalated && <Bell className="size-3 text-yellow-600" />}
-				</div>
+				</div> */}
 			</SidebarMenuButton>
 
 			{chain.isOpen && (
