@@ -339,7 +339,7 @@ export function EmployeeDashboard() {
 								<User className="size-3.5" />
 								Employee ID
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate" title={employeeDetails?.employee_id}>
 								{employeeDetails?.employee_id}
 							</p>
 						</div>
@@ -349,7 +349,7 @@ export function EmployeeDashboard() {
 								<User className="size-3.5" />
 								Name
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate" title={employeeDetails?.name}>
 								{employeeDetails?.name}
 							</p>
 						</div>
@@ -359,7 +359,7 @@ export function EmployeeDashboard() {
 								<Mail className="size-3.5" />
 								Email
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate" title={employeeDetails?.email}>
 								{employeeDetails?.email}
 							</p>
 						</div>
@@ -369,7 +369,7 @@ export function EmployeeDashboard() {
 								<Briefcase className="size-3.5" />
 								Role
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize">
+							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize truncate" title={employeeDetails?.role}>
 								{employeeDetails?.role}
 							</p>
 						</div>
@@ -379,7 +379,7 @@ export function EmployeeDashboard() {
 								<Shield className="size-3.5" />
 								Manager ID
 							</p>
-							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+							<p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate" title={employeeDetails?.manager_id}>
 								{employeeDetails?.manager_id}
 							</p>
 						</div>
@@ -390,7 +390,7 @@ export function EmployeeDashboard() {
 									<AlertCircle className="size-3.5" />
 									Account Status
 								</p>
-								<p className="text-sm font-medium text-red-600 dark:text-red-400">
+								<p className="text-sm font-medium text-red-600 dark:text-red-400 truncate">
 									Account is blocked
 								</p>
 							</div>
@@ -1171,7 +1171,7 @@ export function EmployeeDashboard() {
 												<div
 													className="absolute bottom-full mb-1"
 													style={{
-														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 - (employeeDetails.company_data.vibemeter[0].Vibe_Score - 3) / 2}% - 8px)`,
+														left: `calc(${(employeeDetails.company_data.vibemeter[0].Vibe_Score - 1) * 25 - (employeeDetails.company_data.vibemeter[0].Vibe_Score - 3)*1.5/ 2}% - 8px)`,
 														transition: 'left 0.3s ease-in-out',
 													}}
 												>
