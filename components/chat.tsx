@@ -444,7 +444,7 @@ export function Chat({
 				<ChatHeader
 					chatId={id}
 					isReadonly={isReadonly}
-					can_end_chat={can_end_chat || messageCount >= 10}
+					can_end_chat={can_end_chat || (messageCount >= 10 && !isReadonly)}
 					onChatEnd={handleChatEnd}
 				/>
 
