@@ -225,7 +225,7 @@ function PureChatHeader({
 					) : (
 						<>
 							<XCircle className="size-4" />
-							End Chat
+							End Session
 						</>
 					)}
 				</Button>
