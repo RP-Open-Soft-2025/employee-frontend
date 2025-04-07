@@ -214,7 +214,7 @@ function PureMessages({
 				messages.length > 0 &&
 				messages[messages.length - 1].role === 'user' && <ThinkingMessage />}
 
-			<div ref={messagesEndRef} className="h-0" />
+			<div ref={messagesEndRef} className="h-2" />
 		</div>
 	)
 }
