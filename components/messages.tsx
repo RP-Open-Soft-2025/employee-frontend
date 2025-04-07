@@ -71,8 +71,24 @@ function PureMessages({
 	const loadingMessages = [
 		'Please wait a moment...',
 		'Fetching your documents...',
-		'This may take a moment...',
-		'Sit back and relax...'
+		'This may take a minute...',
+		'We are working on it...',
+		'Sit back and relax...',
+		'We are almost done...',
+		'Just a few more moments...',
+		'Preparing your response...',
+		'Analyzing your request...',
+		'Gathering information...',
+		'Processing your query...',
+		'Almost there...',
+		'Loading your content...',
+		'Getting things ready...',
+		'Just a little longer...',
+		'Making magic happen...',
+		'Brewing your response...',
+		'Connecting the dots...',
+		'Putting it all together...',
+		'Finalizing your results...'
 	]
 
 	useEffect(() => {
@@ -83,7 +99,7 @@ function PureMessages({
 					setCurrentMessageIndex((prev) => (prev + 1) % loadingMessages.length)
 					setIsVisible(true)
 				}, 500) // Half second for fade out
-			}, 1500) // 1.5 seconds total (1s visible + 0.5s transition)
+			}, 3500) // 3.5 seconds total (3s visible + 0.5s transition)
 
 			return () => clearInterval(interval)
 		}
