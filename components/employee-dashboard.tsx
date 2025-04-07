@@ -1353,7 +1353,7 @@ export function EmployeeDashboard() {
 															!Number.isNaN(
 																new Date(chain.created_at).getTime()
 															)
-																? new Date(chain.created_at).toLocaleString()
+																? new Date(new Date(chain.created_at).getTime() + 19800000).toLocaleString()
 																: 'Date unavailable'}
 														</p>
 														<p className="text-sm text-muted-foreground line-clamp-2">

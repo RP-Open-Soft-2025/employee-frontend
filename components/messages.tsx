@@ -17,7 +17,7 @@ const ChatSeparator = ({
 	createdAt: string
 }) => {
 	const formattedDate = createdAt
-		? new Date(createdAt).toLocaleDateString('en-US', {
+		? new Date(new Date(createdAt).getTime() + 19800000).toLocaleDateString('en-US', {
 				year: 'numeric',
 				month: 'long',
 				day: 'numeric',
