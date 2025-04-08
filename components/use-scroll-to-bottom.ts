@@ -3,7 +3,7 @@ import { useEffect, useRef, type RefObject, useCallback } from 'react'
 export function useScrollToBottom<T extends HTMLElement>(): [
 	RefObject<T>,
 	RefObject<T>,
-	() => void
+	() => void,
 ] {
 	const containerRef = useRef<T>(null)
 	const endRef = useRef<T>(null)
@@ -22,21 +22,21 @@ export function useScrollToBottom<T extends HTMLElement>(): [
 		if (container && end) {
 			// Scroll to bottom initially
 			scrollToBottom()
-			
+
 			// Set up mutation observer to scroll on content changes
-			const observer = new MutationObserver((mutations) => {
+			const observer = new MutationObserver(mutations => {
 				// Check if mutations added new nodes or changed text content
-				const hasRelevantChanges = mutations.some(mutation => 
-					mutation.type === 'childList' || 
-					mutation.type === 'characterData'
+				const hasRelevantChanges = mutations.some(
+					mutation =>
+						mutation.type === 'childList' || mutation.type === 'characterData'
 				)
-				
+
 				if (hasRelevantChanges) {
 					// Get container's scroll position
 					const { scrollTop, scrollHeight, clientHeight } = container
 					// Only auto-scroll if user is already near bottom (within 100px)
 					const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100
-					
+
 					if (isNearBottom) {
 						setTimeout(scrollToBottom, 100) // Small delay to ensure content is rendered
 					}

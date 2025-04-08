@@ -10,13 +10,21 @@ export const metadata: Metadata = {
 	metadataBase: new URL('https://employee-frontend-ten-puce.vercel.app'),
 	title: {
 		default: 'DeloConnect - Employee Support Platform',
-		template: '%s | DeloConnect'
+		template: '%s | DeloConnect',
 	},
-	description: 'AI-powered employee support platform for professional development and guidance.',
-	keywords: ['employee support', 'career development', 'professional guidance', 'AI assistant', 'workplace support'],
+	description:
+		'AI-powered employee support platform for professional development and guidance.',
+	keywords: [
+		'employee support',
+		'career development',
+		'professional guidance',
+		'AI assistant',
+		'workplace support',
+	],
 	openGraph: {
 		title: 'DeloConnect - Employee Support Platform',
-		description: 'AI-powered employee support platform for professional development and guidance.',
+		description:
+			'AI-powered employee support platform for professional development and guidance.',
 		url: 'https://employee-frontend-ten-puce.vercel.app',
 		siteName: 'DeloConnect',
 		locale: 'en_US',
@@ -25,7 +33,8 @@ export const metadata: Metadata = {
 	twitter: {
 		card: 'summary_large_image',
 		title: 'DeloConnect - Employee Support Platform',
-		description: 'AI-powered employee support platform for professional development and guidance.',
+		description:
+			'AI-powered employee support platform for professional development and guidance.',
 	},
 }
 

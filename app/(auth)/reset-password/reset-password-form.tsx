@@ -17,4 +17,4 @@ export default function ResetPasswordForm() {
 	}, [router])
 
 	return <LoadingScreen />
-} 
+}

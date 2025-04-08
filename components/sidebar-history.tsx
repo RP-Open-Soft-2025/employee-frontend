@@ -371,7 +371,6 @@ export function SidebarHistory({ user }: { user: any }) {
 		} catch (e) {
 			// console.error('Completely failed to fetch chains:', e)
 			// If everything fails, still show mock data
-
 			// Fetch mock sessions for each chain
 		} finally {
 			// console.log('Chains fetch process completed')

@@ -48,7 +48,7 @@ export function ScheduledChatClient() {
 	const [isReadonly, setIsReadonly] = useState(false)
 	const [initialMessages, setInitialMessages] = useState<UIMessage[]>([])
 	const [allMessages, setAllMessages] = useState<UIMessage[]>([])
-	const [scheduledAt, setScheduledAt] = useState<string>("");
+	const [scheduledAt, setScheduledAt] = useState<string>('')
 
 	// Get authentication status and active chat ID from Redux
 	const isAuthenticated = useSelector(

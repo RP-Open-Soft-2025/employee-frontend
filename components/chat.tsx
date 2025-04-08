@@ -520,7 +520,9 @@ export function Chat({
 												</span>
 												<span className="ml-2 text-gray-600 dark:text-gray-400">
 													{scheduledAt
-														? new Date(new Date(scheduledAt).getTime() + 19800000).toLocaleString('en-US', {
+														? new Date(
+																new Date(scheduledAt).getTime() + 19800000
+															).toLocaleString('en-US', {
 																timeZone: 'Asia/Kolkata',
 																hour: 'numeric',
 																minute: 'numeric',
@@ -553,7 +555,9 @@ export function Chat({
 												<span className="ml-2 text-gray-600 dark:text-gray-400">
 													{scheduledAt
 														? (() => {
-																const endDate = new Date(new Date(scheduledAt).getTime() + 19800000)
+																const endDate = new Date(
+																	new Date(scheduledAt).getTime() + 19800000
+																)
 																endDate.setHours(endDate.getHours() + 48)
 																return endDate.toLocaleString('en-US', {
 																	timeZone: 'Asia/Kolkata',

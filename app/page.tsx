@@ -4,7 +4,8 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
 	title: 'Dashboard | DeloConnect',
-	description: 'Access your personalized employee dashboard with AI-powered support and guidance.',
+	description:
+		'Access your personalized employee dashboard with AI-powered support and guidance.',
 }
 
 export default function Page() {

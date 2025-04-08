@@ -14,7 +14,8 @@ export const experimental_ppr = true
 
 export const metadata: Metadata = {
 	title: '%s | DeloConnect',
-	description: 'Access and manage your DeloConnect chat sessions for employee support and guidance.',
+	description:
+		'Access and manage your DeloConnect chat sessions for employee support and guidance.',
 }
 
 export default async function Layout({
