@@ -26,7 +26,8 @@ import {
 	Shield,
 	Mail,
 	Briefcase,
-	VideoIcon,
+	Video,
+	ExternalLink,
 } from 'lucide-react'
 import { Header } from '@/components/ui/header'
 import { LoadingScreen } from './loading-screen'
@@ -101,6 +102,26 @@ interface EmployeeDetails {
 		created_at: string
 		meeting: any
 	}>
+}
+
+// Interface for meetings response
+interface Meeting {
+	meetId: string;
+	organizer: {
+		id: string;
+		name: string;
+		role: string;
+	};
+	scheduledAt: string;
+	duration: number;
+	status: string;
+	location: string | null;
+	meetingLink: string | null;
+	notes: string;
+}
+
+interface MeetingsResponse {
+	meetingsToAttend: Meeting[];
 }
 
 export function EmployeeDashboard() {
@@ -1264,10 +1285,10 @@ export function EmployeeDashboard() {
 																chain.status === 'active'
 																	? 'text-green-600 dark:text-green-400'
 																	: chain.status === 'completed'
-																		? 'text-blue-600 dark:text-blue-400'
-																		: chain.status === 'escalated'
-																			? 'text-yellow-600 dark:text-yellow-400'
-																			: 'text-gray-600 dark:text-gray-400'
+																	? 'text-blue-600 dark:text-blue-400'
+																	: chain.status === 'escalated'
+																	? 'text-yellow-600 dark:text-yellow-400'
+																	: 'text-gray-600 dark:text-gray-400'
 															}`}
 														/>
 													</div>
@@ -1291,22 +1312,21 @@ export function EmployeeDashboard() {
 														</p>
 													</div>
 												</div>
-												<div className="flex items-center space-x-2">
-													<span
-														className={`text-xs px-2 py-1 rounded-full ${
-															chain.status === 'active'
-																? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-																: chain.status === 'completed'
-																	? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
-																	: chain.status === 'escalated'
-																		? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-																		: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
-														}`}
-													>
-														{chain.status[0].toUpperCase() +
-															chain.status.slice(1)}
-													</span>
-												</div>
+												<span
+													className={`text-xs px-2 py-1 rounded-full ${
+														chain.status === 'active'
+															? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+															: chain.status === 'completed'
+															? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+															: chain.status === 'escalated'
+															? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+															: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+													}`}
+												>
+													{chain.status[0].toUpperCase() +
+														chain.status.slice(1)}
+												</span>
+												
 											</div>
 										</div>
 									))}
@@ -1334,110 +1354,181 @@ export function EmployeeDashboard() {
 						</CardFooter>
 					</Card>
 
-					{/* Upcoming Meetings Card */}
-					<Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
-						<CardHeader className="pb-4">
-							<CardTitle className="flex items-center pb-1">
-								<Calendar className="size-5 mr-2" />
-								<span className="relative">
-									Upcoming Meetings
-									<div className="absolute -right-6 -top-1">
-										<span className="flex h-5 w-5">
-											<span className="relative inline-flex rounded-full h-5 w-5 bg-blue-500 text-white text-xs font-bold flex items-center justify-center">
-												{employeeDetails?.recent_chains?.filter(
-													chain => chain.status === 'escalated'
-												).length || 0}
-											</span>
-										</span>
-									</div>
-								</span>
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
-							{employeeDetails?.recent_chains &&
-							employeeDetails.recent_chains.filter(
-								chain => chain.status === 'escalated'
-							).length > 0 ? (
-								<div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
-									{employeeDetails.recent_chains
-										.filter(chain => chain.status === 'escalated')
-										.map(chain => (
-											<div
-												key={chain.chain_id}
-												className="grid gap-2 cursor-pointer p-3 rounded-lg bg-blue-50/50 hover:bg-blue-50 dark:bg-blue-900/10 dark:hover:bg-blue-900/20 transition-colors border border-blue-200/50 dark:border-blue-800/30 shadow-sm hover:shadow-md dark:shadow-zinc-900 backdrop-blur-sm"
-												onClick={() =>
-													router.push(`/session/${chain.chain_id}`)
-												}
-												role="button"
-												tabIndex={0}
-												onKeyDown={e => {
-													if (e.key === 'Enter' || e.key === ' ') {
-														router.push(`/session/${chain.chain_id}`)
-													}
-												}}
-											>
-												<div className="flex items-center justify-between">
-													<div className="flex items-center">
-														<div className="size-10 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center mr-3">
-															<VideoIcon className="size-5 text-blue-600 dark:text-blue-400" />
-														</div>
-														<div>
-															<p className="font-medium text-blue-700 dark:text-blue-400 flex items-center gap-2">
-																<span className="py-0.5">
-																	Meeting: Chain {chain.chain_id}
-																</span>
-																<span className="text-[10px] px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
-																	Scheduled
-																</span>
-															</p>
-															<p className="text-xs text-blue-600/70 dark:text-blue-400/70">
-																Scheduled:{' '}
-																{new Date(
-																	new Date().getTime() +
-																		Math.floor(Math.random() * 86400000)
-																).toLocaleString()}
-															</p>
-															<p className="text-sm text-blue-700/80 dark:text-blue-400/80 line-clamp-2">
-																{chain.notes ||
-																	'Follow-up meeting for escalated issue'}
-															</p>
-														</div>
-													</div>
-													<div className="flex flex-col items-end space-y-2">
-														<a
-															href={chain.meeting.meeting_link}
-															target="_blank"
-															rel="noopener noreferrer"
-															onClick={e => {
-																e.stopPropagation()
-															}}
-															className="px-3 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-md hover:shadow-lg flex items-center transition-all duration-200"
-														>
-															<VideoIcon className="size-4 mr-1.5" /> Join
-															Meeting
-														</a>
-														<span className="text-xs text-blue-600/70 dark:text-blue-400/70">
-															Click to view details
-														</span>
-													</div>
-												</div>
-											</div>
-										))}
-								</div>
-							) : (
-								<div className="flex flex-col items-center justify-center py-6 text-center">
-									<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
-										<Calendar className="size-10 text-muted-foreground" />
-									</div>
-									<p className="text-sm text-muted-foreground">
-										No upcoming meetings scheduled
-									</p>
-								</div>
-							)}
-						</CardContent>
-					</Card>
+					{/* Upcoming Meetings */}
+					<UpcomingMeetings />
 				</div>
 			</div>
 		</div>
 	)
+}
+
+// Upcoming Meetings Component
+function UpcomingMeetings() {
+	const [meetings, setMeetings] = useState<Meeting[]>([]);
+	const [loading, setLoading] = useState(true);
+	const router = useRouter();
+	const { fetchProtected } = useProtectedApi();
+
+	const fetchMeetings = async () => {
+		try {
+			const response = await fetchProtected('/meet/meetings-to-attend');
+			if (response && response.meetingsToAttend) {
+				setMeetings(response.meetingsToAttend);
+			}
+			setLoading(false);
+		} catch (err) {
+			console.error('Error fetching meetings:', err);
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchMeetings();
+	}, []);
+
+	const formatMeetingTime = (dateString: string) => {
+		const date = new Date(dateString);
+		return date.toLocaleString();
+	};
+
+	return (
+		<Card className="h-full p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-900">
+			<CardHeader className="pb-4">
+				<CardTitle className="flex items-center pb-1">
+					<Calendar className="size-5 mr-2" />
+					<span className="relative">
+						Upcoming Meetings
+						{meetings.length > 0 && (
+							<div className="absolute -right-6 -top-1">
+								<span className="flex h-5 w-5">
+									<span className="relative inline-flex rounded-full h-5 w-5 bg-blue-500 text-white text-xs font-bold flex items-center justify-center">
+										{meetings.length}
+									</span>
+								</span>
+							</div>
+						)}
+					</span>
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				{loading ? (
+					<div className="flex items-center justify-center py-6">
+						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+					</div>
+				) : meetings.length > 0 ? (
+					<div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+						{meetings.map(meeting => {
+							const isSoon = false;							
+							return (
+								<div
+									key={meeting.meetId}
+									className={`grid gap-2 p-3 rounded-lg border ${
+										isSoon 
+											? 'bg-yellow-50/50 hover:bg-yellow-50 dark:bg-yellow-900/10 dark:hover:bg-yellow-900/20 border-yellow-200/50 dark:border-yellow-800/30'
+											: 'bg-blue-50/50 hover:bg-blue-50 dark:bg-blue-900/10 dark:hover:bg-blue-900/20 border-blue-200/50 dark:border-blue-800/30'
+									} shadow-sm hover:shadow-md dark:shadow-zinc-900 backdrop-blur-sm transition-colors`}
+								>
+									<div className="flex items-center justify-between">
+										<div className="flex items-center">
+											<div className={`size-10 rounded-full ${
+												isSoon 
+													? 'bg-yellow-100 dark:bg-yellow-900/20'
+													: 'bg-blue-100 dark:bg-blue-900/20'
+											} flex items-center justify-center mr-3`}>
+												<Video className={`size-5 ${
+													isSoon 
+														? 'text-yellow-600 dark:text-yellow-400'
+														: 'text-blue-600 dark:text-blue-400'
+												}`} />
+											</div>
+											<div>
+												<p className={`font-medium ${
+													isSoon 
+														? 'text-yellow-700 dark:text-yellow-400'
+														: 'text-blue-700 dark:text-blue-400'
+												} flex items-center gap-2`}>
+													<span className="py-0.5">
+														Meeting with {meeting.organizer.name}
+													</span>
+													<span className={`text-[10px] px-2 py-1 rounded-full ${
+														isSoon 
+															? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+															: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+													}`}>
+														{isSoon ? 'Coming Soon' : 'Scheduled'}
+													</span>
+												</p>
+												<p className={`text-xs ${
+													isSoon 
+														? 'text-yellow-600/70 dark:text-yellow-400/70'
+														: 'text-blue-600/70 dark:text-blue-400/70'
+												}`}>
+													Scheduled: {formatMeetingTime(meeting.scheduledAt)} ({meeting.duration} min)
+												</p>
+												<p className={`text-sm ${
+													isSoon 
+														? 'text-yellow-700/80 dark:text-yellow-400/80'
+														: 'text-blue-700/80 dark:text-blue-400/80'
+												} line-clamp-2`}>
+													{meeting.notes || 'No notes available'}
+												</p>
+											</div>
+										</div>
+										<div className="flex flex-col items-end space-y-2">
+											{meeting.meetingLink ? (
+												<a
+													href={meeting.meetingLink}
+													target="_blank"
+													rel="noopener noreferrer"
+													className={`px-3 py-1.5 rounded-md text-white text-sm font-semibold shadow-md hover:shadow-lg flex items-center transition-all duration-200 ${
+														isSoon 
+															? 'bg-yellow-600 hover:bg-yellow-700' 
+															: 'bg-blue-600 hover:bg-blue-700'
+													}`}
+												>
+													<Video className="size-4 mr-1.5" /> 
+													Join Meeting
+												</a>
+											) : (
+												<div className="px-3 py-1.5 rounded-md bg-gray-600 text-white text-sm font-semibold shadow-md flex items-center">
+													No Link Available
+												</div>
+											)}
+											<span className={`text-xs ${
+												isSoon 
+													? 'text-yellow-600/70 dark:text-yellow-400/70'
+													: 'text-blue-600/70 dark:text-blue-400/70'
+											}`}>
+												ID: {meeting.meetId}
+											</span>
+										</div>
+									</div>
+								</div>
+							);
+						})}
+					</div>
+				) : (
+					<div className="flex flex-col items-center justify-center py-6 text-center">
+						<div className="p-4 bg-muted/30 dark:bg-muted/10 rounded-full mb-3">
+							<Calendar className="size-10 text-muted-foreground" />
+						</div>
+						<p className="text-sm text-muted-foreground">
+							No upcoming meetings scheduled
+						</p>
+					</div>
+				)}
+			</CardContent>
+			<CardFooter>
+				<Button
+					variant="outline"
+					size="sm"
+					className="w-full"
+					onClick={() => {/* View all meetings logic */}}
+				>
+					<Calendar className="size-4 mr-2" /> 
+					View All Meetings
+				</Button>
+			</CardFooter>
+		</Card>
+	);
 }
