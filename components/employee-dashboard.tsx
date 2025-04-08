@@ -1107,7 +1107,7 @@ export function EmployeeDashboard() {
 														transition: 'left 0.3s ease-in-out',
 													}}
 												>
-													<div className="size-0 border-x-8 border-t-8 border-transparent border-t-gray-800 dark:border-t-white mx-auto" />
+													<div className="size-0 border-x-8 border-t-8 border-transparent border-t-gray-800 mx-auto" />
 												</div>
 											</div>
 
@@ -1344,8 +1344,6 @@ export function EmployeeDashboard() {
 						</CardContent>
 						<CardFooter>
 							<Button
-								variant="primary"
-								size="sm"
 								className="w-full"
 								onClick={() => router.push('/session')}
 							>
@@ -1400,8 +1398,8 @@ function UpcomingMeetings() {
 						Upcoming Meetings
 						{meetings.length > 0 && (
 							<div className="absolute -right-6 -top-1">
-								<span className="flex h-5 w-5">
-									<span className="relative inline-flex rounded-full h-5 w-5 bg-blue-500 text-white text-xs font-bold flex items-center justify-center">
+								<span className="flex size-5">
+									<span className="relative rounded-full size-5 bg-blue-500 text-white text-xs font-bold flex items-center justify-center">
 										{meetings.length}
 									</span>
 								</span>
@@ -1520,8 +1518,6 @@ function UpcomingMeetings() {
 			</CardContent>
 			<CardFooter>
 				<Button
-					variant="outline"
-					size="sm"
 					className="w-full"
 					onClick={() => {/* View all meetings logic */}}
 				>
