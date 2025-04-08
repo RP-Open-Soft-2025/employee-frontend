@@ -216,6 +216,9 @@ export function Chat({
 				setCan_end_chat(data.can_end_chat)
 			}
 
+			if(data.ended) document.location.reload()
+
+
 			// Check if session has ended
 			if (data.ended) {
 				setEnded(true)
@@ -275,6 +278,8 @@ export function Chat({
 			if (data.can_end_chat !== undefined) {
 				setCan_end_chat(data.can_end_chat)
 			}
+
+			if(data.ended) document.location.reload()
 
 			// Check if session has ended
 			if (data.ended) {
@@ -344,6 +349,8 @@ export function Chat({
 				if (data.can_end_chat !== undefined) {
 					setCan_end_chat(data.can_end_chat)
 				}
+
+				if(data.ended) document.location.reload()
 
 				// Check if session has ended
 				if (data.ended) {
