@@ -1491,7 +1491,7 @@ function UpcomingMeetings() {
 												</a>
 											) : (
 												<div className="px-3 py-1.5 rounded-md bg-gray-600 text-white text-sm font-semibold shadow-md flex items-center">
-													No Link Available
+													Link Unavailable
 												</div>
 											)}
 											<span className={`text-xs ${
