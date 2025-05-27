@@ -2,8 +2,6 @@
 
 An AI-powered Employee Support Platform for Professional Development and Guidance.
 
-🌐 **Live Demo**: [https://employee-frontend-ten-puce.vercel.app/](https://employee-frontend-ten-puce.vercel.app/)
-
 ## 📑 Table of Contents
 
 - [Features](#-features)
