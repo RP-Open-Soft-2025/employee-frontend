@@ -13,18 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm' # Change to 'yarn' or 'pnpm' if needed
-
-      - name: Install dependencies
-        run: npm install # or yarn install / pnpm install
-
-      - name: Build the project
-        run: npm run build # Ensure your Next.js build works
-
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
